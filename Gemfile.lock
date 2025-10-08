@@ -256,6 +256,9 @@ GEM
     rubocop-ast (1.47.1)
       parser (>= 3.3.7.2)
       prism (~> 1.4)
+    rubocop-fjord (0.3.1)
+      rubocop (>= 1.0)
+      rubocop-performance
     rubocop-performance (1.26.0)
       lint_roller (~> 1.1)
       rubocop (>= 1.75.0, < 2.0)
@@ -351,6 +354,8 @@ DEPENDENCIES
   propshaft
   puma (>= 5.0)
   rails (~> 8.0.2, >= 8.0.2.1)
+  rubocop-fjord
+  rubocop-rails
   rubocop-rails-omakase
   solid_cache
   solid_queue
