@@ -57,3 +57,7 @@ group :development do
   gem "rubocop-fjord", require: false
   gem "rubocop-rails", require: false
 end
+
+gem "dotenv-rails"
+gem "omniauth-discord"
+gem "omniauth-rails_csrf_protection"
