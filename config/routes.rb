@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  root to: "pages#home"
   resource :session, only: %i[create destroy]
   get 'auth/:provider/callback', to: 'sessions#create'
   get 'auth/failure', to: redirect('/')
