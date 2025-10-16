@@ -1,0 +1,11 @@
+div
+  h1.font-bold.text-4xl
+    | Pages#home
+  p
+    | Find me in app/views/pages/home.html.erb
+  - if current_user
+    = @current_user.name
+    = link_to "ログアウト", logout_path
+  - else
+    = button_to "/auth/discord", method: :post, data: { turbo: false } do
+      |  Discordでログイン

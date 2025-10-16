@@ -59,6 +59,7 @@ group :development do
   gem "web-console"
 
   gem "rubocop-fjord", require: false
+  gem "slim_lint", require: false
 end
 
 group :test do
@@ -72,3 +73,4 @@ gem "dotenv-rails"
 gem "omniauth-discord"
 gem "omniauth-rails_csrf_protection"
 gem "discordrb"
+gem "slim-rails"
