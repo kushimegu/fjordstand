@@ -399,6 +399,13 @@ GEM
       childprocess (>= 0.5, < 5.0)
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2)
+    slim (5.2.1)
+      temple (~> 0.10.0)
+      tilt (>= 2.1.0)
+    slim-rails (3.7.0)
+      actionpack (>= 3.1)
+      railties (>= 3.1)
+      slim (>= 3.0, < 6.0, != 5.0.0)
     snaky_hash (2.0.3)
       hashie (>= 0.1.0, < 6)
       version_gem (>= 1.1.8, < 3)
@@ -432,11 +439,13 @@ GEM
     tailwindcss-ruby (4.1.13-arm64-darwin)
     tailwindcss-ruby (4.1.13-x86_64-linux-gnu)
     tailwindcss-ruby (4.1.13-x86_64-linux-musl)
+    temple (0.10.4)
     thor (1.4.0)
     thruster (0.1.15)
     thruster (0.1.15-aarch64-linux)
     thruster (0.1.15-arm64-darwin)
     thruster (0.1.15-x86_64-linux)
+    tilt (2.6.1)
     timeout (0.4.3)
     tsort (0.2.0)
     turbo-rails (2.0.17)
@@ -509,6 +518,7 @@ DEPENDENCIES
   rubocop-rails-omakase
   rubocop-rspec
   selenium-webdriver
+  slim-rails
   solid_cache
   solid_queue
   stimulus-rails
