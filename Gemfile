@@ -48,6 +48,10 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  gem "rspec-rails"
+  gem "factory_bot_rails"
+  gem "rubocop-rspec", require: false
 end
 
 group :development do
@@ -55,5 +59,16 @@ group :development do
   gem "web-console"
 
   gem "rubocop-fjord", require: false
-  gem "rubocop-rails", require: false
 end
+
+group :test do
+  gem "capybara"
+  gem "selenium-webdriver"
+  gem "webdrivers"
+  gem "webmock"
+end
+
+gem "dotenv-rails"
+gem "omniauth-discord"
+gem "omniauth-rails_csrf_protection"
+gem "discordrb"
