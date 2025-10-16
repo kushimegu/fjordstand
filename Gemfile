@@ -70,3 +70,4 @@ end
 gem "dotenv-rails"
 gem "omniauth-discord"
 gem "omniauth-rails_csrf_protection"
+gem "discordrb"
