@@ -1,11 +1,13 @@
 require 'rails_helper'
+require 'webmock/rspec'
 
 RSpec.describe User, type: :model do
   describe '.from_omniauth' do
+    let(:uid) { '1234567890' }
     let(:auth) do
       OmniAuth::AuthHash.new(
         provider: 'discord',
-        uid: '1234567890',
+        uid:,
         info: {
           name: 'Bob',
           image: 'https://example.com/avatar.png'
@@ -18,6 +20,15 @@ RSpec.describe User, type: :model do
       )
     end
     let(:user) { described_class.from_omniauth(auth) }
+
+    before do
+      WebMock.stub_request(:get, "#{Discordrb::API.api_base}/guilds/#{ENV['DISCORD_SERVER_ID']}/members/#{uid}")
+      .to_return(
+        status: 200,
+        body: { user: { id: uid } }.to_json,
+        headers: { "Content-Type" => "application/json" }
+      )
+    end
 
     context 'when the user already exists' do
       let!(:existing_user) { create(:user, uid: '1234567890', name: 'Carol') }
