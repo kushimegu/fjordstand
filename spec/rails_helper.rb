@@ -72,3 +72,5 @@ RSpec.configure do |config|
 
   config.include FactoryBot::Syntax::Methods
 end
+
+OmniAuth.config.test_mode = true

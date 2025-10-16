@@ -43,7 +43,8 @@ module FjordStand
                         helper_specs: false,
                         routing_specs: false,
                         controller_specs: false,
-                        request_specs: true
+                        request_specs: true,
+                        system_specs: true
     end
   end
 end

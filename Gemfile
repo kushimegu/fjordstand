@@ -61,6 +61,12 @@ group :development do
   gem "rubocop-fjord", require: false
 end
 
+group :test do
+  gem "capybara"
+  gem "selenium-webdriver"
+  gem "webdrivers"
+end
+
 gem "dotenv-rails"
 gem "omniauth-discord"
 gem "omniauth-rails_csrf_protection"
