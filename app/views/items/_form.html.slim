@@ -1,0 +1,42 @@
+= form_with(model: item) do |form|
+  - if item.errors.any?
+    div style="color: red"
+      h2 = "#{pluralize(item.errors.count, "error")} prohibited this item from being saved:"
+      ul
+        - item.errors.each do |error|
+          li = error.full_message
+
+  div
+    = form.label :user_id, style: "display: block"
+    = form.text_field :user_id
+
+  div
+    = form.label :title, style: "display: block"
+    = form.text_field :title
+
+  div
+    = form.label :description, style: "display: block"
+    = form.textarea :description
+
+  div
+    = form.label :price, style: "display: block"
+    = form.number_field :price
+
+  div
+    = form.label :shipping_fee_payer, style: "display: block"
+    = form.number_field :shipping_fee_payer
+
+  div
+    = form.label :payment_method, style: "display: block"
+    = form.text_field :payment_method
+
+  div
+    = form.label :entry_deadline_at, style: "display: block"
+    = form.datetime_field :entry_deadline_at
+
+  div
+    = form.label :status, style: "display: block"
+    = form.number_field :status
+
+  div
+    = form.submit
