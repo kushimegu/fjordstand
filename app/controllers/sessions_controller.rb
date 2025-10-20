@@ -6,7 +6,7 @@ class SessionsController < ApplicationController
       reset_session
       log_in user
     end
-    redirect_to root_path
+    redirect_to items_path
   end
 
   def destroy
