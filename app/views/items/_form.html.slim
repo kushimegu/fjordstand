@@ -1,14 +1,11 @@
 = form_with(model: item) do |form|
   - if item.errors.any?
     div style="color: red"
-      h2 = "#{pluralize(item.errors.count, "error")} prohibited this item from being saved:"
+      error_count = pluralize(item.errors.count, "error")
+      h2 = "#{error_count} prohibited this item from being saved:"
       ul
         - item.errors.each do |error|
           li = error.full_message
-
-  div
-    = form.label :user_id, style: "display: block"
-    = form.text_field :user_id
 
   div
     = form.label :title, style: "display: block"
@@ -24,7 +21,10 @@
 
   div
     = form.label :shipping_fee_payer, style: "display: block"
-    = form.number_field :shipping_fee_payer
+    = form.select :shipping_fee_payer,
+                  Item.shipping_fee_payers.keys.map { |k| [ k.humanize, k ] },
+               {},
+               class: "form-select"
 
   div
     = form.label :payment_method, style: "display: block"
@@ -32,11 +32,7 @@
 
   div
     = form.label :entry_deadline_at, style: "display: block"
-    = form.datetime_field :entry_deadline_at
-
-  div
-    = form.label :status, style: "display: block"
-    = form.number_field :status
+    = form.date_field :entry_deadline_at
 
   div
     = form.submit

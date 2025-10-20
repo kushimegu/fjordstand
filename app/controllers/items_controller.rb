@@ -21,7 +21,7 @@ class ItemsController < ApplicationController
 
   # POST /items
   def create
-    @item = Item.new(item_params)
+    @item = current_user.items.build(item_params)
 
     if @item.save
       redirect_to @item, notice: "Item was successfully created."
@@ -53,6 +53,6 @@ class ItemsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def item_params
-      params.expect(item: [ :user_id, :title, :description, :price, :shipping_fee_payer, :payment_method, :entry_deadline_at, :status ])
+      params.expect(item: [ :title, :description, :price, :shipping_fee_payer, :payment_method, :entry_deadline_at, :status ])
     end
 end
