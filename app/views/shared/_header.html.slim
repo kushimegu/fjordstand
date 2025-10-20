@@ -1,0 +1,7 @@
+- if logged_in
+  header.flex.justify-between.items-center.p-4
+    = link_to "FjordStand", items_path, class: "font-bold"
+    .flex.items-center.gap-4
+      = image_tag current_user.avatar_url, class: "w-10 h-10 rounded-full"
+      = current_user.name
+      = link_to "ログアウト", logout_path
