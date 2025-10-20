@@ -1,8 +1,5 @@
 div id="#{dom_id item}"
   p
-    strong User:
-    =< item.user_id
-  p
     strong Title:
     =< item.title
   p
@@ -19,7 +16,4 @@ div id="#{dom_id item}"
     =< item.payment_method
   p
     strong Entry deadline at:
-    =< item.entry_deadline_at
-  p
-    strong Status:
-    =< item.status
+    =< item.entry_deadline_at.to_date
