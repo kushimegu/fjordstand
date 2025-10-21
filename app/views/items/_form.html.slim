@@ -12,6 +12,10 @@
     = form.text_field :title
 
   div
+    = form.label :images
+    = form.file_field :images, multiple: true
+
+  div
     = form.label :description, style: "display: block"
     = form.textarea :description
 
