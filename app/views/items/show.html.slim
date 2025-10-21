@@ -1,10 +1,20 @@
 p style="color: green" = notice
-
-== render @item
-
-div
-  => link_to "Edit this item", edit_item_path(@item)
-  '|
-  =< link_to "Back to items", items_path
-
-  = button_to "Destroy this item", @item, method: :delete
+.font-bold.text-2xl
+  = @item.title
+.text-2xl.my-2
+  = number_to_currency(@item.price)
+p.text-sm
+  | 送料負担 
+  span.text-lg= I18n.t("enums.item.shipping_fee_payer.#{@item.shipping_fee_payer}")
+p.text-sm
+  | 支払い方法 
+  span.text-lg= @item.payment_method
+.text-xl.py-2
+  = l @item.entry_deadline_at.to_date
+  span 締切
+.flex.gap-2
+  => link_to "編集する", edit_item_path(@item)
+  = button_to "削除する", @item, method: :delete
+p.text-lg.py-2
+ | 商品説明
+= @item.description

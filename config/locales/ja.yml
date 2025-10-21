@@ -10,6 +10,7 @@ ja:
     attributes:
       item:
         title: 商品名
+        images: 商品画像
         description: 商品説明
         price: 金額
         shipping_fee_payer: 送料負担
