@@ -6,7 +6,7 @@ div id="#{dom_id item}"
     p
       strong Images
       - item.images.each do |image|
-        = image_tag image.variant(resize_to_fill: [200, 200]).processed
+        = image_tag image.variant(resize_to_fill: [ 200, 200 ]).processed
   p
     strong Description:
     =< item.description
