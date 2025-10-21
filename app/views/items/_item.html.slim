@@ -2,6 +2,11 @@ div id="#{dom_id item}"
   p
     strong Title:
     =< item.title
+  - if item.images.attached?
+    p
+      strong Images
+      - item.images.each do |image|
+        = image_tag image.variant(resize_to_fill: [200, 200]).processed
   p
     strong Description:
     =< item.description
