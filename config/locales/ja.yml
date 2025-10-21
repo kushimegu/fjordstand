@@ -1,0 +1,31 @@
+ja:
+  enums:
+    item:
+      shipping_fee_payer:
+        buyer: 購入者
+        seller: 出品者
+  activerecord:
+    models:
+      item: 商品
+    attributes:
+      item:
+        title: 商品名
+        description: 商品説明
+        price: 金額
+        shipping_fee_payer: 送料負担
+        payment_method: 支払い方法
+        entry_deadline_at: 購入希望申請締切
+  number:
+    currency:
+      format:
+        unit: "¥"
+        precision: 0
+        format: "%u%n"
+        delimiter: ","
+  date:
+    formats:
+      default: "%Y年%m月%d日"
+  helpers:
+    submit:
+      create: "%{model}を出品する"
+      update: "%{model}を更新する"
