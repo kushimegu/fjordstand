@@ -9,10 +9,10 @@ p style="color: green" = notice
         = @item.title
       .text-2xl.my-2
         = number_to_currency(@item.price)
-        span.text-lg= I18n.t("views.item.shipping_fee_label.#{@item.shipping_fee_payer}")
+        span.text-lg = I18n.t("views.item.shipping_fee_label.#{@item.shipping_fee_payer}")
       p.text-base
-        | 希望する支払い方法　
-        span.text-lg= @item.payment_method
+        | 希望する支払い方法
+        span.text-lg.ml-2 = @item.payment_method
       .text-xl.py-2
         = l @item.entry_deadline_at.to_date
         span 締切

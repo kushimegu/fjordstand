@@ -24,26 +24,26 @@ ja:
         entry_deadline_at: 購入希望申請締切
     errors:
       messages:
-        blank: "を入力してください"
-        too_long: "は%{count}文字以内で入力してください"
+        blank: 'を入力してください'
+        too_long: 'は%{count}文字以内で入力してください'
   number:
     currency:
       format:
-        unit: "¥"
+        unit: '¥'
         precision: 0
-        format: "%u%n"
-        delimiter: ","
+        format: '%u%n'
+        delimiter: ','
   date:
     formats:
-      default: "%Y年%m月%d日"
+      default: '%Y年%m月%d日'
   helpers:
     submit:
-      create: "%{model}を出品する"
-      update: "%{model}を更新する"
+      create: '%{model}を出品する'
+      update: '%{model}を更新する'
   items:
     create:
-      success: "商品情報を登録しました"
+      success: '商品情報を登録しました'
     update:
-      success: "商品情報を更新しました"
+      success: '商品情報を更新しました'
     destroy:
-      success: "商品情報を削除しました"
+      success: '商品情報を削除しました'
