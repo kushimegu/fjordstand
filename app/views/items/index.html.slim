@@ -1,7 +1,7 @@
 p style="color: green" = notice
 
-#items
+#items.grid.grid-cols-1.sm:grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-4
   - @items.each do |item|
-    == render item
-    p
-      = link_to "詳細を見る", item
+    = link_to item, class: "block" do
+      .container.bg-white.shadow.rounded.p-4.hover:bg-gray-50
+        == render item

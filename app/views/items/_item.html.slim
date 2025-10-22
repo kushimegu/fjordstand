@@ -1,15 +1,12 @@
 div id="#{dom_id item}"
-  .font-bold.text-xl
-    = item.title
   - if item.images.attached?
-  p
-    strong Images
-    - item.images.each do |image|
-      = image_tag image.variant(resize_to_fill: [ 200, 200 ]).processed
-  .text-lg
+    = image_tag item.images.first.variant(resize_to_fill: [ 200, 200 ]).processed
+  .text-xl
+    = item.title
+  .text-lg.text-right
     = number_to_currency(item.price)
-  p 
-    | 送料負担：
-    = I18n.t("enums.item.shipping_fee_payer.#{item.shipping_fee_payer}")
-  p 購入希望申請締切
-  = l item.entry_deadline_at.to_date
+    span.text-base
+      = I18n.t("views.item.shipping_fee_label.#{item.shipping_fee_payer}")
+  .text-lg
+    = l item.entry_deadline_at.to_date
+    span.text-base まで
