@@ -3,7 +3,7 @@ class ItemsController < ApplicationController
 
   # GET /items
   def index
-    @items = Item.all
+    @items = Item.all.order(entry_deadline_at: :asc)
   end
 
   # GET /items/1
@@ -24,7 +24,7 @@ class ItemsController < ApplicationController
     @item = current_user.items.build(item_params)
 
     if @item.save
-      redirect_to @item, notice: t('items.create.success')
+      redirect_to @item, notice: t("items.create.success")
     else
       render :new, status: :unprocessable_content
     end
@@ -38,7 +38,7 @@ class ItemsController < ApplicationController
       end
     end
     if @item.update(item_params)
-      redirect_to @item, notice: t('items.update.success'), status: :see_other
+      redirect_to @item, notice: t("items.update.success"), status: :see_other
     else
       render :edit, status: :unprocessable_content
     end
@@ -47,7 +47,7 @@ class ItemsController < ApplicationController
   # DELETE /items/1
   def destroy
     @item.destroy!
-    redirect_to items_path, notice: t('items.destroy.success'), status: :see_other
+    redirect_to items_path, notice: t("items.destroy.success"), status: :see_other
   end
 
   private
