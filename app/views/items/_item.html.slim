@@ -1,24 +1,12 @@
 div id="#{dom_id item}"
-  p
-    strong Title:
-    =< item.title
   - if item.images.attached?
-    p
-      strong Images
-      - item.images.each do |image|
-        = image_tag image.variant(resize_to_fill: [ 200, 200 ]).processed
-  p
-    strong Description:
-    =< item.description
-  p
-    strong Price:
-    =< item.price
-  p
-    strong Shipping fee payer:
-    =< item.shipping_fee_payer
-  p
-    strong Payment method:
-    =< item.payment_method
-  p
-    strong Entry deadline at:
-    =< item.entry_deadline_at.to_date
+    = image_tag item.images.first.variant(resize_to_fill: [ 200, 200 ]).processed
+  .text-xl
+    = item.title
+  .text-lg.text-right
+    = number_to_currency(item.price)
+    span.text-base
+      = I18n.t("views.item.shipping_fee_label.#{item.shipping_fee_payer}")
+  .text-lg
+    = l item.entry_deadline_at.to_date
+    span.text-base まで

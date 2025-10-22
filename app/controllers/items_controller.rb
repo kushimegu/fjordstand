@@ -3,7 +3,7 @@ class ItemsController < ApplicationController
 
   # GET /items
   def index
-    @items = Item.all
+    @items = Item.all.order(entry_deadline_at: :asc)
   end
 
   # GET /items/1
@@ -24,7 +24,7 @@ class ItemsController < ApplicationController
     @item = current_user.items.build(item_params)
 
     if @item.save
-      redirect_to @item, notice: "Item was successfully created."
+      redirect_to @item, notice: t("items.create.success")
     else
       render :new, status: :unprocessable_content
     end
@@ -32,8 +32,13 @@ class ItemsController < ApplicationController
 
   # PATCH/PUT /items/1
   def update
+    if params[:remove_images]
+      params[:remove_images].each do |id|
+        @item.images.find(id).purge
+      end
+    end
     if @item.update(item_params)
-      redirect_to @item, notice: "Item was successfully updated.", status: :see_other
+      redirect_to @item, notice: t("items.update.success"), status: :see_other
     else
       render :edit, status: :unprocessable_content
     end
@@ -42,7 +47,7 @@ class ItemsController < ApplicationController
   # DELETE /items/1
   def destroy
     @item.destroy!
-    redirect_to items_path, notice: "Item was successfully destroyed.", status: :see_other
+    redirect_to items_path, notice: t("items.destroy.success"), status: :see_other
   end
 
   private

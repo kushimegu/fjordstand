@@ -7,6 +7,7 @@
     p 購入希望の申請締切を設定して出品できます
     p 締切後に抽選で購入者が決定します
     p 購入希望者は当落通知をDiscordで受け取ることができます
+  .text-center.mb-4
     p 利用規約とプライバシーポリシーに同意して
     = button_to "/auth/discord", method: :post, data: { turbo: false },
       class: "inline-flex items-center gap-2 mt-4 px-6 py-3 rounded-lg bg-cyan-600 text-white font-semibold shadow hover:opacity-90 transition" do

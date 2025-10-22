@@ -1,10 +1,29 @@
 p style="color: green" = notice
-
-== render @item
-
-div
-  => link_to "Edit this item", edit_item_path(@item)
-  '|
-  =< link_to "Back to items", items_path
-
-  = button_to "Destroy this item", @item, method: :delete
+.container.mx-auto.max-w-4xl
+  .mt-6.flex.gap-6
+    .w-1/2
+      - @item.images.each do |image|
+        = image_tag image.variant(resize_to_fill: [ 400, 400 ]).processed
+    .w-1/2
+      .text-3xl
+        = @item.title
+      .text-2xl.my-2
+        = number_to_currency(@item.price)
+        span.text-lg = I18n.t("views.item.shipping_fee_label.#{@item.shipping_fee_payer}")
+      p.text-base
+        | 希望する支払い方法
+        span.text-lg.ml-2 = @item.payment_method
+      .text-xl.py-2
+        = l @item.entry_deadline_at.to_date
+        span 締切
+      p.text-lg.py-2
+        | 商品説明
+      = @item.description
+      p.text-lg.py-2
+        | 出品者
+      .flex.items-center.gap-2
+        = image_tag @item.user.avatar_url, class: "w-10 h-10 rounded-full"
+        = @item.user.name
+      .flex.my-2.gap-2
+        => link_to "編集する", edit_item_path(@item)
+        = button_to "削除する", @item, method: :delete

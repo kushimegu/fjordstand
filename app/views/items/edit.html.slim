@@ -1,10 +1,11 @@
-h1 Editing item
+.text-center
+  h1.font-bold.text-2xl.my-2 商品の編集
 
-== render "form", item: @item
+  == render "form", item: @item
 
-br
+  br
 
-div
-  => link_to "Show this item", @item
-  '|
-  =< link_to "Back to items", items_path
+  .mb-4
+    => link_to "商品ページへ", @item
+    '|
+    =< link_to "商品一覧へ", items_path
