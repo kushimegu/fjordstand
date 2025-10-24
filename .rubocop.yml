@@ -6,5 +6,5 @@ inherit_gem:
 
 plugins: rubocop-rspec
 
-Rspec/MultipleExpectations:
+RSpec/MultipleExpectations:
   Enabled: false
