@@ -1,10 +1,23 @@
 p style="color: green" = notice
-.container.mx-auto.max-w-4xl
-  .mt-6.flex.gap-6
-    .w-1/2
-      - @item.images.each do |image|
-        = image_tag image.variant(resize_to_fill: [ 400, 400 ]).processed
-    .w-1/2
+.container
+  .flex.flex-col.space-y-2.lg:grid.grid-cols-2.mt-6.gap-6.px-2
+    .flex.flex-col.space-y-2.items-center
+      .aspect-square.h-108.flex.items-center.justify-center.bg-gray-100.relative
+        #prev.absolute.inset-y-0.left-0.flex.items-center.pl-3
+          svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" class="w-5 h-5 fill-gray-500"
+            path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 214.6 118.6c12.5-12.5 12.5-32.8
+            0-45.3s-32.8-12.5-45.3 0l-160 160z"
+        = image_tag @item.images.first.variant(resize_to_limit: [ 400, 400 ]).processed, id: "big-image", class: "object-contain w-full h-full"
+        #next.absolute.inset-y-0.right-0.flex.items-center.pr-3
+          svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" class="w-5 h-5 fill-gray-500"
+            path d="M247.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L179.2 256 41.9
+            118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"
+      .grid.grid-cols-5.gap-2
+        - @item.images.each do |image|
+          .aspect-square.h-20.flex.items-center.justify-center.bg-gray-100
+            = image_tag image.variant(resize_to_limit: [ 200, 200 ]).processed, class: "thumbnail object-contain w-full h-full",
+              data: { image: url_for(image) }
+    div
       .text-3xl
         = @item.title
       .text-2xl.my-2
@@ -27,3 +40,4 @@ p style="color: green" = notice
       .flex.my-2.gap-2
         => link_to "編集する", edit_item_path(@item)
         = button_to "削除する", @item, method: :delete
+= javascript_importmap_tags "items/show"

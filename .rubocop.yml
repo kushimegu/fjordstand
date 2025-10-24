@@ -5,3 +5,6 @@ inherit_gem:
     - 'config/rails.yml'
 
 plugins: rubocop-rspec
+
+RSpec/MultipleExpectations:
+  Enabled: false
