@@ -1,6 +1,8 @@
 div id="#{dom_id item}"
   - if item.images.attached?
-    = image_tag item.images.first.variant(resize_to_fill: [ 200, 200 ]).processed
+    .aspect-square.flex.items-center.justify-center.bg-gray-100
+      = image_tag item.images.first.variant(resize_to_limit: [ 200, 200 ]).processed,
+      class: "object-contain w-full h-full"
   .text-xl
     = item.title
   .text-lg.text-right

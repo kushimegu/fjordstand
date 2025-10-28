@@ -52,6 +52,7 @@ group :development, :test do
   gem "rspec-rails"
   gem "factory_bot_rails"
   gem "rubocop-rspec", require: false
+  gem "faker"
 end
 
 group :development do
@@ -65,7 +66,6 @@ end
 group :test do
   gem "capybara"
   gem "selenium-webdriver"
-  gem "webdrivers"
   gem "webmock"
 end
 
