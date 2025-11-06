@@ -21,7 +21,17 @@
                 = image_tag image.variant(resize_to_limit: [ 200, 200 ]).processed, class: "object-contain w-full h-full"
                 = form.hidden_field :images, multiple: true, value: image.signed_id
               = check_box_tag "remove_images[]", image.id
-    = form.file_field :images, accept: "image/jpeg,image/png", multiple: true
+    - if action_name == "create" && @item.images.attached?
+      p 添付済みファイル
+      .grid.grid-cols-3.md:grid-cols-5.gap-3
+        - @item.images.each do |image|
+          .aspect-square.h-25.flex.items-center.justify-center.bg-gray-100
+            = image_tag image.variant(resize_to_limit: [ 200, 200 ]).processed, class: "object-contain w-full h-full"
+            = form.hidden_field :images, multiple: true, value: image.signed_id
+    div[data-controller="image-preview"]
+      = form.file_field :images, accept: "image/jpeg,image/png", multiple: true, direct_upload: true,
+      data: { "image-preview-target": "input", action: "change->image-preview#previewImage" }
+      .grid.grid-cols-3.md:grid-cols-5.gap-3 data-image-preview-target="preview"
 
   .mt-4
     = form.label :description, style: "display: block", class: "font-bold text-lg block text-left"
