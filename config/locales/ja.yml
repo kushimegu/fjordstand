@@ -35,15 +35,21 @@ ja:
         delimiter: ','
   date:
     formats:
-      default: '%Y年%m月%d日'
+      default: '%Y年%m月%d日(%a)'
+  time:
+    formats:
+      default: '%Y年%m月%d日(%a) %H時%M分'
   helpers:
     submit:
-      create: '%{model}を出品する'
-      update: '%{model}を更新する'
+      item:
+        publish:
+          draft: '出品する'
+          published: '更新する'
+        draft: '下書きに保存する'
   items:
     create:
-      success: '商品情報を登録しました'
+      success: '商品を登録しました'
     update:
-      success: '商品情報を更新しました'
+      success: '商品を更新しました'
     destroy:
-      success: '商品情報を削除しました'
+      success: '商品を削除しました'

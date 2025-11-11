@@ -29,9 +29,13 @@ p style="color: green" = notice
       p.text-base
         | 希望する支払い方法
         span.text-lg.ml-2 = @item.payment_method
-      .text-xl.py-2
-        = l @item.entry_deadline_at.to_date
-        span 締切
+      - if @item.entry_deadline_at.present?
+        .text-xl.py-2
+          = l @item.entry_deadline_at.to_date
+          span 締切
+      - else
+        .text-xl.py-2
+          span 締め切り未設定
       p.text-lg.py-2
         | 商品説明
       = @item.description

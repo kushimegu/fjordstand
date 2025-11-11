@@ -11,16 +11,13 @@
 
   .mt-4.text-left
     = form.label :images, style: "display: block", class: "font-bold text-lg block text-left"
-    - if action_name == "edit" && @item.images.attached?
-      p.text-sm
-        | 削除する場合はチェックを入れてください
-        .grid.grid-cols-3.md:grid-cols-5.gap-3
-          - @item.images.each do |image|
-            .flex.flex-col.items-center.space-y-2
-              .aspect-square.h-25.flex.items-center.justify-center.bg-gray-100
-                = image_tag image.variant(resize_to_limit: [ 200, 200 ]).processed, class: "object-contain w-full h-full"
-                = form.hidden_field :images, multiple: true, value: image.signed_id
-              = check_box_tag "remove_images[]", image.id
+    - if @item.images.attached?
+      .grid.grid-cols-3.md:grid-cols-5.gap-3
+        - @item.images.each do |image|
+          .flex.flex-col.items-center.space-y-2
+            .aspect-square.h-25.flex.items-center.justify-center.bg-gray-100
+              = image_tag image.variant(resize_to_limit: [ 200, 200 ]).processed, class: "object-contain w-full h-full"
+              = form.hidden_field :images, multiple: true, value: image.signed_id
     - if action_name == "create" && @item.images.attached?
       p 添付済みファイル
       .grid.grid-cols-3.md:grid-cols-5.gap-3
@@ -62,4 +59,9 @@
     = form.date_field :entry_deadline_at, class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500"
 
   .mt-6
-    = form.submit class: "w-1/2 mx-auto block px-3 py-2 rounded-lg bg-cyan-600 text-white font-semibold hover:opacity-90 transition"
+    = form.submit I18n.t("helpers.submit.item.publish.#{item.status}"), name: "publish",
+    class: "w-1/2 mx-auto block px-3 py-2 rounded bg-cyan-600 text-white font-semibold hover:opacity-80 transition"
+  - if item.draft?
+    .mt-4
+      = form.submit I18n.t("helpers.submit.item.draft"), name: "draft",
+      class: "w-1/2 mx-auto block px-3 py-2 rounded border border-cyan-500 text-cyan-600 font-semibold hover:bg-cyan-50 transition"

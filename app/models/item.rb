@@ -2,8 +2,9 @@ class Item < ApplicationRecord
   belongs_to :user
   has_many_attached :images
 
-  validates :title, :price, :payment_method, :entry_deadline_at, presence: true
-  validate :image_content_type, :image_size, :image_length
+  validates :title, :price, :payment_method, :entry_deadline_at, presence: true, on: :publish
+  validate :image_min_length, on: :publish
+  validate :image_content_type, :image_size, :image_max_length
   before_save :set_entry_deadline_at_end_of_day
 
   enum :shipping_fee_payer, { buyer: 0, seller: 1 }
@@ -33,17 +34,22 @@ class Item < ApplicationRecord
     end
   end
 
-  def image_length
+  def image_max_length
     if images.length > 5
       images.purge
       errors.add(:images, "は5枚以内にしてください")
     end
+  end
+
+  def image_min_length
     if images.length < 1
-      errors.add(:images, "を追加してください")
+      errors.add(:images, "を1枚以上追加してください")
     end
   end
 
   def set_entry_deadline_at_end_of_day
+    return if entry_deadline_at.nil?
+
     self.entry_deadline_at = entry_deadline_at.in_time_zone.end_of_day
   end
 end
