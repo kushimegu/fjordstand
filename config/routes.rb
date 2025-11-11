@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "/drafts", to: "items#drafts"
   resources :items
   root to: "pages#home"
   resource :session, only: %i[create destroy]
