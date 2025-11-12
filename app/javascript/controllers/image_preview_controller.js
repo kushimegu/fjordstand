@@ -14,21 +14,29 @@ export default class extends Controller {
   }
 
   previewImage() {
-    const files = this.inputTarget.files;
+    const files = Array.from(this.inputTarget.files);
     this.previewTarget.innerHTML = '';
 
-    Array.from(files).forEach((file) => {
+    const previews = [];
+
+    files.forEach((file, index) => {
       const reader = new FileReader();
       reader.onload = (e) => {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'aspect-square h-25 flex items-center justify-center bg-gray-100';
+        previews[index] = e.target.result;
 
-        const img = document.createElement('img');
-        img.src = e.target.result;
-        img.className = 'object-contain w-full h-full';
+        if (previews.filter(Boolean).length === files.length) {
+          previews.forEach((preview) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'aspect-square h-25 flex items-center justify-center bg-gray-100';
 
-        wrapper.appendChild(img);
-        this.previewTarget.appendChild(wrapper);
+            const img = document.createElement('img');
+            img.src = preview;
+            img.className = 'object-contain w-full h-full';
+
+            wrapper.appendChild(img);
+            this.previewTarget.appendChild(wrapper);
+          });
+        }
       };
       reader.readAsDataURL(file);
     });
