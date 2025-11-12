@@ -3,49 +3,14 @@ class Item < ApplicationRecord
   has_many_attached :images
 
   validates :title, :price, :payment_method, :entry_deadline_at, presence: true, on: :publish
-  validate :image_min_length, on: :publish
-  validate :image_content_type, :image_size, :image_max_length
+  validates :images, attached: { message: "を選択してください" }, on: :publish
+  validates :images, limit: { max: 5 }, content_type: ['image/png', 'image/jpeg'], size: { less_than: 5.megabytes }
   before_save :set_entry_deadline_at_end_of_day
 
   enum :shipping_fee_payer, { buyer: 0, seller: 1 }
   enum :status, { draft: 0, published: 1, sold: 2, closed: 3 }
 
   private
-
-  def image_content_type
-    return unless images.attached?
-
-    images.each do |image|
-      if !image.content_type.in?(%w[image/jpeg image/png])
-        image.purge
-        errors.add(:image, "のJPEGかPNGのファイルを選択してください")
-      end
-    end
-  end
-
-  def image_size
-    return unless images.attached?
-
-    images.each do |image|
-      if image.blob.byte_size > 5.megabytes
-        image.purge
-        errors.add(:image, "は5MB以下のファイルをアップロードしてください")
-      end
-    end
-  end
-
-  def image_max_length
-    if images.length > 5
-      images.purge
-      errors.add(:images, "は5枚以内にしてください")
-    end
-  end
-
-  def image_min_length
-    if images.length < 1
-      errors.add(:images, "を1枚以上追加してください")
-    end
-  end
 
   def set_entry_deadline_at_end_of_day
     return if entry_deadline_at.nil?
