@@ -56,5 +56,6 @@
     class: "w-1/2 mx-auto block px-3 py-2 rounded bg-cyan-600 text-white font-semibold hover:opacity-80 transition"
   - if item.draft?
     .mt-4
-      = form.submit I18n.t("helpers.submit.item.draft"), name: "draft",
+      - label = item.persisted? ? "update" : "new"
+      = form.submit I18n.t("helpers.submit.item.draft.#{label}"), name: "draft",
       class: "w-1/2 mx-auto block px-3 py-2 rounded border border-cyan-500 text-cyan-600 font-semibold hover:bg-cyan-50 transition"
