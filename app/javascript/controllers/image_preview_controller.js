@@ -4,6 +4,15 @@ import { Controller } from '@hotwired/stimulus';
 export default class extends Controller {
   static targets = ['input', 'preview'];
 
+  removeImage(e) {
+    const button = e.currentTarget;
+    const hiddenId = button.dataset.target;
+    const hiddenField = document.getElementById(hiddenId);
+    if (hiddenField) hiddenField.remove();
+    const preview = button.closest("[data-image-preview-target='saved-preview']");
+    if (preview) preview.remove();
+  }
+
   previewImage() {
     const files = this.inputTarget.files;
     this.previewTarget.innerHTML = '';
