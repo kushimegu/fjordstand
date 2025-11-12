@@ -13,7 +13,7 @@
     = form.label :images, style: "display: block", class: "font-bold text-lg block text-left"
     - if @item.images.attached?
       .grid.grid-cols-3.md:grid-cols-5.gap-3
-        - @item.images.each do |image|
+        - @item.images.order(:created_at).each do |image|
           .flex.flex-col.items-center data-image-preview-target="saved-preview"
             .aspect-square.h-25.flex.items-center.justify-center.bg-gray-100
               = image_tag image.variant(resize_to_limit: [ 200, 200 ]).processed, class: "object-contain w-full h-full"

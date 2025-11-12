@@ -4,7 +4,7 @@ class Item < ApplicationRecord
 
   validates :title, :price, :payment_method, :entry_deadline_at, presence: true, on: :publish
   validates :images, attached: { message: "を選択してください" }, on: :publish
-  validates :images, limit: { max: 5 }, content_type: ['image/png', 'image/jpeg'], size: { less_than: 5.megabytes }
+  validates :images, limit: { max: 5 }, content_type: [ "image/png", "image/jpeg" ], size: { less_than: 5.megabytes }
   before_save :set_entry_deadline_at_end_of_day
 
   enum :shipping_fee_payer, { buyer: 0, seller: 1 }
