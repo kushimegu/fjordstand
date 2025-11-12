@@ -67,7 +67,12 @@ class ItemsController < ApplicationController
   # DELETE /items/1
   def destroy
     @item.destroy!
-    redirect_to items_path, notice: t("items.destroy.success"), status: :see_other
+
+    if @item.draft?
+      redirect_to drafts_path, notice: "下書きを削除しました", status: :see_other
+    else
+      redirect_to items_path, notice: t("items.destroy.success"), status: :see_other
+    end
   end
 
   private
