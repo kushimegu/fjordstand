@@ -18,7 +18,7 @@ ja:
         images: 商品画像
         image: 商品画像
         description: 商品説明
-        price: 金額
+        price: 価格
         shipping_fee_payer: 送料負担
         payment_method: お支払い方法
         entry_deadline_at: 購入希望申請締切
@@ -35,15 +35,23 @@ ja:
         delimiter: ','
   date:
     formats:
-      default: '%Y年%m月%d日'
+      default: '%Y年%m月%d日(%a)'
+  time:
+    formats:
+      default: '%Y年%m月%d日(%a) %H時%M分'
   helpers:
     submit:
-      create: '%{model}を出品する'
-      update: '%{model}を更新する'
+      item:
+        publish:
+          draft: '出品する'
+          published: '更新する'
+        draft:
+          update: '上書き保存する'
+          new: '下書きに保存する'
   items:
     create:
-      success: '商品情報を登録しました'
+      success: '商品を登録しました'
     update:
-      success: '商品情報を更新しました'
+      success: '商品を更新しました'
     destroy:
-      success: '商品情報を削除しました'
+      success: '商品を削除しました'

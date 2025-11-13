@@ -1,0 +1,21 @@
+h1.font-bold.text-2xl.my-2.text-center 下書き一覧
+.w-full.max-w-2xl.mx-auto.px-4
+  - @items.each do |item|
+    = link_to edit_item_path(item), class: "block my-2" do
+      .container.bg-white.shadow.rounded.p-4.hover:bg-gray-50.flex.gap-x-4
+        - if item.images.attached?
+          .aspect-square.h-25.flex.items-center.justify-center.bg-gray-100
+            = image_tag item.images.first.variant(resize_to_limit: [ 400, 400 ]).processed,
+            class: "object-contain w-full h-full"
+        .flex.flex-col.justify-between.h-25
+          div
+            .text-2xl
+              = item.title
+            .text-lg
+              = number_to_currency(item.price)
+              - if item.price.present?
+                span.text-base
+                  = I18n.t("views.item.shipping_fee_label.#{item.shipping_fee_payer}")
+          div
+            = l item.updated_at
+            span 更新

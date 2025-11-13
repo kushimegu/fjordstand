@@ -2,7 +2,6 @@ require 'rails_helper'
 
 RSpec.describe "Items", type: :system do
   let(:user) { create(:user, uid: "1234567890") }
-  let(:item) { create(:item, :with_three_images) }
 
   before do
     driven_by(:selenium_chrome_headless)
@@ -10,26 +9,50 @@ RSpec.describe "Items", type: :system do
     login(user)
   end
 
-  it "changes big image to the thumbnail image when clicked" do
-    visit item_path(item)
-    expect(page).to have_selector(".thumbnail")
-    all(".thumbnail")[1].click
-    expect(page).to have_selector("#big-image[src*='test2.png']")
+  describe "change big item image" do
+    let(:item) { create(:item, :with_three_images, user: user, status: :published) }
+
+    it "changes big image to the thumbnail image when clicked" do
+      visit item_path(item)
+      expect(page).to have_selector(".thumbnail")
+      all(".thumbnail")[1].click
+      expect(page).to have_selector("#big-image[src*='test2.png']")
+    end
+
+    it "changes to next image when next button is clicked" do
+      visit item_path(item)
+      expect(page).to have_selector("#big-image[src*='test1.png']")
+      expect(page). to have_selector("#next")
+      find("#next").click
+      expect(page).to have_selector("#big-image[src*='test2.png']")
+    end
+
+    it "changes to prev image when prev button is clicked" do
+      visit item_path(item)
+      expect(page).to have_selector("#big-image[src*='test1.png']")
+      expect(page). to have_selector("#prev")
+      find("#prev").click
+      expect(page).to have_selector("#big-image[src*='test3.png']")
+    end
   end
 
-  it "changes to next image when next button is clicked" do
-    visit item_path(item)
-    expect(page).to have_selector("#big-image[src*='test1.png']")
-    expect(page). to have_selector("#next")
-    find("#next").click
-    expect(page).to have_selector("#big-image[src*='test2.png']")
-  end
+  describe "save item" do
+    context "when save item as draft" do
+      before do
+        click_on '出品する'
+        fill_in '商品名', with: '技術書'
+        click_on '下書きに保存する'
+      end
 
-  it "changes to prev image when prev button is clicked" do
-    visit item_path(item)
-    expect(page).to have_selector("#big-image[src*='test1.png']")
-    expect(page). to have_selector("#prev")
-    find("#prev").click
-    expect(page).to have_selector("#big-image[src*='test3.png']")
+      it "shows on draft index page" do
+        visit drafts_path
+        expect(page).to have_content('技術書')
+      end
+
+      it "does not show on item index page" do
+        visit items_path
+        expect(page).not_to have_content('技術書')
+      end
+    end
   end
 end

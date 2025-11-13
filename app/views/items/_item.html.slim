@@ -9,6 +9,7 @@ div id="#{dom_id item}"
     = number_to_currency(item.price)
     span.text-base
       = I18n.t("views.item.shipping_fee_label.#{item.shipping_fee_payer}")
-  .text-lg
-    = l item.entry_deadline_at.to_date
-    span.text-base まで
+  - if item.entry_deadline_at.present?
+    .text-lg
+      = l item.entry_deadline_at.to_date
+      span.text-base まで
