@@ -4,54 +4,80 @@
       ul
         - item.errors.each do |error|
           li = error.full_message
+  - if item.published?
 
   div
     = form.label :title, style: "display: block", class: "font-bold text-lg block text-left"
-    = form.text_field :title, class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500"
-
+    = form.text_field :title, class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500 read-only:bg-gray-100 read-only:focus:border-gray-300", readonly: item.published?
+    - if item.published?
+      = form.label "商品名の追記", style: "display: block", class: "text-left pt-2"
+      = form.text_field :title_append, class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500"
+  
   .mt-4.text-left[data-controller="image-preview"]
-    = form.label :images, style: "display: block", class: "font-bold text-lg block text-left"
+    div.flex.items-center.gap-x-2
+      = form.label :images, style: "display: block", class: "font-bold text-lg block text-left"
+      span.text-sm 最大5枚
     - if @item.images.attached?
       .grid.grid-cols-3.md:grid-cols-5.gap-3
-        - @item.images.order(:created_at).each do |image|
+        - @item.images.each do |image|
           .flex.flex-col.items-center data-image-preview-target="saved-preview"
             .aspect-square.h-25.flex.items-center.justify-center.bg-gray-100
               = image_tag image.variant(resize_to_limit: [ 200, 200 ]).processed, class: "object-contain w-full h-full"
               = form.hidden_field :images, multiple: true, value: image.signed_id, id: "hidden_image_#{image.signed_id}"
-            button type="button" data-target="hidden_image_#{image.signed_id}" data-action="image-preview#removeImage" 削除
+            - if !item.published? || !image.id.present?
+              button type="button" data-target="hidden_image_#{image.signed_id}" data-action="image-preview#removeImage" 削除
     = form.file_field :images, accept: "image/jpeg,image/png", multiple: true, direct_upload: true,
     data: { "image-preview-target": "input", action: "change->image-preview#previewImage" }
     .grid.grid-cols-3.md:grid-cols-5.gap-3 data-image-preview-target="preview"
 
   .mt-4
-    = form.label :description, style: "display: block", class: "font-bold text-lg block text-left"
-    = form.textarea :description, rows: 6, class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500"
+    div.flex.items-center.gap-x-2
+      = form.label :description, style: "display: block", class: "font-bold text-lg block text-left"
+      span.text-sm 任意
+    = form.textarea :description, rows: 6, class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500 read-only:bg-gray-100 read-only:focus:border-gray-300", readonly: item.published?
+    - if item.published?
+      = form.label "商品説明の追記", style: "display: block", class: "text-left"
+      = form.textarea :description_append, rows: 6, class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500 read-only:bg-gray-100 read-only:focus:border-gray-300"
 
   .mt-2
-    = form.label :price, style: "display: block", class: "font-bold text-lg block text-left"
-    = form.number_field :price, class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500"
+    div.flex.items-center.gap-x-2
+      = form.label :price, style: "display: block", class: "font-bold text-lg block text-left"
+      span.text-gray-400.text-sm ※出品後は変更できません
+    = form.number_field :price, class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500 read-only:bg-gray-100 read-only:focus:border-gray-300", readonly: item.published?
 
   .mt-4
-    = form.label :shipping_fee_payer, style: "display: block", class: "font-bold text-lg block text-left"
+    div.flex.items-center.gap-x-2
+      = form.label :shipping_fee_payer, style: "display: block", class: "font-bold text-lg block text-left"
+      span.text-gray-400.text-sm ※出品後は変更できません
     .relative
       = form.select :shipping_fee_payer,
                     Item.shipping_fee_payers.keys.map { |k| [ I18n.t("enums.item.shipping_fee_payer.#{k}"), k ] },
                 {},
-                class: "form-select w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500"
-      .pointer-events-none.absolute.inset-y-0.right-0.flex.items-center.pr-3
-        svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" class="w-5 h-5 fill-gray-500"
-          path d="M169.4 374.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 306.7
-          54.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"
+                { disabled: item.published?, class: "form-select w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500 disabled:bg-gray-100 disabled:focus:border-gray-300" }
+      - if !item.published?
+        .pointer-events-none.absolute.inset-y-0.right-0.flex.items-center.pr-3
+          svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" class="w-5 h-5 fill-gray-500"
+            path d="M169.4 374.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 306.7
+            54.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"
 
   .mt-4
     = form.label :payment_method, style: "display: block", class: "font-bold text-lg block text-left"
-    = form.text_field :payment_method, class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500"
-
+    = form.text_field :payment_method, class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500 read-only:bg-gray-100 read-only:focus:border-gray-300", readonly: item.published?
+    - if item.published?
+          = form.label "お支払い方法の追記", style: "display: block", class: "text-left pt-2"
+          = form.text_field :payment_method_append, class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500"
+  
   .mt-4
-    = form.label :entry_deadline_at, style: "display: block", class: "font-bold text-lg block text-left"
-    = form.date_field :entry_deadline_at, class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500"
+    div.flex.items-center.gap-x-2
+      = form.label :entry_deadline_at, style: "display: block", class: "font-bold text-lg block text-left"
+      - if item.published?
+        span.text-sm.text-left ※延長のみ可能です
+    = form.date_field :entry_deadline_at, class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500", min: [Date.current, item.entry_deadline_at.to_date].max 
 
   .mt-6
+    - if item.draft?
+      p.text-gray-400.text-sm.text-left
+        | 出品後はご入力いただいた内容の削除はできず、商品情報の追加と締切の延長のみ行うことができます。出品前に内容をお確かめください。
     = form.submit I18n.t("helpers.submit.item.publish.#{item.status}"), name: "publish",
     class: "w-1/2 mx-auto block px-3 py-2 rounded bg-cyan-600 text-white font-semibold hover:opacity-80 transition"
   - if item.draft?
