@@ -11,7 +11,7 @@ FactoryBot.define do
     association :user
 
     trait :with_max_five_images do
-      before(:create) do |item|
+      after(:build) do |item|
         rand(1..5).times do |n|
           item.images.attach(
             io: File.open(Rails.root.join("spec/fixtures/test#{(n % 5) + 1}.png")),
@@ -23,7 +23,7 @@ FactoryBot.define do
     end
 
     trait :with_three_images do
-      before(:create) do |item|
+      after(:build) do |item|
         3.times do |n|
           item.images.attach(
             io: File.open(Rails.root.join("spec/fixtures/test#{n + 1}.png")),
