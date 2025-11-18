@@ -35,8 +35,8 @@ class Item < ApplicationRecord
 
   def deadline_not_change_earlier_after_published
     if status_was == "published" && will_save_change_to_entry_deadline_at?
-      new_deadline = entry_deadline_at
-      old_deadline = entry_deadline_at_in_database
+      new_deadline = entry_deadline_at.to_date
+      old_deadline = entry_deadline_at_was.to_date
 
       if new_deadline < old_deadline
         errors.add(:entry_deadline_at, "は元の締切日以降に設定してください")
