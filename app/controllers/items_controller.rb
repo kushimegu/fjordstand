@@ -47,6 +47,20 @@ class ItemsController < ApplicationController
   # PATCH/PUT /items/1
   def update
     @item.assign_attributes(item_params)
+    title_append = params[:item][:title_append]
+    description_append = params[:item][:description_append]
+    payment_method_append = params[:item][:payment_method_append]
+
+    if title_append.present?
+      @item.title = [ @item.title, title_append ].join(" ")
+    end
+    if description_append.present?
+      @item.description = [ @item.description, description_append ].join("\n")
+    end
+    if payment_method_append.present?
+      @item.payment_method = [ @item.payment_method, payment_method_append ].join(" ")
+    end
+
     if params[:publish]
       if @item.valid?(:publish)
         @item.status = :published
