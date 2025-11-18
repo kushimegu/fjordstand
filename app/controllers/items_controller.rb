@@ -55,7 +55,7 @@ class ItemsController < ApplicationController
       @item.title = [ @item.title, title_append ].join(" ")
     end
     if description_append.present?
-      @item.description = [ @item.description, description_append ].join("\n")
+      @item.description = [ @item.description.presence, description_append ].compact.join("\n")
     end
     if payment_method_append.present?
       @item.payment_method = [ @item.payment_method, payment_method_append ].join(" ")
