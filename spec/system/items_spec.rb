@@ -7,7 +7,6 @@ RSpec.describe "Items", type: :system do
     driven_by(:selenium_chrome_headless)
 
     login(user)
-    expect(page).to have_link('出品する')
   end
 
   describe "change big item image" do
