@@ -3,7 +3,7 @@ class Item < ApplicationRecord
   has_many_attached :images
 
   validates :title, :price, :payment_method, :entry_deadline_at, presence: true, on: :publish
-  validates :images, attached: { message: "を選択してください" }, on: :publish
+  validates :images, attached: { message: "を1枚以上選択してください" }, on: :publish
   validates :images, limit: { max: 5 }, content_type: [ "image/png", "image/jpeg" ], size: { less_than: 5.megabytes }
   before_save :set_entry_deadline_at_end_of_day
   validate :price_not_change_after_published, :deadline_today_or_later, :deadline_not_change_earlier_after_published, on: :publish
@@ -28,7 +28,7 @@ class Item < ApplicationRecord
   end
 
   def deadline_today_or_later
-    return if entry_deadline_at.present? && entry_deadline_at.to_date >= Date.current
+    return if entry_deadline_at.nil? || (entry_deadline_at.present? && entry_deadline_at.to_date >= Date.current)
 
     errors.add(:entry_deadline_at, "は本日以降に設定してください")
   end
