@@ -5,7 +5,7 @@
 
   div
     = form.label :title, style: "display: block", class: "font-bold text-lg block text-left"
-    = form.text_field :title, class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500 \
+    = form.text_field :title, maxlength: 255, class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500 \
       read-only:bg-gray-100 read-only:focus:border-gray-300", readonly: item.published?
     = render "error_messages", model: item, attribute: :title
     - if item.published?
