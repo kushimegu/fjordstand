@@ -1,0 +1,5 @@
+- if model.errors.any?
+  .text-left style="color: red"
+    ul
+      - model.errors.full_messages_for(attribute).each do |message|
+        li = message

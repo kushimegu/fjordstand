@@ -1,38 +1,41 @@
-- content_for :javascript do
-  = javascript_import_module_tag "items/show"
 p style="color: green" = notice
 .container
   .flex.flex-col.space-y-2.lg:grid.grid-cols-2.mt-6.gap-6.px-2
     - if @item.images.attached?
-      .flex.flex-col.space-y-2.items-center
+      .flex.flex-col.space-y-2.items-center[data-controller="image-gallery"]
         .aspect-square.h-108.flex.items-center.justify-center.bg-gray-100.relative
-          #prev.absolute.inset-y-0.left-0.flex.items-center.pl-3
-            svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" class="w-5 h-5 fill-gray-500"
-              path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 214.6 118.6c12.5-12.5 12.5-32.8
-              0-45.3s-32.8-12.5-45.3 0l-160 160z"
-          = image_tag @item.images.first.variant(resize_to_limit: [ 400, 400 ]).processed, id: "big-image", class: "object-contain w-full h-full"
-          #next.absolute.inset-y-0.right-0.flex.items-center.pr-3
-            svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" class="w-5 h-5 fill-gray-500"
-              path d="M247.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L179.2 256 41.9
-              118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"
+          = image_tag @item.images.first.variant(resize_to_limit: [ 400, 400 ]).processed, id: "big-image", data: { image_gallery_target: "bigImage" },
+          class: "object-contain w-full h-full"
+          - if @item.images.length > 1
+            .absolute.inset-y-0.left-0.flex.items-center.pl-3
+              button#prev type="button" data-action="image-gallery#prev"
+                svg[xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8
+                bg-white/50 hover:bg-white rounded-full p-1 cursor-pointer"]
+                  path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"
+            .absolute.inset-y-0.right-0.flex.items-center.pr-3
+              button#next type="button" data-action="image-gallery#next"
+                svg[xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8
+                bg-white/50 hover:bg-white rounded-full p-1 cursor-pointer"]
+                  path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"
         .grid.grid-cols-5.gap-2
           - @item.images.each do |image|
             .aspect-square.h-20.flex.items-center.justify-center.bg-gray-100
-              = image_tag image.variant(resize_to_limit: [ 200, 200 ]).processed, class: "thumbnail object-contain w-full h-full",
-                data: { image: url_for(image) }
+              = image_tag image.variant(resize_to_limit: [ 200, 200 ]).processed,
+                class: "thumbnail object-contain w-full h-full hover:ring hover:ring-gray-400 cursor-pointer",
+                data: { image_gallery_target: "thumbnail", action: "click->image-gallery#show", image: url_for(image) }
+
     div
       .text-3xl
         = @item.title
+
       - if @item.price.present?
-        .text-2xl.my-2
+        .text-2xl.mt-2.flex.items-center
           = number_to_currency(@item.price)
-          span.text-lg = I18n.t("views.item.shipping_fee_label.#{@item.shipping_fee_payer}")
+          span.text-base.pl-1 = I18n.t("views.item.shipping_fee_label.#{@item.shipping_fee_payer}")
       - else
         .text-xl.py-2
           span 価格未設定
-      p.text-base
-        | 希望する支払い方法
-      p.text-lg = @item.payment_method
+
       - if @item.entry_deadline_at.present?
         .text-xl.py-2
           = l @item.entry_deadline_at.to_date
@@ -40,14 +43,20 @@ p style="color: green" = notice
       - else
         .text-xl.py-2
           span 締め切り未設定
-      p.text-lg.py-2
-        | 商品説明
-      = simple_format(@item.description)
-      p.text-lg.py-2
-        | 出品者
-      .flex.items-center.gap-2
+
+      - if @item.payment_method.present?
+        p.mt-6.text-lg.border-b.border-gray-300 希望する支払い方法
+        p.text-lg.mt-1 = @item.payment_method
+
+      - if @item.description.present?
+        p.text-lg.mt-4.border-b.border-gray-300 商品説明
+        .mt-1 = simple_format(@item.description)
+
+      p.text-lg.mt-4.border-b.border-gray-300 出品者
+      .mt-2.flex.items-center.gap-2
         = image_tag @item.user.avatar_url, class: "w-10 h-10 rounded-full"
         = @item.user.name
+
       .flex.my-2.gap-2
         => link_to "編集する", edit_item_path(@item)
         = button_to "削除する", @item, method: :delete

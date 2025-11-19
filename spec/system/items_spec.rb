@@ -22,16 +22,16 @@ RSpec.describe "Items", type: :system do
     it "changes to next image when next button is clicked" do
       visit item_path(item)
       expect(page).to have_selector("#big-image[src*='test1.png']")
-      expect(page). to have_selector("#next")
-      find("#next").click
+      expect(page).to have_selector("#next")
+      click_button("next")
       expect(page).to have_selector("#big-image[src*='test2.png']")
     end
 
     it "changes to prev image when prev button is clicked" do
       visit item_path(item)
       expect(page).to have_selector("#big-image[src*='test1.png']")
-      expect(page). to have_selector("#prev")
-      find("#prev").click
+      expect(page).to have_selector("#prev")
+      click_button("prev")
       expect(page).to have_selector("#big-image[src*='test3.png']")
     end
   end
