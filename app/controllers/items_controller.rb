@@ -1,5 +1,6 @@
 class ItemsController < ApplicationController
   before_action :set_item, only: %i[ show edit update destroy ]
+  before_action :ensure_user, only: %i[ edit update destroy ]
 
   def drafts
     @items = current_user.items.draft.order(updated_at: :desc)
@@ -98,5 +99,11 @@ class ItemsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def item_params
       params.expect(item: [ :title, :description, :price, :shipping_fee_payer, :payment_method, :entry_deadline_at, :status, images: [] ])
+    end
+
+    def ensure_user
+      @items = current_user.items
+      @item = @items.find_by(id: params[:id])
+      redirect_to items_path unless @item
     end
 end
