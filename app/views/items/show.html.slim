@@ -1,27 +1,28 @@
-- content_for :javascript do
-  = javascript_import_module_tag "items/show"
 p style="color: green" = notice
 .container
   .flex.flex-col.space-y-2.lg:grid.grid-cols-2.mt-6.gap-6.px-2
     - if @item.images.attached?
-      .flex.flex-col.space-y-2.items-center
+      .flex.flex-col.space-y-2.items-center[data-controller="image-gallery"]
         .aspect-square.h-108.flex.items-center.justify-center.bg-gray-100.relative
-          = image_tag @item.images.first.variant(resize_to_limit: [ 400, 400 ]).processed, id: "big-image", class: "object-contain w-full h-full"
+          = image_tag @item.images.first.variant(resize_to_limit: [ 400, 400 ]).processed, id: "big-image", data: { image_gallery_target: "bigImage" },
+          class: "object-contain w-full h-full"
           - if @item.images.length > 1
-            #prev.absolute.inset-y-0.left-0.flex.items-center.pl-3
-              svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor",
-                class="size-8 bg-white/50 hover:bg-white rounded-full p-1 cursor-pointer"
-                path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"
-            #next.absolute.inset-y-0.right-0.flex.items-center.pr-3
-              svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor",
-                class="size-8 bg-white/50 hover:bg-white rounded-full p-1 cursor-pointer"
-                path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"
+            .absolute.inset-y-0.left-0.flex.items-center.pl-3
+              button#prev type="button" data-action="image-gallery#prev"
+                svg[xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8
+                bg-white/50 hover:bg-white rounded-full p-1 cursor-pointer"]
+                  path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"
+            .absolute.inset-y-0.right-0.flex.items-center.pr-3
+              button#next type="button" data-action="image-gallery#next"
+                svg[xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8
+                bg-white/50 hover:bg-white rounded-full p-1 cursor-pointer"]
+                  path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"
         .grid.grid-cols-5.gap-2
           - @item.images.each do |image|
             .aspect-square.h-20.flex.items-center.justify-center.bg-gray-100
               = image_tag image.variant(resize_to_limit: [ 200, 200 ]).processed,
                 class: "thumbnail object-contain w-full h-full hover:ring hover:ring-gray-400 cursor-pointer",
-                data: { image: url_for(image) }
+                data: { image_gallery_target: "thumbnail", action: "click->image-gallery#show", image: url_for(image) }
 
     div
       .text-3xl
