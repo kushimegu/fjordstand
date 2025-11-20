@@ -1,7 +1,8 @@
 FactoryBot.define do
   factory :entry do
-    user { nil }
-    item { nil }
-    status { 1 }
+    status { %i[pending won lost].sample }
+
+    association :user
+    association :item
   end
 end
