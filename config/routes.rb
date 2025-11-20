@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   get "/drafts", to: "items#drafts"
+  get "/entries", to: "entries#index"
   resources :items do
     resource :entries, only: %i[create destroy]
   end

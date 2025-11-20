@@ -1,4 +1,8 @@
 class EntriesController < ApplicationController
+  def index
+    @items = current_user.applied_items
+  end
+
   # POST /entries
   def create
     item = Item.find(params[:item_id])
