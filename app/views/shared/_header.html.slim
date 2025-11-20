@@ -12,5 +12,6 @@
           span = current_user.name
         #header__nav.absolute.right-0.mt-2.w-50.bg-white.border.border-gray-300.divide-y.divide-gray-300.rounded.hidden data-hamburger-target="nav"
           = link_to "下書き一覧", drafts_path, class: "block px-4 py-2 text-gray-700 hover:bg-gray-50"
+          = link_to "出品した商品一覧", listings_path, class: "block px-4 py-2 text-gray-700 hover:bg-gray-50"
           = link_to "購入希望商品一覧", entries_path, class: "block px-4 py-2 text-gray-700 hover:bg-gray-50"
           = link_to "ログアウト", logout_path, method: :delete, class: "block px-4 py-2 text-red-400 hover:bg-gray-50"

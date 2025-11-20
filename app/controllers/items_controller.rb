@@ -6,6 +6,10 @@ class ItemsController < ApplicationController
     @items = current_user.items.draft.order(updated_at: :desc)
   end
 
+  def listings
+    @items = current_user.items.order(entry_deadline_at: :asc)
+  end
+
   # GET /items
   def index
     @items = Item.published.order(entry_deadline_at: :asc)
