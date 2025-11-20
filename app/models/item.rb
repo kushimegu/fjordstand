@@ -1,6 +1,7 @@
 class Item < ApplicationRecord
   belongs_to :user
   has_many_attached :images
+  has_many :entries
 
   validates :title, length: { maximum: 255 }, presence: true, on: :publish
   validates :price, presence: true, on: :publish
@@ -17,6 +18,11 @@ class Item < ApplicationRecord
   enum :status, { draft: 0, published: 1, sold: 2, closed: 3 }
 
   attr_accessor :title_append, :description_append, :payment_method_append
+
+
+  def has_entry_by?(user)
+    entries.exists?(user_id: user.id)
+  end
 
   private
 

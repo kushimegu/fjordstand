@@ -1,6 +1,6 @@
 class ItemsController < ApplicationController
-  before_action :set_item, only: %i[ show edit update destroy ]
-  before_action :ensure_user, only: %i[ edit update destroy ]
+  before_action :set_item, only: %i[show edit update destroy]
+  before_action :ensure_user, only: %i[edit update destroy]
 
   def drafts
     @items = current_user.items.draft.order(updated_at: :desc)

@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
   get "/drafts", to: "items#drafts"
-  resources :items
+  get "/entries", to: "entries#index"
+  resources :items do
+    resource :entries, only: %i[create destroy]
+  end
   root to: "pages#home"
   resource :session, only: %i[create destroy]
   get 'auth/:provider/callback', to: 'sessions#create'

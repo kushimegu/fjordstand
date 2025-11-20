@@ -100,9 +100,9 @@
       p.text-gray-400.text-sm.text-left
         | 出品後はご入力いただいた内容の削除はできず、商品情報（商品名・商品説明・お支払い方法）の追加と締切の延長のみ行うことができます。出品前に内容をお確かめください。
     = form.submit I18n.t("helpers.submit.item.publish.#{item.status}"), name: "publish",
-    class: "w-1/2 mx-auto block px-3 py-2 rounded bg-cyan-600 text-white font-semibold hover:opacity-80 transition"
+    class: "w-1/2 mx-auto block px-3 py-2 rounded bg-cyan-600 text-white font-semibold hover:opacity-80"
   - if item.draft?
     .mt-4
       - label = item.persisted? ? "update" : "new"
       = form.submit I18n.t("helpers.submit.item.draft.#{label}"), name: "draft",
-      class: "w-1/2 mx-auto block px-3 py-2 rounded border border-cyan-500 text-cyan-600 font-semibold hover:bg-cyan-50 transition"
+      class: "w-1/2 mx-auto block px-3 py-2 rounded border border-cyan-500 text-cyan-600 font-semibold hover:bg-cyan-50"
