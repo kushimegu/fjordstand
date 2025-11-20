@@ -5,7 +5,8 @@
 
   div
     = form.label :title, style: "display: block", class: "font-bold text-lg block text-left"
-    = form.text_field :title, maxlength: 255, class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500 \
+    = form.text_field :title, maxlength: 255,
+      class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500 \
       read-only:bg-gray-100 read-only:focus:border-gray-300", readonly: item.published?
     = render "error_messages", model: item, attribute: :title
     - if item.published?
@@ -35,9 +36,10 @@
       = form.label :description, style: "display: block", class: "font-bold text-lg block text-left"
       span.text-sm 任意
     = form.textarea :description,
-      placeholder: "商品の特徴や状態などをご入力ください\n\n入力例）カバーに傷みがありますが、中は書き込みや破れなどはなく綺麗な状態です",
+      placeholder: (item.published? ? nil : "商品の特徴や状態などをご入力ください\n\n入力例）カバーに傷みがありますが、中は書き込みや破れなどはなく綺麗な状態です"),
       class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500 min-h-42 field-sizing-content \
-      placeholder-gray-300 read-only:bg-gray-100 read-only:focus:border-gray-300 read-only:min-h-[46px] read-only:field-sizing-content", readonly: item.published?
+      placeholder-gray-300 read-only:bg-gray-100 read-only:focus:border-gray-300 read-only:min-h-[46px] read-only:field-sizing-content",
+      readonly: item.published?
     = render "error_messages", model: item, attribute: :description
     - if item.published?
       = form.label "商品説明の追記", style: "display: block", class: "text-left"

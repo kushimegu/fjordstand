@@ -54,9 +54,13 @@ p style="color: green" = notice
 
       p.text-lg.mt-4.border-b.border-gray-300 出品者
       .mt-2.flex.items-center.gap-2
-        = image_tag @item.user.avatar_url, class: "w-10 h-10 rounded-full"
+        - if @item.user.avatar_url
+          = image_tag @item.user.avatar_url, class: "w-10 h-10 rounded-full"
+        - else
+          = image_tag "default-avatar.png", class: "w-10 h-10 rounded-full"
         = @item.user.name
 
-      .flex.my-2.gap-2
-        => link_to "編集する", edit_item_path(@item)
-        = button_to "削除する", @item, method: :delete
+      - if @item.user == current_user
+        .flex.my-2.gap-2
+          => link_to "編集する", edit_item_path(@item)
+          = button_to "削除する", @item, method: :delete
