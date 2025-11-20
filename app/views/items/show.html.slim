@@ -46,7 +46,7 @@ p style="color: green" = notice
 
       - if @item.user != current_user
         - if @item.has_entry_by?(current_user)
-          p.text-lg.text-cyan-600 現在応募しています
+          p.text-lg.text-cyan-600 購入希望を出しています
           = button_to "購入希望を取り消す", item_entries_path(@item), method: :delete,
           class: "w-full mx-auto px-3 py-2 rounded border border-gray-500 text-gray-500 font-semibold hover:bg-gray-50 cursor-pointer"
         - else
