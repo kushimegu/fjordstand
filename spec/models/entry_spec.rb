@@ -6,7 +6,7 @@ RSpec.describe Entry, type: :model do
     let(:item) { create(:item, :with_max_five_images, user: user, status: :published) }
 
     context "when trying to apply to own item" do
-      let(:entry) { build(:entry, item: item, user: user, status: :pending) }
+      let(:entry) { build(:entry, item: item, user: user, status: :applied) }
 
       it "validates applying to own item" do
         entry.valid?

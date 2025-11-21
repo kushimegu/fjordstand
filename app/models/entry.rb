@@ -2,7 +2,7 @@ class Entry < ApplicationRecord
   belongs_to :user
   belongs_to :item
 
-  enum :status, { pending: 0, won: 1, lost: 2 }
+  enum :status, { applied: 0, won: 1, lost: 2 }
 
   validate :cannot_apply_to_own_item
 

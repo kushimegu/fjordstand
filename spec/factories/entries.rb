@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :entry do
-    status { %i[pending won lost].sample }
+    status { %i[applied won lost].sample }
 
     association :user
     association :item
