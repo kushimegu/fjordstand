@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :user do
-    name { "Alice" }
+    name { Faker::Name.name }
     sequence(:uid) { |n| "123456789#{n}" }
     provider { "discord" }
-    avatar_url { "https://example.com/avatar.png" }
+    avatar_url { Faker::Avatar.image }
   end
 end
