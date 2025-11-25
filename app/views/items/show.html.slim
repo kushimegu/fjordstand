@@ -1,4 +1,8 @@
 p style="color: green" = notice
+- if @entry && @entry.errors.any?
+  ul.error-messages style="color: red"
+    - @entry.errors.full_messages.each do |msg|
+      li = msg
 .container
   .flex.flex-col.space-y-2.lg:grid.grid-cols-2.mt-6.gap-6.px-2
     - if @item.images.attached?
@@ -46,8 +50,8 @@ p style="color: green" = notice
         .text-xl.py-2
           span 締め切り未設定
 
-      - if @item.entry_deadline_at.presence && @item.entry_deadline_at >= Time.current
-        - if @item.user != current_user
+      - if @item.user != current_user
+        - if @item.entry_deadline_at.presence && @item.entry_deadline_at >= Time.current
           - if current_user.entry_for(@item)&.applied?
             p.text-lg.text-cyan-600 購入希望を出しています
             = button_to "購入希望を取り消す", item_entries_path(@item), method: :delete,

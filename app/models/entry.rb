@@ -4,13 +4,20 @@ class Entry < ApplicationRecord
 
   enum :status, { applied: 0, won: 1, lost: 2 }
 
-  validate :cannot_apply_to_own_item
+  validate :cannot_apply_for_own_item
+  validate :cannot_apply_for_expired_item
 
   private
 
-  def cannot_apply_to_own_item
+  def cannot_apply_for_own_item
     if item.user_id == user_id
       errors.add(:base, "自分の出品物には応募できません")
+    end
+  end
+
+  def cannot_apply_for_expired_item
+    if item.entry_deadline_at < Time.current
+      errors.add(:base, "締切の過ぎた商品には応募できません")
     end
   end
 end
