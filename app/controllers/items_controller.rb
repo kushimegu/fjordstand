@@ -7,7 +7,7 @@ class ItemsController < ApplicationController
   end
 
   def listings
-    @items = current_user.items.order(entry_deadline_at: :asc)
+    @items = current_user.items.where.not(status: :draft).order(entry_deadline_at: :asc)
   end
 
   # GET /items
