@@ -59,15 +59,15 @@ p style="color: green" = notice
           - else
             = button_to "購入希望を申請する", item_entries_path(@item), method: :post,
             class: "w-full mx-auto px-3 py-2 rounded bg-cyan-600 text-white font-semibold hover:opacity-80 cursor-pointer"
-      - else
-        - if current_user.entry_for(@item)&.won?
-          p.text-xl.text-cyan-600 当選しました！
-        - elsif current_user.entry_for(@item)&.lost?
-          p.text-xl.text-red-400 落選しました
-        - elsif current_user.entry_for(@item)&.applied?
-          p.text-xl.text-cyan-600 購入希望中です
         - else
-          p.text-xl 応募していません
+          - if current_user.entry_for(@item)&.won?
+            p.text-xl.text-cyan-600 当選しました！
+          - elsif current_user.entry_for(@item)&.lost?
+            p.text-xl.text-red-400 落選しました
+          - elsif current_user.entry_for(@item)&.applied?
+            p.text-xl.text-cyan-600 購入希望中です
+          - else
+            p.text-xl 応募していません
 
       - if @item.payment_method.present?
         p.mt-6.text-lg.border-b.border-gray-300 希望する支払い方法
