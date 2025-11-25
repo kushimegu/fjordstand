@@ -3,26 +3,25 @@ class Item < ApplicationRecord
   has_many_attached :images
   has_many :entries
 
+  enum :shipping_fee_payer, { buyer: 0, seller: 1 }
+  enum :status, { draft: 0, published: 1, sold: 2, closed: 3 }
+
+  attr_accessor :title_append, :description_append, :payment_method_append
+
   validates :title, length: { maximum: 255 }, presence: true, on: :publish
   validates :price, presence: true, on: :publish
   validates :payment_method, presence: true, on: :publish
   validates :entry_deadline_at, presence: true, on: :publish
   validates :images, attached: { message: "を1枚以上選択してください" }, on: :publish
   validates :images, limit: { max: 5 }, content_type: [ "image/png", "image/jpeg" ], size: { less_than: 5.megabytes }
+
   before_save :set_entry_deadline_at_end_of_day
+
   validate :price_not_change_after_published, on: :publish
-  validate :deadline_today_or_later,  on: :publish
+  validate :deadline_today_or_later, on: :publish
   validate :deadline_not_change_earlier_after_published, on: :publish
 
-  enum :shipping_fee_payer, { buyer: 0, seller: 1 }
-  enum :status, { draft: 0, published: 1, sold: 2, closed: 3 }
-
-  attr_accessor :title_append, :description_append, :payment_method_append
-
-
-  def has_entry_by?(user)
-    entries.exists?(user_id: user.id)
-  end
+  scope :expired, -> { where('entry_deadline_at < ?', Time.current.beginning_of_day).where(status: :published) }
 
   private
 
