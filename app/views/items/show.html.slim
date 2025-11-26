@@ -1,4 +1,8 @@
 p style="color: green" = notice
+- if @entry && @entry.errors.any?
+  ul.error-messages style="color: red"
+    - @entry.errors.full_messages.each do |msg|
+      li = msg
 .container
   .flex.flex-col.space-y-2.lg:grid.grid-cols-2.mt-6.gap-6.px-2
     - if @item.images.attached?
@@ -40,18 +44,30 @@ p style="color: green" = notice
         .text-xl.py-2
           = l @item.entry_deadline_at.to_date
           span 締切
+          - if @item.entry_deadline_at < Time.current
+            span.pl-2.text-red-400 締め切りました
       - else
         .text-xl.py-2
           span 締め切り未設定
 
       - if @item.user != current_user
-        - if @item.has_entry_by?(current_user)
-          p.text-lg.text-cyan-600 購入希望を出しています
-          = button_to "購入希望を取り消す", item_entries_path(@item), method: :delete,
-          class: "w-full mx-auto px-3 py-2 rounded border border-gray-500 text-gray-500 font-semibold hover:bg-gray-50 cursor-pointer"
+        - if @item.entry_deadline_at.presence && @item.entry_deadline_at >= Time.current
+          - if current_user.entry_for(@item)&.applied?
+            p.text-lg.text-cyan-600 購入希望を出しています
+            = button_to "購入希望を取り消す", item_entries_path(@item), method: :delete,
+            class: "w-full mx-auto px-3 py-2 rounded border border-gray-500 text-gray-500 font-semibold hover:bg-gray-50 cursor-pointer"
+          - else
+            = button_to "購入希望を申請する", item_entries_path(@item), method: :post,
+            class: "w-full mx-auto px-3 py-2 rounded bg-cyan-600 text-white font-semibold hover:opacity-80 cursor-pointer"
         - else
-          = button_to "購入希望を申請する", item_entries_path(@item), method: :post,
-          class: "w-full mx-auto px-3 py-2 rounded bg-cyan-600 text-white font-semibold hover:opacity-80 cursor-pointer"
+          - if current_user.entry_for(@item)&.won?
+            p.text-xl.text-cyan-600 当選しました！
+          - elsif current_user.entry_for(@item)&.lost?
+            p.text-xl.text-red-400 落選しました
+          - elsif current_user.entry_for(@item)&.applied?
+            p.text-xl.text-cyan-600 購入希望中です
+          - else
+            p.text-xl 応募していません
 
       - if @item.payment_method.present?
         p.mt-6.text-lg.border-b.border-gray-300 希望する支払い方法

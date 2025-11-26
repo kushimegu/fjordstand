@@ -15,4 +15,8 @@ class User < ApplicationRecord
       )
       user
   end
+
+  def entry_for(item)
+    entries.find_by(item: item)
+  end
 end

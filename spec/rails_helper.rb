@@ -74,6 +74,8 @@ RSpec.configure do |config|
   config.include LoginSupport::Request, type: :request
   config.include LoginSupport::System, type: :system
   config.include LoginSupport
+
+  config.include ActiveSupport::Testing::TimeHelpers
 end
 
 OmniAuth.config.test_mode = true
