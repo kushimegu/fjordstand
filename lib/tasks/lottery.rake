@@ -1,6 +1,6 @@
 namespace :lottery do
-  desc "締切が過ぎた商品の抽選を行う"
-  task select_buyer: :environment do
+  desc "run lottery to select winner for items whose deadline has passed"
+  task select_winner: :environment do
     items = Item.expired
 
     items.find_each do |item|

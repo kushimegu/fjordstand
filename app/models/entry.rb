@@ -5,7 +5,7 @@ class Entry < ApplicationRecord
   enum :status, { applied: 0, won: 1, lost: 2 }
 
   validate :cannot_apply_for_own_item
-  validate :cannot_apply_for_expired_item
+  validate :cannot_apply_for_expired_item, on: :create
 
   private
 
