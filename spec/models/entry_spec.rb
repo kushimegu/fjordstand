@@ -14,13 +14,27 @@ RSpec.describe Entry, type: :model do
   end
 
   describe "cannot_apply_for_expired_item" do
-    let(:item) { create(:item, :with_max_five_images, user: seller, status: :published, entry_deadline_at: Date.yesterday.end_of_day) }
+    let(:item) { create(:item, :with_max_five_images, user: seller, status: :published, entry_deadline_at: entry_deadline_at) }
     let(:buyer) { create(:user, uid: "1234567891") }
-    let(:entry) { build(:entry, item: item, user: buyer, status: :applied) }
 
-    it "validates applying for expired item" do
-      entry.valid?
-      expect(entry.errors.full_messages).to include("締切の過ぎた商品には応募できません")
+    context "when applying for item whose deadline was yesterday" do
+      let(:entry_deadline_at) { Date.yesterday.end_of_day }
+      let(:entry) { build(:entry, item: item, user: buyer, status: :applied) }
+
+      it "validates applying for expired item" do
+        entry.valid?
+        expect(entry.errors.full_messages).to include("締切の過ぎた商品には応募できません")
+      end
+    end
+
+    context "when applying for item whose deadline is today" do
+      let(:entry_deadline_at) { Date.today.end_of_day }
+      let(:entry) { build(:entry, item: item, user: buyer, status: :applied) }
+
+      it "can apply for unexpired item" do
+        entry.valid?
+        expect(entry.errors.full_messages).to be_empty
+      end
     end
   end
 end
