@@ -1,6 +1,7 @@
 class EntriesController < ApplicationController
   def index
-    @items = current_user.applied_items
+    @entries = current_user.entries.includes(:item).order("items.entry_deadline_at ASC")
+    @entries = @entries.where(status: params[:status]) if params[:status].present?
   end
 
   # POST /entries

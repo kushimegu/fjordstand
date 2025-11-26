@@ -9,6 +9,11 @@ ja:
       shipping_fee_label:
         seller: （送料込み）
         buyer: ＋送料
+    entry:
+      status:
+        applied: 希望中
+        won: 当選
+        lost: 落選
   activerecord:
     models:
       item: 商品
