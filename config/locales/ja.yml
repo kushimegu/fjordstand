@@ -9,6 +9,10 @@ ja:
       shipping_fee_label:
         seller: （送料込み）
         buyer: ＋送料
+      status:
+        published: 掲載中
+        sold: 抽選済み
+        closed: 掲載終了
     entry:
       status:
         applied: 希望中

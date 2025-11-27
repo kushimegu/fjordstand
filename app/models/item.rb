@@ -22,7 +22,13 @@ class Item < ApplicationRecord
   validate :deadline_not_change_earlier_after_published, on: :publish
 
   scope :expired, -> { where("entry_deadline_at < ?", Time.current.beginning_of_day).where(status: :published) }
-
+  scope :by_target, ->(target) {
+  if target.present? && statuses.key?(target)
+    where(status: target)
+  else
+    all
+  end
+  }
   private
 
   def set_entry_deadline_at_end_of_day
