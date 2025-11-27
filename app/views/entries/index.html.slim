@@ -1,15 +1,20 @@
 h1.font-bold.text-2xl.my-2.text-center 購入希望商品一覧
-- if @entries.length < 1
-  .mt-20.text-center.gap-y-3
-    h.text-lg 現在購入希望を出している商品はありません
-.flex.space-x-4.mb-4
-  = link_to "全て", entries_path, data: { turbo_frame: "entries" }
-  = link_to "応募中", entries_path(status: :applied), data: { turbo_frame: "entries" }
-  = link_to "当選", entries_path(status: :won), data: { turbo_frame: "entries" }
-  = link_to "落選", entries_path(status: :lost), data: { turbo_frame: "entries" }
-turbo-frame#entries class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
-  - @entries.each do |entry|
-    = link_to entry.item, data: { turbo: false }, class: "block" do
-      .container.bg-white.shadow.rounded.p-4.hover:bg-gray-50
-        = I18n.t("views.entry.status.#{entry.status}")
-        = render "items/item", item: entry.item
+.flex.border-b.border-gray-300.mb-2[data-controller="action-button"]
+  = link_to "全て", entries_path, class: "text-lg px-4 py-2 hover:bg-gray-100",
+  data: { action_button_target: "button", action: "click->action-button#toggle", turbo_frame: "entries" }
+  = link_to "希望中", entries_path(status: :applied), class: "text-lg px-4 py-2 hover:bg-gray-100",
+  data: { action_button_target: "button", action: "click->action-button#toggle", turbo_frame: "entries" }
+  = link_to "当選", entries_path(status: :won), class: "text-lg px-4 py-2 hover:bg-gray-100",
+  data: { action_button_target: "button", action: "click->action-button#toggle", turbo_frame: "entries" }
+  = link_to "落選", entries_path(status: :lost), class: "text-lg px-4 py-2 hover:bg-gray-100",
+  data: { action_button_target: "button", action: "click->action-button#toggle", turbo_frame: "entries" }
+turbo-frame#entries
+  - if @entries.empty?
+    p.mt-20.text-center.text-xl 該当する商品はありません
+  - else
+    .grid.grid-cols-1.sm:grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-4
+      - @entries.each do |entry|
+        = link_to entry.item, data: { turbo: false }, class: "block" do
+          .container.bg-white.shadow.rounded.p-4.hover:bg-gray-50
+            = I18n.t("views.entry.status.#{entry.status}")
+            = render "items/item", item: entry.item
