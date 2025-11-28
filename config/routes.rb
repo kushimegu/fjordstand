@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  get "transactions/index"
+  resources :transactions, only: [:index] do
+    resources :messages, only: %i[index create]
+  end
   get "/drafts", to: "items#drafts"
   get "/entries", to: "entries#index"
   get "/listings", to: "items#listings"
