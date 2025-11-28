@@ -2,6 +2,7 @@ class Item < ApplicationRecord
   belongs_to :user
   has_many_attached :images
   has_many :entries
+  has_many :messages
 
   enum :shipping_fee_payer, { buyer: 0, seller: 1 }
   enum :status, { draft: 0, published: 1, sold: 2, closed: 3 }
