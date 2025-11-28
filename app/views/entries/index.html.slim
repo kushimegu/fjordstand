@@ -16,5 +16,11 @@ turbo-frame#entries
       - @entries.each do |entry|
         = link_to entry.item, data: { turbo: false }, class: "block" do
           .container.bg-white.shadow.rounded.p-4.hover:bg-gray-50
-            = I18n.t("views.entry.status.#{entry.status}")
+            - case entry.status
+              - when "applied"
+                span.inline-block.px-2.py-1.text-sm.font-semibold.text-gray-700.bg-gray-100.rounded 希望中
+              - when "won"
+                span.inline-block.px-2.py-1.text-sm.font-semibold.text-cyan-600.bg-cyan-100.rounded 当選
+              - when "lost"
+                span.inline-block.px-2.py-1.text-sm.font-semibold.text-red-400.bg-red-100.rounded 落選
             = render "items/item", item: entry.item
