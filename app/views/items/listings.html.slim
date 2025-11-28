@@ -1,9 +1,26 @@
 h1.font-bold.text-2xl.my-2.text-center 出品した商品一覧
-- if @items.length < 1
-  .mt-20.text-center.gap-y-3
-    h.text-lg 出品した商品はありません
-#items.grid.grid-cols-1.sm:grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-4
-  - @items.each do |item|
-    = link_to item, class: "block" do
-      .container.bg-white.shadow.rounded.p-4.hover:bg-gray-50
-        == render item
+.flex.border-b.border-gray-300.mb-2[data-controller="action-button"]
+  = link_to "全て", listings_path, class: "text-lg px-4 py-2 hover:bg-gray-100",
+  data: { action_button_target: "button", action: "click->action-button#toggle", turbo_frame: "listings" }
+  = link_to "出品中", listings_path(status: :published), class: "text-lg px-4 py-2 hover:bg-gray-100",
+  data: { action_button_target: "button", action: "click->action-button#toggle", turbo_frame: "listings" }
+  = link_to "抽選済み", listings_path(status: :sold), class: "text-lg px-4 py-2 hover:bg-gray-100",
+  data: { action_button_target: "button", action: "click->action-button#toggle", turbo_frame: "listings" }
+  = link_to "公開終了", listings_path(status: :closed), class: "text-lg px-4 py-2 hover:bg-gray-100",
+  data: { action_button_target: "button", action: "click->action-button#toggle", turbo_frame: "listings" }
+turbo-frame#listings
+  - if @items.empty?
+    p.mt-20.text-center.text-xl 該当する商品はありません
+  - else
+    .grid.grid-cols-1.sm:grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-4
+      - @items.each do |item|
+        = link_to item, data: { turbo: false }, class: "block" do
+          .container.bg-white.shadow.rounded.p-4.hover:bg-gray-50
+            - case item.status
+              - when "published"
+                span.inline-block.px-2.py-1.text-sm.font-semibold.text-gray-700.bg-gray-100.rounded 出品中
+              - when "sold"
+                span.inline-block.px-2.py-1.text-sm.font-semibold.text-cyan-600.bg-cyan-100.rounded 抽選済み
+              - when "closed"
+                span.inline-block.px-2.py-1.text-sm.font-semibold.text-red-400.bg-red-100.rounded 公開終了
+            == render item

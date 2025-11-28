@@ -1,6 +1,9 @@
 class EntriesController < ApplicationController
   def index
-    @items = current_user.applied_items
+    @entries = current_user.entries
+                            .includes(:item)
+                            .by_target(params[:status])
+                            .order("items.entry_deadline_at DESC")
   end
 
   # POST /entries

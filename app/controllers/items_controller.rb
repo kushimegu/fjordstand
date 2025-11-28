@@ -7,12 +7,15 @@ class ItemsController < ApplicationController
   end
 
   def listings
-    @items = current_user.items.where.not(status: :draft).order(entry_deadline_at: :asc)
+    @items = current_user.items
+                          .where.not(status: :draft)
+                          .by_target(params[:status])
+                          .order(entry_deadline_at: :asc)
   end
 
   # GET /items
   def index
-    @items = Item.published.order(entry_deadline_at: :asc)
+    @items = Item.published.where("entry_deadline_at >= ?", Time.current.beginning_of_day).order(entry_deadline_at: :asc)
   end
 
   # GET /items/1
