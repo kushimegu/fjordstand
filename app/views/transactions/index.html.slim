@@ -17,9 +17,20 @@ h1.font-bold.text-2xl.my-2.text-center 連絡ページ一覧
               span.text-base
                 = I18n.t("views.item.shipping_fee_label.#{item.shipping_fee_payer}")
               .flex.items-center.gap-2
-                p 出品者
-                - if item.user.avatar_url
-                  = image_tag item.user.avatar_url, class: "w-10 h-10 rounded-full"
+                - if item.user == current_user
+                  - winner = item.entries.find_by(status: :won)&.user
+                  p 購入者
+                  - if winner.avatar_url
+                    = image_tag winner.avatar_url, class: "w-10 h-10 rounded-full"
+                  - else
+                    = image_tag "default-avatar.png", class: "w-10 h-10 rounded-full"
+                  = winner.name
+                  span さん
                 - else
-                  = image_tag "default-avatar.png", class: "w-10 h-10 rounded-full"
-                = item.user.name
+                  p 出品者
+                  - if item.user.avatar_url
+                    = image_tag item.user.avatar_url, class: "w-10 h-10 rounded-full"
+                  - else
+                    = image_tag "default-avatar.png", class: "w-10 h-10 rounded-full"
+                  = item.user.name
+                  span さん
