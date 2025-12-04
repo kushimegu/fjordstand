@@ -1,8 +1,8 @@
 class User < ApplicationRecord
-  has_many :items
-  has_many :entries
+  has_many :items, dependent: :destroy
+  has_many :entries, dependent: :destroy
   has_many :applied_items, through: :entries, source: :item
-  has_many :messages
+  has_many :messages, dependent: :destroy
 
   def self.from_omniauth(auth)
     Discordrb::API::Server.resolve_member("Bot #{ENV['DISCORD_BOT_TOKEN']}", ENV["DISCORD_SERVER_ID"], auth.uid)
