@@ -5,10 +5,7 @@
       = link_to "出品する", new_item_path, class: "px-3 py-2.5 rounded bg-cyan-600 text-white font-semibold hover:opacity-80"
       .relative[data-hamburger-target="button" data-action="click->hamburger#toggle" aria-expanded="false" aria-controls="header__nav"]
         .flex.items-center.cursor-pointer.px-2.py-1.rounded.h-11.hover:bg-gray-100
-          - if current_user.avatar_url
-            = image_tag current_user.avatar_url, class: "w-9 h-9 rounded-full mr-2"
-          - else
-            = image_tag "default-avatar.png", class: "w-9 h-9 rounded-full mr-2"
+          = image_tag (current_user.avatar_url.presence || "default-avatar.png"), class: "w-9 h-9 rounded-full mr-2"
           span = current_user.name
         #header__nav.absolute.right-0.mt-2.w-50.bg-white.border.border-gray-300.divide-y.divide-gray-300.rounded.hidden data-hamburger-target="nav"
           = link_to "下書き一覧", drafts_path, class: "block px-4 py-2 text-gray-700 hover:bg-gray-50"

@@ -50,6 +50,11 @@ p style="color: green" = notice
         .text-xl.py-2
           span 締め切り未設定
 
+      - if @item.user == current_user && @item.sold?
+        .flex.items-center
+          p.text-xl.text-cyan-600 抽選が完了しました！
+          = link_to "当選者との連絡ページへ", transaction_messages_path(@item), class: "underline text-cyan-600 hover:text-cyan-700"
+
       - if @item.user != current_user
         - if @item.entry_deadline_at.presence && @item.entry_deadline_at >= Time.current
           - if current_user.entry_for(@item)&.applied?
@@ -61,7 +66,9 @@ p style="color: green" = notice
             class: "w-full mx-auto px-3 py-2 rounded bg-cyan-600 text-white font-semibold hover:opacity-80 cursor-pointer"
         - else
           - if current_user.entry_for(@item)&.won?
-            p.text-xl.text-cyan-600 当選しました！
+            .flex.items-center
+              p.text-xl.text-cyan-600 当選しました！
+              = link_to "出品者との連絡ページへ", transaction_messages_path(@item), class: "underline text-cyan-600 hover:text-cyan-700"
           - elsif current_user.entry_for(@item)&.lost?
             p.text-xl.text-red-400 落選しました
           - elsif current_user.entry_for(@item)&.applied?
@@ -79,10 +86,7 @@ p style="color: green" = notice
 
       p.text-lg.mt-4.border-b.border-gray-300 出品者
       .mt-2.flex.items-center.gap-2
-        - if @item.user.avatar_url
-          = image_tag @item.user.avatar_url, class: "w-10 h-10 rounded-full"
-        - else
-          = image_tag "default-avatar.png", class: "w-10 h-10 rounded-full"
+        = image_tag (@item.user.avatar_url.presence || "default-avatar.png"), class: "w-10 h-10 rounded-full"
         = @item.user.name
 
       - if @item.user == current_user
