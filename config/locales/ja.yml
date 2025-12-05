@@ -45,6 +45,7 @@ ja:
         publish:
           draft: '出品する'
           published: '更新する'
+          closed: '出品する'
         draft:
           update: '上書き保存する'
           new: '下書きに保存する'
