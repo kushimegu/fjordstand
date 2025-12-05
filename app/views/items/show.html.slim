@@ -29,8 +29,7 @@ p style="color: green" = notice
                 data: { image_gallery_target: "thumbnail", action: "click->image-gallery#show", image: url_for(image) }
 
     div
-      .text-3xl
-        = @item.title
+      h2.text-3xl = @item.title
 
       - if @item.price.present?
         .text-2xl.mt-2.flex.items-center
@@ -90,6 +89,8 @@ p style="color: green" = notice
         = @item.user.name
 
       - if @item.user == current_user
-        .flex.my-2.gap-2
-          => link_to "編集する", edit_item_path(@item)
-          = button_to "削除する", @item, method: :delete
+        .flex.justify-end.items-center.gap-2
+          - if !@item.sold?
+            = link_to "編集する", edit_item_path(@item),
+            class: "inline-block border border-gray-300 text-sm px-3 py-2 rounded hover:bg-gray-50"
+          = button_to "削除する", @item, method: :delete, class: "inline-block cursor-pointer text-sm text-gray-700 underline hover:text-red-400"
