@@ -100,9 +100,17 @@
       p.text-gray-400.text-sm.text-left
         | 出品後はご入力いただいた内容の削除はできず、商品情報（商品名・商品説明・お支払い方法）の追加と締切の延長のみ行うことができます。出品前に内容をお確かめください。
     = form.submit I18n.t("helpers.submit.item.publish.#{item.status}"), name: "publish",
-    class: "w-1/2 mx-auto block px-3 py-2 rounded bg-cyan-600 text-white font-semibold hover:opacity-80"
+    class: "cursor-pointer w-1/2 mx-auto block px-3 py-2 rounded bg-cyan-600 text-white font-semibold hover:opacity-80"
+  
   - if item.draft?
     .mt-4
       - label = item.persisted? ? "update" : "new"
       = form.submit I18n.t("helpers.submit.item.draft.#{label}"), name: "draft",
-      class: "w-1/2 mx-auto block px-3 py-2 rounded border border-cyan-500 text-cyan-600 font-semibold hover:bg-cyan-50"
+      class: "cursor-pointer w-1/2 mx-auto block px-3 py-2 rounded border border-cyan-500 text-cyan-600 font-semibold hover:bg-cyan-50"
+  
+  - if item.published?
+    .mt-4
+      p.text-gray-400.text-sm.text-left
+        | 商品を非公開にすると購入希望が全て取り消され、購入希望者に通知が送られます。再度公開する際は全ての項目を編集でき、新たに購入希望を受け付けることができます。
+      = form.submit "非公開にする", name: "close",
+      class: "cursor-pointer w-1/2 mx-auto block px-3 py-2 rounded border border-gray-500 text-gray-500 font-semibold hover:bg-gray-50"

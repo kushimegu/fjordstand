@@ -5,7 +5,7 @@
 
   - if @item.draft? && @item.persisted?
     .m-4
-      = button_to "削除する", @item, method: :delete
+      = button_to "削除する", @item, method: :delete, class: "cursor-pointer text-gray-700 underline hover:text-red-400"
     .m-4
       = link_to "下書き一覧へ", drafts_path
   - if @item.published?
@@ -13,3 +13,6 @@
       => link_to "商品ページへ", @item
       '|
       =< link_to "商品一覧へ", items_path
+  - if @item.closed?
+    .m-4
+      = link_to "出品した商品一覧へ", listings_path

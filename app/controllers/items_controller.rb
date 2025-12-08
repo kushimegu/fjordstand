@@ -77,6 +77,11 @@ class ItemsController < ApplicationController
       else
         render :edit, status: :unprocessable_content
       end
+    elsif params[:close]
+      @item.status = :closed
+      @item.save!
+      @item.entries.destroy_all
+      redirect_to listings_path, notice: "商品を非公開にしました", status: :see_other
     else
       if @item.save
         redirect_to drafts_path, notice: t("items.update.success"), status: :see_other
