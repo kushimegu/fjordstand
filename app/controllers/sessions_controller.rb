@@ -6,11 +6,11 @@ class SessionsController < ApplicationController
       reset_session
       log_in user
     end
-    redirect_to items_path
+    redirect_to items_path, notice: "ログインしました"
   end
 
   def destroy
     reset_session
-    redirect_to root_path
+    redirect_to root_path, notice: "ログアウトしました"
   end
 end

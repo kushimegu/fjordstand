@@ -49,10 +49,3 @@ ja:
         draft:
           update: '上書き保存する'
           new: '下書きに保存する'
-  items:
-    create:
-      success: '商品を登録しました'
-    update:
-      success: '商品を更新しました'
-    destroy:
-      success: '商品を削除しました'

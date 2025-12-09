@@ -39,7 +39,7 @@ class ItemsController < ApplicationController
       if @item.valid?(:publish)
         @item.status = :published
         @item.save!
-        redirect_to @item, notice: t("items.create.success")
+        redirect_to @item, notice: "商品を登録しました"
       else
         render :new, status: :unprocessable_content
       end
@@ -73,7 +73,7 @@ class ItemsController < ApplicationController
       if @item.valid?(:publish)
         @item.status = :published
         @item.save!
-        redirect_to @item, notice: t("items.update.success"), status: :see_other
+        redirect_to @item, notice: "商品を更新しました", status: :see_other
       else
         render :edit, status: :unprocessable_content
       end
@@ -84,7 +84,7 @@ class ItemsController < ApplicationController
       redirect_to listings_path, notice: "商品を非公開にしました", status: :see_other
     else
       if @item.save
-        redirect_to drafts_path, notice: t("items.update.success"), status: :see_other
+        redirect_to drafts_path, notice: "商品を更新しました", status: :see_other
       else
         render :edit, status: :unprocessable_content
       end
@@ -98,7 +98,7 @@ class ItemsController < ApplicationController
     if @item.draft?
       redirect_to drafts_path, notice: "下書きを削除しました", status: :see_other
     else
-      redirect_to items_path, notice: t("items.destroy.success"), status: :see_other
+      redirect_to items_path, notice: "商品を削除しました", status: :see_other
     end
   end
 
