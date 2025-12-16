@@ -35,7 +35,7 @@ class Item < ApplicationRecord
   def other_user_for(current_user)
     seller = user
     winner = entries.find_by(status: :won).user
-    [seller, winner].find{ |user| user != current_user }
+    [ seller, winner ].find { |user| user != current_user }
   end
 
   private

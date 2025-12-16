@@ -8,7 +8,8 @@ h1.font-bold.text-2xl.my-2.text-center 通知一覧
       data: { action_button_target: "button", target: "all", action: "click->action-button#toggle", turbo_frame: "notifications" }
     - has_unread = current_user.notifications.unread.exists?
     = link_to read_all_notifications_path,
-      class: "cursor-pointer px-3 py-2 rounded font-semibold border #{has_unread ? 'text-cyan-600 border-cyan-600 hover:opacity-80' : 'text-gray-400 border-gray-400 pointer-events-none'}" do
+      class: "cursor-pointer px-3 py-2 rounded font-semibold border \
+      #{has_unread ? 'text-cyan-600 border-cyan-600 hover:opacity-80' : 'text-gray-400 border-gray-400 pointer-events-none'}" do
       | 全て既読にする
   = turbo_frame_tag "notifications", data: { turbo_action: :advance } do
     - if @notifications.empty?
