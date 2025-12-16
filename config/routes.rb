@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
-  get "transactions/index"
+  resources :notifications, only: [:index] do
+    get :read, on: :member
+    get :read_all, on: :collection
+  end
   resources :transactions, only: [:index] do
     resources :messages, only: %i[index create]
   end

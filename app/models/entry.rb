@@ -1,6 +1,7 @@
 class Entry < ApplicationRecord
   belongs_to :user
   belongs_to :item
+  has_many :notifications, as: :notifiable, dependent: :destroy
 
   enum :status, { applied: 0, won: 1, lost: 2 }
 

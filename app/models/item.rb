@@ -3,6 +3,7 @@ class Item < ApplicationRecord
   has_many_attached :images
   has_many :entries, dependent: :destroy
   has_many :messages, dependent: :destroy
+  has_many :notifications, as: :notifiable, dependent: :destroy
 
   enum :shipping_fee_payer, { buyer: 0, seller: 1 }
   enum :status, { draft: 0, published: 1, sold: 2, closed: 3 }
@@ -22,7 +23,7 @@ class Item < ApplicationRecord
   validate :deadline_today_or_later, on: :publish
   validate :deadline_not_change_earlier_after_published, on: :publish
 
-  scope :expired, -> { where("entry_deadline_at < ?", Time.current.beginning_of_day).where(status: :published) }
+  scope :expired, -> { where("entry_deadline_at < ?", Time.current).where(status: :published) }
   scope :by_target, ->(target) {
   if target.present? && statuses.key?(target)
     where(status: target)
@@ -30,6 +31,13 @@ class Item < ApplicationRecord
     all
   end
   }
+
+  def other_user_for(current_user)
+    seller = user
+    winner = entries.find_by(status: :won).user
+    [seller, winner].find{ |user| user != current_user }
+  end
+
   private
 
   def set_entry_deadline_at_end_of_day
