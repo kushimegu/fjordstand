@@ -4,9 +4,9 @@ export default class extends Controller {
   static targets = ['button'];
 
   connect() {
-    const params = new URLSearchParams(window.location.search)
-    const target = params.get("target") || "all"
-    const targetButton = this.element.querySelector(`[data-target="${target}"]`)
+    const params = new URLSearchParams(window.location.search);
+    const target = params.get('target') || 'all';
+    const targetButton = this.element.querySelector(`[data-target="${target}"]`);
     targetButton.classList.add('text-cyan-600', 'border-b-2', 'border-cyan-600');
   }
 
