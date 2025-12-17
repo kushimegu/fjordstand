@@ -22,18 +22,14 @@ class Notification < ApplicationRecord
     end
   end
 
-  def url
+  def link
     case notifiable
     when Message
       Rails.application.routes.url_helpers.transaction_messages_path(notifiable.item)
     when Entry
       Rails.application.routes.url_helpers.transaction_messages_path(notifiable.item)
     when Item
-      if notifiable.sold?
-        Rails.application.routes.url_helpers.transaction_messages_path(notifiable)
-      else
-        Rails.application.routes.url_helpers.item_path(notifiable)
-      end
+      item_notification_link
     end
   end
 
@@ -49,9 +45,17 @@ class Notification < ApplicationRecord
 
   def item_notification_message
     if notifiable.sold?
-      "「#{notifiable.title}」の抽選が完了し、当選者が決まりました。"
+      "「#{notifiable.title}」の抽選が完了し、当選者が決まりました。連絡ページから当選者へご連絡ください。"
     else
-      "「#{notifiable.title}」に購入希望者がいなかったため当選者なしで公開終了しました。"
+      "「#{notifiable.title}」に購入希望者がいなかったため、当選者なしで公開終了しました。"
+    end
+  end
+
+  def item_notification_link
+    if notifiable.sold?
+      Rails.application.routes.url_helpers.transaction_messages_path(notifiable)
+    else
+      Rails.application.routes.url_helpers.item_path(notifiable)
     end
   end
 end

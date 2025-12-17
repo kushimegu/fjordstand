@@ -3,7 +3,7 @@
     = link_to "FjordStand", items_path, class: "font-bold text-2xl text-cyan-600"
     .flex.items-center.gap-1[data-controller="hamburger"]
       = link_to "出品する", new_item_path, class: "px-3 py-2.5 rounded bg-cyan-600 text-white font-semibold hover:opacity-80"
-      - notifications = current_user.notifications.unread.exists? ? notifications_path(target: "unread") : notifications_path
+      - notifications = current_user.notifications.unread.exists? ? notifications_path(status: "unread") : notifications_path
       = link_to notifications, class: "relative p-2 cursor-pointer rounded hover:bg-gray-100"
         svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-7 text-gray-700"
           path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6

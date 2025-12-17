@@ -1,12 +1,14 @@
 class NotificationsController < ApplicationController
   def index
-    @notifications = current_user.notifications.by_target(params[:target]).order(created_at: :desc)
+    @notifications = current_user.notifications
+                                  .by_target(params[:status])
+                                  .order(created_at: :desc)
   end
 
   def read
     notification = current_user.notifications.find(params[:id])
     notification.update(read: true)
-    redirect_to notification.url
+    redirect_to notification.link
   end
 
   def read_all

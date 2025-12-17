@@ -5,7 +5,7 @@ export default class extends Controller {
 
   connect() {
     const params = new URLSearchParams(window.location.search);
-    const target = params.get('target') || 'all';
+    const target = params.get('status') || 'all';
     const targetButton = this.element.querySelector(`[data-target="${target}"]`);
     targetButton.classList.add('text-cyan-600', 'border-b-2', 'border-cyan-600');
   }
