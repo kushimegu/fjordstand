@@ -14,7 +14,7 @@ class Notification < ApplicationRecord
   def message
     case notifiable
     when Message
-      "#{notifiable.item.other_user_for(user).name}さんからメッセージが届きました。"
+      "#{notifiable.item.other_user_for(user).name}さんから「#{notifiable.item.title}」についてメッセージが届きました。"
     when Entry
       entry_notification_message
     when Item
@@ -27,7 +27,7 @@ class Notification < ApplicationRecord
     when Message
       Rails.application.routes.url_helpers.transaction_messages_path(notifiable.item)
     when Entry
-      Rails.application.routes.url_helpers.transaction_messages_path(notifiable.item)
+      entry_notification_link
     when Item
       item_notification_link
     end
@@ -47,7 +47,15 @@ class Notification < ApplicationRecord
     if notifiable.sold?
       "「#{notifiable.title}」の抽選が完了し、当選者が決まりました。連絡ページから当選者へご連絡ください。"
     else
-      "「#{notifiable.title}」に購入希望者がいなかったため、当選者なしで公開終了しました。"
+      "「#{notifiable.title}」は当選者なしで公開終了しました。"
+    end
+  end
+
+  def entry_notification_link
+    if notifiable.won?
+      Rails.application.routes.url_helpers.transaction_messages_path(notifiable.item)
+    else
+      Rails.application.routes.url_helpers.item_path(notifiable.item)
     end
   end
 
