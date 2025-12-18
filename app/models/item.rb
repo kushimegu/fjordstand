@@ -15,13 +15,15 @@ class Item < ApplicationRecord
   validates :payment_method, presence: true, on: :publish
   validates :entry_deadline_at, presence: true, on: :publish
   validates :images, attached: { message: "を1枚以上選択してください" }, on: :publish
+  validate :price_not_change_after_published, on: :publish
+  validate :deadline_today_or_later, on: :publish
+  validate :deadline_not_change_earlier_after_published, on: :publish
+
   validates :images, limit: { max: 5 }, content_type: [ "image/png", "image/jpeg" ], size: { less_than: 5.megabytes }
 
   before_save :set_entry_deadline_at_end_of_day
 
-  validate :price_not_change_after_published, on: :publish
-  validate :deadline_today_or_later, on: :publish
-  validate :deadline_not_change_earlier_after_published, on: :publish
+  after_update :notify_destroy_entries, if: :saved_change_status_from_published_to_closed?
 
   scope :expired, -> { where("entry_deadline_at < ?", Time.current).where(status: :published) }
   scope :by_target, ->(target) {
@@ -67,5 +69,17 @@ class Item < ApplicationRecord
         errors.add(:entry_deadline_at, "は元の締切日以降に設定してください")
       end
     end
+  end
+
+  def saved_change_status_from_published_to_closed?
+    saved_change_to_attribute?(:status, from: :published, to: :closed)
+  end
+
+  def notify_destroy_entries
+    entries.each do |entry|
+      Notification.create!(user: entry.user, notifiable: self)
+    end
+
+    entries.destroy_all
   end
 end

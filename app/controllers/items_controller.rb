@@ -80,7 +80,6 @@ class ItemsController < ApplicationController
     elsif params[:close]
       @item.status = :closed
       @item.save!
-      @item.entries.destroy_all
       redirect_to listings_path, notice: "商品を非公開にしました", status: :see_other
     else
       if @item.save
