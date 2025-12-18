@@ -65,14 +65,17 @@ RSpec.describe "Notifications", type: :request do
   end
 
   describe "GET /read" do
-    let!(:unread_notification) { create(:notification, :for_item, user: seller, notifiable: sold_item, read: false)}
+    let!(:unread_notification1) { create(:notification, :for_item, user: seller, notifiable: sold_item, read: false)}
+    let!(:unread_notification2) { create(:notification, :for_item, user: seller, notifiable: closed_item, read: false)}
 
     it "updates read status to true and redirect to notification link" do
-      expect(unread_notification.read).to be false
-      get read_notification_path(unread_notification)
+      expect(unread_notification1.read).to be false
+      expect(unread_notification2.read).to be false
+      get read_notification_path(unread_notification1)
 
-      expect(unread_notification.reload.read).to be true
-      expect(response).to redirect_to(unread_notification.link)
+      expect(unread_notification1.reload.read).to be true
+      expect(unread_notification2.reload.read).to be false
+      expect(response).to redirect_to(unread_notification1.link)
     end
   end
 
