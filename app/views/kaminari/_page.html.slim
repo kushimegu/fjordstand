@@ -1,0 +1,4 @@
+- if page.current?
+  span.w-9.h-9.m-1.inline-flex.items-center.justify-center.rounded-full.bg-gray-100.text-gray-500 = page
+- else
+  = link_to page, url, remote: remote, rel: page.rel, class: "m-1 w-9 h-9 inline-flex items-center justify-center cursor-pointer rounded-full text-gray-500 hover:bg-gray-100"
