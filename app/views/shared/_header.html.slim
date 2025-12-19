@@ -10,7 +10,7 @@
           9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
         - if current_user.notifications.unread.exists?
           - display_count = current_user.notifications.unread.count > 99 ? "99+" : current_user.notifications.unread.count
-          span.absolute.top-1.left-5.5.min-w-5.px-1.bg-red-500.text-white.text-xs.font-bold.rounded-full.flex.items-center.justify-center
+          span.absolute.top-1.left-5.min-w-5.px-1.bg-red-500.text-white.text-xs.font-bold.rounded-full.flex.items-center.justify-center
             = display_count
       .relative[data-hamburger-target="button" data-action="click->hamburger#toggle" aria-expanded="false" aria-controls="header__nav"]
         .flex.items-center.cursor-pointer.px-2.py-1.rounded.h-11.hover:bg-gray-100
@@ -21,4 +21,4 @@
           = link_to "出品した商品一覧", listings_path, class: "block px-4 py-2 text-gray-700 hover:bg-gray-50"
           = link_to "購入希望商品一覧", entries_path, class: "block px-4 py-2 text-gray-700 hover:bg-gray-50"
           = link_to "連絡ページ一覧", transactions_path, class: "block px-4 py-2 text-gray-700 hover:bg-gray-50"
-          = link_to "ログアウト", logout_path, method: :delete, class: "block px-4 py-2 text-red-400 hover:bg-gray-50"
+          = link_to "ログアウト", logout_path, data: { turbo_method: :delete }, class: "block px-4 py-2 text-red-400 hover:bg-gray-50"
