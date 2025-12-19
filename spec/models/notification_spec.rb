@@ -108,7 +108,7 @@ RSpec.describe Notification, type: :model do
 
     context "when notifiable is lost entry" do
       it "returns link to item" do
-        loser = create(:user, uid: "3")
+        loser = create(:user)
         lost_entry = create(:entry, user: loser, item: sold_item, status: :lost)
         notification = create(:notification, :for_entry, notifiable: lost_entry, user: loser)
 

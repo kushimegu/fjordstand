@@ -2,7 +2,7 @@ h1.font-bold.text-2xl.my-2.text-center 通知一覧
 .w-full.max-w-2xl.mx-auto
   .flex.justify-between.items-center.border-b.border-gray-300.mb-2[data-controller="action-button"]
     .flex
-      = link_to "未読", notifications_path(status: "unread"), class: "text-lg px-4 py-2 hover:bg-gray-100 h-[46px]",
+      = link_to "未読", notifications_path(status: "unread"), class: "text-lg px-4 py-2 hover:bg-gray-100",
       data: { action_button_target: "button", target: "unread", action: "click->action-button#toggle", turbo_frame: "notifications" }
       = link_to "全て", notifications_path, class: "text-lg px-4 py-2 hover:bg-gray-100",
       data: { action_button_target: "button", target: "all", action: "click->action-button#toggle", turbo_frame: "notifications" }

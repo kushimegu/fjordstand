@@ -17,14 +17,14 @@ RSpec.describe "Notifications", type: :request do
       it "returns current users notifications with http success" do
         unread_notification = create(:notification, :for_item, user: seller, notifiable: sold_item)
         read_notification = create(:notification, :for_item, user: seller, notifiable: closed_item, read: true)
-        other_notification = create(:notification, :for_entry, notifiable: entry, user: buyer)
+        others_notification = create(:notification, :for_entry, notifiable: entry, user: buyer)
 
         get notifications_path
         expect(response).to have_http_status(:success)
 
         expect(response.body).to include(unread_notification.message)
         expect(response.body).to include(read_notification.message)
-        expect(response.body).not_to include(other_notification.message)
+        expect(response.body).not_to include(others_notification.message)
       end
     end
 
@@ -66,30 +66,30 @@ RSpec.describe "Notifications", type: :request do
 
   describe "PATCH /read" do
     it "updates read status to true and redirect to notification link" do
-      unread_notification1 = create(:notification, :for_item, user: seller, notifiable: sold_item)
-      unread_notification2 = create(:notification, :for_item, user: seller, notifiable: closed_item)
+      unread_notification_1 = create(:notification, :for_item, user: seller, notifiable: sold_item)
+      unread_notification_2 = create(:notification, :for_item, user: seller, notifiable: closed_item)
 
-      expect(unread_notification1.read).to be false
-      expect(unread_notification2.read).to be false
-      patch read_notification_path(unread_notification1)
+      expect(unread_notification_1.read).to be false
+      expect(unread_notification_2.read).to be false
+      patch read_notification_path(unread_notification_1)
 
-      expect(unread_notification1.reload.read).to be true
-      expect(unread_notification2.reload.read).to be false
-      expect(response).to redirect_to(unread_notification1.link)
+      expect(unread_notification_1.reload.read).to be true
+      expect(unread_notification_2.reload.read).to be false
+      expect(response).to redirect_to(unread_notification_1.link)
     end
   end
 
   describe "PATCH /read_all" do
     it "updates all notifications status to read and redirect to notifications path" do
-      unread_notification1 = create(:notification, :for_item, user: seller, notifiable: sold_item)
-      unread_notification2 = create(:notification, :for_item, user: seller, notifiable: closed_item)
+      unread_notification_1 = create(:notification, :for_item, user: seller, notifiable: sold_item)
+      unread_notification_2 = create(:notification, :for_item, user: seller, notifiable: closed_item)
 
-      expect(unread_notification1.read).to be false
-      expect(unread_notification2.read).to be false
+      expect(unread_notification_1.read).to be false
+      expect(unread_notification_2.read).to be false
       patch read_all_notifications_path
 
-      expect(unread_notification1.reload.read).to be true
-      expect(unread_notification2.reload.read).to be true
+      expect(unread_notification_1.reload.read).to be true
+      expect(unread_notification_2.reload.read).to be true
       expect(response).to redirect_to(notifications_path)
     end
   end
