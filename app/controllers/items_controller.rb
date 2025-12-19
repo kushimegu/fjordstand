@@ -73,14 +73,13 @@ class ItemsController < ApplicationController
       if @item.valid?(:publish)
         @item.status = :published
         @item.save!
-        redirect_to @item, notice: "商品を更新しました", status: :see_other
+        redirect_to @item, notice: "商品を出品しました", status: :see_other
       else
         render :edit, status: :unprocessable_content
       end
     elsif params[:close]
       @item.status = :closed
       @item.save!
-      @item.entries.destroy_all
       redirect_to listings_path, notice: "商品を非公開にしました", status: :see_other
     else
       if @item.save

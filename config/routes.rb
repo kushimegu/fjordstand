@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
-  get "transactions/index"
+  resources :notifications, only: [:index] do
+    patch :read, on: :member
+    patch :read_all, on: :collection
+  end
   resources :transactions, only: [:index] do
     resources :messages, only: %i[index create]
   end
@@ -13,5 +16,5 @@ Rails.application.routes.draw do
   resource :session, only: %i[create destroy]
   get 'auth/:provider/callback', to: 'sessions#create'
   get 'auth/failure', to: redirect('/')
-  get 'logout', to: 'sessions#destroy', as: 'logout'
+  delete 'logout', to: 'sessions#destroy', as: 'logout'
 end

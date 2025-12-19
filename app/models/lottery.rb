@@ -5,12 +5,19 @@ class Lottery
 
   def run
     if @item.entries.exists?
-      winner = @item.entries.offset(rand(@item.entries.count)).first
-      @item.entries.where.not(id: winner.id).update_all(status: :lost)
+      entries = @item.entries
+      winner = entries.offset(rand(entries.count)).first
+      losers = entries.where.not(id: winner.id)
+      losers.update_all(status: :lost)
       winner.update!(status: :won)
       @item.update!(status: :sold)
+      entries.each do |entry|
+        Notification.create!(user: entry.user, notifiable: entry)
+      end
+      Notification.create!(user: @item.user, notifiable: @item)
     else
       @item.update!(status: :closed)
+      Notification.create!(user: @item.user, notifiable: @item)
     end
   end
 end

@@ -1,0 +1,23 @@
+h1.font-bold.text-2xl.my-2.text-center 通知一覧
+.w-full.max-w-2xl.mx-auto
+  .flex.justify-between.items-center.border-b.border-gray-300.mb-2[data-controller="action-button"]
+    .flex
+      = link_to "未読", notifications_path(status: "unread"), class: "text-lg px-4 py-2 hover:bg-gray-100",
+      data: { action_button_target: "button", target: "unread", action: "click->action-button#toggle", turbo_frame: "notifications" }
+      = link_to "全て", notifications_path, class: "text-lg px-4 py-2 hover:bg-gray-100",
+      data: { action_button_target: "button", target: "all", action: "click->action-button#toggle", turbo_frame: "notifications" }
+    - has_unread = current_user.notifications.unread.exists?
+    = link_to read_all_notifications_path, data: { turbo_method: :patch },
+      class: "cursor-pointer px-3 py-2 rounded font-semibold border \
+      #{has_unread ? 'text-cyan-600 border-cyan-600 hover:opacity-80' : 'text-gray-400 border-gray-400 pointer-events-none'}" do
+      | 全て既読にする
+  = turbo_frame_tag "notifications", data: { turbo_action: :advance } do
+    - if @notifications.empty?
+      p.mt-20.text-center.text-xl 通知はありません
+    - @notifications.each do |notification|
+      = link_to read_notification_path(notification), data: { turbo_method: :patch, turbo_frame: "_top" }, class: "block my-2" do
+        .container.bg-white.shadow.rounded.p-4.hover:bg-gray-50
+          - if !notification.read?
+            span.px-2.py-1.mr-1.text-sm.font-semibold.text-red-400.bg-red-100.rounded 未読
+          = notification.message
+          .text-sm.text-gray-500 = l notification.created_at

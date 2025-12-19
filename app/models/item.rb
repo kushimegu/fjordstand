@@ -3,6 +3,7 @@ class Item < ApplicationRecord
   has_many_attached :images
   has_many :entries, dependent: :destroy
   has_many :messages, dependent: :destroy
+  has_many :notifications, as: :notifiable, dependent: :destroy
 
   enum :shipping_fee_payer, { buyer: 0, seller: 1 }
   enum :status, { draft: 0, published: 1, sold: 2, closed: 3 }
@@ -14,15 +15,17 @@ class Item < ApplicationRecord
   validates :payment_method, presence: true, on: :publish
   validates :entry_deadline_at, presence: true, on: :publish
   validates :images, attached: { message: "を1枚以上選択してください" }, on: :publish
-  validates :images, limit: { max: 5 }, content_type: [ "image/png", "image/jpeg" ], size: { less_than: 5.megabytes }
-
-  before_save :set_entry_deadline_at_end_of_day
-
   validate :price_not_change_after_published, on: :publish
   validate :deadline_today_or_later, on: :publish
   validate :deadline_not_change_earlier_after_published, on: :publish
 
-  scope :expired, -> { where("entry_deadline_at < ?", Time.current.beginning_of_day).where(status: :published) }
+  validates :images, limit: { max: 5 }, content_type: [ "image/png", "image/jpeg" ], size: { less_than: 5.megabytes }
+
+  before_save :set_entry_deadline_at_end_of_day
+
+  after_update :notify_destroy_entries, if: :saved_change_status_from_published_to_closed?
+
+  scope :expired, -> { where("entry_deadline_at < ?", Time.current).where(status: :published) }
   scope :by_target, ->(target) {
   if target.present? && statuses.key?(target)
     where(status: target)
@@ -30,6 +33,13 @@ class Item < ApplicationRecord
     all
   end
   }
+
+  def other_user_for(current_user)
+    seller = user
+    winner = entries.find_by(status: :won).user
+    [ seller, winner ].find { |user| user != current_user }
+  end
+
   private
 
   def set_entry_deadline_at_end_of_day
@@ -59,5 +69,17 @@ class Item < ApplicationRecord
         errors.add(:entry_deadline_at, "は元の締切日以降に設定してください")
       end
     end
+  end
+
+  def saved_change_status_from_published_to_closed?
+    saved_change_to_attribute?(:status, from: :published, to: :closed)
+  end
+
+  def notify_destroy_entries
+    entries.each do |entry|
+      Notification.create!(user: entry.user, notifiable: self)
+    end
+
+    entries.destroy_all
   end
 end

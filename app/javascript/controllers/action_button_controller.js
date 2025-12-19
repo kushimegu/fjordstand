@@ -4,11 +4,10 @@ export default class extends Controller {
   static targets = ['button'];
 
   connect() {
-    this.buttonTargets.forEach((button) => {
-      if (button.textContent.trim() === '全て') {
-        button.classList.add('text-cyan-600', 'border-b-2', 'border-cyan-600');
-      }
-    });
+    const params = new URLSearchParams(window.location.search);
+    const target = params.get('status') || 'all';
+    const targetButton = this.element.querySelector(`[data-target="${target}"]`);
+    targetButton.classList.add('text-cyan-600', 'border-b-2', 'border-cyan-600');
   }
 
   toggle(event) {
