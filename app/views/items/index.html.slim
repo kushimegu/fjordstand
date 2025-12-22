@@ -2,8 +2,10 @@
   .mt-20.text-center.gap-y-3
     h.text-2xl 現在購入希望を出せる商品がありません
     p.pt-2 出品するボタンから商品を出品してみましょう
-#items.grid.grid-cols-1.sm:grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-4
-  - @items.each do |item|
-    = link_to item, class: "block" do
-      .container.bg-white.shadow.rounded.p-4.hover:bg-gray-50
-        == render item
+- else
+  #items.grid.grid-cols-1.sm:grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-4
+    - @items.each do |item|
+      = link_to item, class: "block" do
+        .container.bg-white.shadow.rounded.p-4.hover:bg-gray-50
+          == render item
+  = paginate @items

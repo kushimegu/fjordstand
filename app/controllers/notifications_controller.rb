@@ -3,6 +3,7 @@ class NotificationsController < ApplicationController
     @notifications = current_user.notifications
                                   .by_target(params[:status])
                                   .order(created_at: :desc)
+                                  .page(params[:page])
   end
 
   def read
