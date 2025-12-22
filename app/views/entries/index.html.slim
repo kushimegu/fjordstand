@@ -12,6 +12,7 @@ h1.font-bold.text-2xl.my-2.text-center 購入希望商品一覧
   - if @entries.empty?
     p.mt-20.text-center.text-xl 該当する商品はありません
   - else
+    = paginate @entries
     .grid.grid-cols-1.sm:grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-4
       - @entries.each do |entry|
         = link_to entry.item, data: { turbo: false }, class: "block" do
@@ -24,3 +25,4 @@ h1.font-bold.text-2xl.my-2.text-center 購入希望商品一覧
               - when "lost"
                 span.inline-block.px-2.py-1.text-sm.font-semibold.text-red-400.bg-red-100.rounded 落選
             = render "items/item", item: entry.item
+    = paginate @entries

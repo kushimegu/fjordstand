@@ -3,7 +3,7 @@ class ItemsController < ApplicationController
   before_action :ensure_user, only: %i[edit update destroy]
 
   def drafts
-    @items = current_user.items.draft.order(updated_at: :desc)
+    @items = current_user.items.draft.order(updated_at: :desc).page(params[:page])
   end
 
   def listings
@@ -11,11 +11,17 @@ class ItemsController < ApplicationController
                           .where.not(status: :draft)
                           .by_target(params[:status])
                           .order(entry_deadline_at: :asc)
+                          .page(params[:page])
+                          .per(16)
   end
 
   # GET /items
   def index
-    @items = Item.published.where("entry_deadline_at >= ?", Time.current.beginning_of_day).order(entry_deadline_at: :asc)
+    @items = Item.published
+                  .where("entry_deadline_at >= ?", Time.current.beginning_of_day)
+                  .order(entry_deadline_at: :asc)
+                  .page(params[:page])
+                  .per(20)
   end
 
   # GET /items/1

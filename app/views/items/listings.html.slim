@@ -12,6 +12,7 @@ h1.font-bold.text-2xl.my-2.text-center 出品した商品一覧
   - if @items.empty?
     p.mt-20.text-center.text-xl 該当する商品はありません
   - else
+    = paginate @items
     .grid.grid-cols-1.sm:grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-4
       - @items.each do |item|
         = link_to item, data: { turbo: false }, class: "block" do
@@ -24,3 +25,4 @@ h1.font-bold.text-2xl.my-2.text-center 出品した商品一覧
               - when "closed"
                 span.inline-block.px-2.py-1.text-sm.font-semibold.text-red-400.bg-red-100.rounded 公開終了
             == render item
+    = paginate @items

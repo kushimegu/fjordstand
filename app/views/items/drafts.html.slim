@@ -2,6 +2,7 @@ h1.font-bold.text-2xl.my-2.text-center 下書き一覧
 - if @items.empty?
   p.mt-20.text-center.text-xl 下書きはありません
 .w-full.max-w-2xl.mx-auto.px-4
+  = paginate @items
   - @items.each do |item|
     = link_to edit_item_path(item), class: "block my-2" do
       .container.bg-white.shadow.rounded.p-4.hover:bg-gray-50.flex.gap-x-4
@@ -21,3 +22,4 @@ h1.font-bold.text-2xl.my-2.text-center 下書き一覧
           div
             = l item.updated_at
             span 更新
+  = paginate @items

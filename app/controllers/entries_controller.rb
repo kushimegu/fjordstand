@@ -4,6 +4,8 @@ class EntriesController < ApplicationController
                             .includes(:item)
                             .by_target(params[:status])
                             .order("items.entry_deadline_at DESC")
+                            .page(params[:page])
+                            .per(16)
   end
 
   # POST /entries
