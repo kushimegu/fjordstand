@@ -8,7 +8,7 @@
     = form.text_field :title, maxlength: 255,
       class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500 \
       read-only:bg-gray-100 read-only:focus:border-gray-300", readonly: item.published?
-    = render "error_messages", model: item, attribute: :title
+    = render "shared/error_messages", model: item, attribute: :title
     - if item.published?
       = form.label "商品名の追記", style: "display: block", class: "text-left pt-2"
       = form.text_field :title_append, class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500"
@@ -29,7 +29,7 @@
     = form.file_field :images, accept: "image/jpeg,image/png", multiple: true, direct_upload: true,
     data: { "image-preview-target": "input", action: "change->image-preview#previewImage" }
     .grid.grid-cols-3.md:grid-cols-5.gap-3 data-image-preview-target="preview"
-    = render "error_messages", model: item, attribute: :images
+    = render "shared/error_messages", model: item, attribute: :images
 
   .mt-4
     .flex.items-center.gap-x-2
@@ -40,7 +40,7 @@
       class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500 min-h-42 field-sizing-content \
       placeholder-gray-300 read-only:bg-gray-100 read-only:focus:border-gray-300 read-only:min-h-[46px] read-only:field-sizing-content",
       readonly: item.published?
-    = render "error_messages", model: item, attribute: :description
+    = render "shared/error_messages", model: item, attribute: :description
     - if item.published?
       = form.label "商品説明の追記", style: "display: block", class: "text-left"
       = form.textarea :description_append,
@@ -53,7 +53,7 @@
     = form.number_field :price,
       class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500 \
       read-only:bg-gray-100 read-only:focus:border-gray-300", readonly: item.published?
-    = render "error_messages", model: item, attribute: :price
+    = render "shared/error_messages", model: item, attribute: :price
 
   .mt-4
     .flex.items-center.gap-x-2
@@ -70,7 +70,7 @@
         .pointer-events-none.absolute.inset-y-0.right-0.flex.items-center.pr-3
           svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 text-gray-500"
             path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"
-      = render "error_messages", model: item, attribute: :shipping_fee_payer
+      = render "shared/error_messages", model: item, attribute: :shipping_fee_payer
 
   .mt-4
     = form.label :payment_method, style: "display: block", class: "font-bold text-lg block text-left"
@@ -82,7 +82,7 @@
           = form.label "お支払い方法の追記", style: "display: block", class: "text-left pt-2"
           = form.text_field :payment_method_append,
             class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500"
-    = render "error_messages", model: item, attribute: :payment_method
+    = render "shared/error_messages", model: item, attribute: :payment_method
 
   .mt-4
     .flex.items-center.gap-x-2
@@ -93,7 +93,7 @@
     = form.date_field :entry_deadline_at,
       class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500",
       min: [ Date.current, saved_deadline ].compact.max
-    = render "error_messages", model: item, attribute: :entry_deadline_at
+    = render "shared/error_messages", model: item, attribute: :entry_deadline_at
 
   .mt-6
     - if item.draft?
