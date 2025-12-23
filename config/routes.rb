@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   get "/listings", to: "items#listings"
   resources :items do
     resource :entries, only: %i[create destroy]
+    resources :comments, only: %i[create update]
   end
   root to: "pages#home"
   resource :session, only: %i[create destroy]
