@@ -2,10 +2,10 @@
   ul.error-messages style="color: red"
     - @entry.errors.full_messages.each do |msg|
       li = msg
-.container
-  .flex.flex-col.space-y-2.lg:grid.grid-cols-2.mt-6.gap-6.px-2
-    - if @item.images.attached?
-      .flex.flex-col.space-y-2.items-center[data-controller="image-gallery"]
+.flex.flex-col.space-y-2.lg:grid.grid-cols-2.mt-4.gap-6.px-2
+  - if @item.images.attached?
+    .relative
+      .flex.flex-col.space-y-2.items-center.lg:sticky.top-20[data-controller="image-gallery"]
         .aspect-square.h-108.flex.items-center.justify-center.bg-gray-100.relative
           = image_tag @item.images.first.variant(resize_to_limit: [ 400, 400 ]).processed, id: "big-image", data: { image_gallery_target: "bigImage" },
           class: "object-contain w-full h-full"
@@ -27,69 +27,91 @@
                 class: "thumbnail object-contain w-full h-full hover:ring hover:ring-gray-300 cursor-pointer",
                 data: { image_gallery_target: "thumbnail", action: "click->image-gallery#show", image: url_for(image) }
 
-    div
-      h2.text-3xl = @item.title
+  div
+    h2.text-3xl = @item.title
 
-      - if @item.price.present?
-        .text-2xl.mt-2.flex.items-center
-          = number_to_currency(@item.price)
-          span.text-base.pl-1 = I18n.t("views.item.shipping_fee_label.#{@item.shipping_fee_payer}")
-      - else
-        .text-xl.py-2
-          span 価格未設定
+    - if @item.price.present?
+      .text-2xl.mt-2.flex.items-center
+        = number_to_currency(@item.price)
+        span.text-base.pl-1 = I18n.t("views.item.shipping_fee_label.#{@item.shipping_fee_payer}")
+    - else
+      .text-xl.py-2
+        span 価格未設定
 
-      - if @item.entry_deadline_at.present?
-        .text-xl.py-2
-          = l @item.entry_deadline_at.to_date
-          span 締切
-          - if @item.entry_deadline_at < Time.current
-            span.pl-2.text-red-400 締め切りました
-      - else
-        .text-xl.py-2
-          span 締め切り未設定
+    - if @item.entry_deadline_at.present?
+      .text-xl.py-2
+        = l @item.entry_deadline_at.to_date
+        span 締切
+        - if @item.entry_deadline_at < Time.current
+          span.pl-2.text-red-400 締め切りました
+    - else
+      .text-xl.py-2
+        span 締め切り未設定
 
-      - if @item.user == current_user && @item.sold?
-        .flex.items-center
-          p.text-xl.text-cyan-600 抽選が完了しました！
-          = link_to "当選者との連絡ページへ", transaction_messages_path(@item), class: "underline text-cyan-600 hover:text-cyan-700"
+    - if @item.user == current_user && @item.sold?
+      .flex.items-center
+        p.text-xl.text-cyan-600 抽選が完了しました！
+        = link_to "当選者との連絡ページへ", transaction_messages_path(@item), class: "underline text-cyan-600 hover:text-cyan-700"
 
-      - if @item.user != current_user
-        - if @item.entry_deadline_at.presence && @item.entry_deadline_at >= Time.current
-          - if current_user.entry_for(@item)&.applied?
-            p.text-lg.text-cyan-600 購入希望を出しています
-            = button_to "購入希望を取り消す", item_entries_path(@item), method: :delete,
-            class: "w-full mx-auto px-3 py-2 rounded border border-gray-500 text-gray-500 font-semibold hover:bg-gray-50 cursor-pointer"
-          - else
-            = button_to "購入希望を申請する", item_entries_path(@item), method: :post,
-            class: "w-full mx-auto px-3 py-2 rounded bg-cyan-600 text-white font-semibold hover:opacity-80 cursor-pointer"
+    - if @item.user != current_user
+      - if @item.entry_deadline_at.presence && @item.entry_deadline_at >= Time.current
+        - if current_user.entry_for(@item)&.applied?
+          p.text-lg.text-cyan-600 購入希望を出しています
+          = button_to "購入希望を取り消す", item_entries_path(@item), method: :delete,
+          class: "w-full mx-auto px-3 py-2 rounded border border-gray-500 text-gray-500 font-semibold hover:bg-gray-50 cursor-pointer"
         - else
-          - if current_user.entry_for(@item)&.won?
-            .flex.items-center
-              p.text-xl.text-cyan-600 当選しました！
-              = link_to "出品者との連絡ページへ", transaction_messages_path(@item), class: "underline text-cyan-600 hover:text-cyan-700"
-          - elsif current_user.entry_for(@item)&.lost?
-            p.text-xl.text-red-400 落選しました
-          - elsif current_user.entry_for(@item)&.applied?
-            p.text-xl.text-cyan-600 購入希望中です
-          - else
-            p.text-xl 応募していません
+          = button_to "購入希望を申請する", item_entries_path(@item), method: :post,
+          class: "w-full mx-auto px-3 py-2 rounded bg-cyan-600 text-white font-semibold hover:opacity-80 cursor-pointer"
+      - else
+        - if current_user.entry_for(@item)&.won?
+          .flex.items-center
+            p.text-xl.text-cyan-600 当選しました！
+            = link_to "出品者との連絡ページへ", transaction_messages_path(@item), class: "underline text-cyan-600 hover:text-cyan-700"
+        - elsif current_user.entry_for(@item)&.lost?
+          p.text-xl.text-red-400 落選しました
+        - elsif current_user.entry_for(@item)&.applied?
+          p.text-xl.text-cyan-600 購入希望中です
+        - else
+          p.text-xl 応募していません
 
-      - if @item.payment_method.present?
-        p.mt-6.text-lg.border-b.border-gray-300 希望する支払い方法
-        p.text-lg.mt-1 = @item.payment_method
+    - if @item.payment_method.present?
+      p.mt-6.text-lg.border-b.border-gray-300 希望する支払い方法
+      p.text-lg.mt-1 = @item.payment_method
 
-      - if @item.description.present?
-        p.text-lg.mt-4.border-b.border-gray-300 商品説明
-        .mt-1 = simple_format(@item.description)
+    - if @item.description.present?
+      p.text-lg.mt-4.border-b.border-gray-300 商品説明
+      .mt-1 = simple_format(@item.description)
 
-      p.text-lg.mt-4.border-b.border-gray-300 出品者
-      .mt-2.flex.items-center.gap-2
-        = image_tag (@item.user.avatar_url.presence || "default-avatar.png"), class: "w-10 h-10 rounded-full"
-        = @item.user.name
+    p.text-lg.mt-4.border-b.border-gray-300 出品者
+    .mt-2.flex.items-center.gap-2
+      = image_tag (@item.user.avatar_url.presence || "default-avatar.png"), class: "w-10 h-10 rounded-full"
+      = @item.user.name
 
-      - if @item.user == current_user
-        .flex.justify-end.items-center.gap-2
-          - if !@item.sold?
-            = link_to "編集する", edit_item_path(@item),
-            class: "inline-block border border-gray-300 text-sm px-3 py-2 rounded hover:bg-gray-50"
-          = button_to "削除する", @item, method: :delete, class: "inline-block cursor-pointer text-sm text-gray-700 underline hover:text-red-400"
+    - if @item.user == current_user
+      .flex.justify-end.items-center.gap-2
+        - if !@item.sold?
+          = link_to "編集する", edit_item_path(@item),
+          class: "inline-block border border-gray-300 text-sm px-3 py-2 rounded hover:bg-gray-50"
+        = button_to "削除する", @item, method: :delete, class: "inline-block cursor-pointer text-sm text-gray-700 underline hover:text-red-400"
+
+    p.mt-4.text-lg.border-b.border-gray-300 コメント
+    - @item.comments.each do |comment|
+      .mt-4.flex.items-start.space-x-3
+        = image_tag (comment.user.avatar_url.presence || "default-avatar.png"), class: "w-10 h-10 rounded-full"
+        .flex-1.flex.flex-col.space-y-1.w-full
+          .px-2.flex.justify-between.items-center
+            span.text-lg = comment.user.name
+            span.text-sm.text-gray-500 = l comment.created_at
+          .px-3.py-2.rounded.bg-gray-100
+            = simple_format(comment.body)
+    = form_with(model: [ @item, @comment ], class: "my-6") do |form|
+      .flex.items-start.space-x-3
+        = image_tag (current_user.avatar_url.presence || "default-avatar.png"), class: "w-10 h-10 rounded-full"
+        .flex-1
+          = form.textarea :body,
+            class: "w-full rounded p-2 min-h-28 border border-gray-300 focus:outline-none focus:border-cyan-600 field-sizing-content",
+            placeholder: "コメントを入力...",
+            required: true
+          = render "shared/error_messages", model: @comment, attribute: :body
+          .flex.justify-center
+            = form.submit "送信する", class: "cursor-pointer w-1/2 border border-cyan-600 text-cyan-600 font-semibold px-3 py-1 rounded hover:bg-cyan-100"

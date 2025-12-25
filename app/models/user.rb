@@ -3,6 +3,7 @@ class User < ApplicationRecord
   has_many :entries, dependent: :destroy
   has_many :applied_items, through: :entries, source: :item
   has_many :messages, dependent: :destroy
+  has_many :comments, dependent: :destroy
   has_many :notifications, dependent: :destroy
 
   def self.from_omniauth(auth)

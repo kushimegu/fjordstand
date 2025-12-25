@@ -3,6 +3,7 @@ class Item < ApplicationRecord
   has_many_attached :images
   has_many :entries, dependent: :destroy
   has_many :messages, dependent: :destroy
+  has_many :comments, dependent: :destroy
   has_many :notifications, as: :notifiable, dependent: :destroy
 
   enum :shipping_fee_payer, { buyer: 0, seller: 1 }

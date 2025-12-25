@@ -22,6 +22,8 @@ ja:
         shipping_fee_payer: 送料負担
         payment_method: お支払い方法
         entry_deadline_at: 購入希望申請締切
+      comment:
+        body: コメント
     errors:
       messages:
         blank: 'を入力してください'
