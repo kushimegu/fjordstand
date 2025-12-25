@@ -35,7 +35,7 @@ class Entry < ApplicationRecord
 
   def cannot_apply_for_closed_item
     if item.closed?
-      errors.add(:base, "非公開の商品には応募できません")
+      errors.add(:base, "公開終了した商品には応募できません")
     end
   end
 end

@@ -38,7 +38,9 @@
       .text-xl.py-2
         = l @item.entry_deadline_at.to_date
         span 締切
-        - if @item.entry_deadline_at < Time.current
+        - if @item.closed?
+          span.pl-2.text-red-400 公開終了しました
+        - elsif @item.entry_deadline_at < Time.current
           span.pl-2.text-red-400 締め切りました
     - else
       .text-xl.py-2
@@ -58,8 +60,6 @@
         - else
           = button_to "購入希望を申請する", item_entries_path(@item), method: :post,
           class: "w-full mx-auto px-3 py-2 rounded bg-cyan-600 text-white font-semibold hover:opacity-80 cursor-pointer"
-      - elsif @item.closed?
-        p.text-xl この商品は公開終了しました
       - else
         - if current_user.entry_for(@item)&.won?
           .flex.items-center
