@@ -20,6 +20,6 @@ class User < ApplicationRecord
   end
 
   def entry_for(item)
-    entries.find_by(item: item)
+    entries.find_by(item_id: item.id)
   end
 end

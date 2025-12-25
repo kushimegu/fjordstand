@@ -8,7 +8,8 @@ class Entry < ApplicationRecord
   validates :user_id, uniqueness: { scope: :item_id }
 
   validate :cannot_apply_for_own_item
-  validate :cannot_apply_for_expired_item, on: :create
+  validate :cannot_apply_for_expired_item
+  validate :cannot_apply_for_closed_item
 
   scope :by_target, ->(target) {
   if target.present? && statuses.key?(target)
@@ -29,6 +30,12 @@ class Entry < ApplicationRecord
   def cannot_apply_for_expired_item
     if item.entry_deadline_at < Time.current
       errors.add(:base, "締切の過ぎた商品には応募できません")
+    end
+  end
+
+  def cannot_apply_for_closed_item
+    if item.closed?
+      errors.add(:base, "非公開の商品には応募できません")
     end
   end
 end
