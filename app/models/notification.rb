@@ -19,6 +19,8 @@ class Notification < ApplicationRecord
       entry_notification_message
     when Item
       item_notification_message
+    when Comment
+      "#{notifiable.user.name}さんが「#{notifiable.item.title}」についてコメントしました。"
     end
   end
 
@@ -30,6 +32,8 @@ class Notification < ApplicationRecord
       entry_notification_link
     when Item
       item_notification_link
+    when Comment
+      Rails.application.routes.url_helpers.item_path(notifiable.item)
     end
   end
 
