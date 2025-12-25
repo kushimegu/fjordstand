@@ -8,7 +8,7 @@ RSpec.describe Comment, type: :model do
       it "is invalid" do
         is_valid = comment.valid?
 
-        expect(is_valid).to eq false
+        expect(is_valid).to be false
         expect(comment.errors[:body]).to include("を入力してください")
       end
     end
@@ -23,7 +23,7 @@ RSpec.describe Comment, type: :model do
       it "sends notification to seller" do
         comment = build(:comment, user: other_user, item: item)
 
-        expect{ comment.save! }.to change{ seller.notifications.count }.by(1)
+        expect { comment.save! }.to change { seller.notifications.count }.by(1)
 
         notification = Notification.last
         expect(notification.user).to eq(seller)
@@ -35,7 +35,7 @@ RSpec.describe Comment, type: :model do
       it "does not send notification to seller" do
         comment = build(:comment, user: seller, item: item)
 
-        expect{ comment.save! }.not_to change{ seller.notifications.count }
+        expect { comment.save! }.not_to change { seller.notifications.count }
       end
     end
   end

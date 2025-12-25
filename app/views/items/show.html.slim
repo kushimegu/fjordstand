@@ -104,7 +104,7 @@
             span.text-sm.text-gray-500 = l comment.created_at
           .px-3.py-2.rounded.bg-gray-100
             = simple_format(comment.body)
-    = form_with(model: [@item, @comment], class: "my-6") do |form|
+    = form_with(model: [ @item, @comment ], class: "my-6") do |form|
       .flex.items-start.space-x-3
         = image_tag (current_user.avatar_url.presence || "default-avatar.png"), class: "w-10 h-10 rounded-full"
         .flex-1
@@ -113,6 +113,5 @@
             placeholder: "コメントを入力...",
             required: true
           = render "shared/error_messages", model: @comment, attribute: :body
-          .flex.justify-center 
+          .flex.justify-center
             = form.submit "送信する", class: "cursor-pointer w-1/2 border border-cyan-600 text-cyan-600 font-semibold px-3 py-1 rounded hover:bg-cyan-100"
-
