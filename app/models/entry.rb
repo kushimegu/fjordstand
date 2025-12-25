@@ -5,6 +5,8 @@ class Entry < ApplicationRecord
 
   enum :status, { applied: 0, won: 1, lost: 2 }
 
+  validates :user_id, uniqueness: { scope: :item_id }
+
   validate :cannot_apply_for_own_item
   validate :cannot_apply_for_expired_item, on: :create
 
