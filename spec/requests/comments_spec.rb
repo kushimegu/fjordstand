@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "/comments", type: :request do
   let(:user) { create(:user) }
-  let(:item) { create(:item, user: user, status: :published) }
+  let(:item) { create(:item, :published, user: user) }
 
   let(:valid_attributes) { {
     body: "有効なコメント"

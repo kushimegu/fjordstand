@@ -1,8 +1,7 @@
 FactoryBot.define do
   factory :notification do
     read { false }
-
-    association :user
+    user
 
     trait :for_item do
       association :notifiable, factory: :item
@@ -14,6 +13,10 @@ FactoryBot.define do
 
     trait :for_message do
       association :notifiable, factory: :message
+    end
+
+    trait :read do
+      read { true }
     end
   end
 end

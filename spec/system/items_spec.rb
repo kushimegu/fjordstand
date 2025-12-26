@@ -10,7 +10,7 @@ RSpec.describe "Items", type: :system do
   end
 
   describe "change big item image" do
-    let(:item) { create(:item, :with_three_images, user: user, status: :published) }
+    let(:item) { create(:item, :with_three_images, :published, user: user) }
 
     it "changes big image to the thumbnail image when clicked" do
       visit item_path(item)

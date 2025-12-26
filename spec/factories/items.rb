@@ -6,9 +6,20 @@ FactoryBot.define do
     shipping_fee_payer { %i[buyer seller].sample }
     payment_method { Faker::Lorem.sentence }
     entry_deadline_at { Faker::Date.forward(days: 30).end_of_day }
-    status { %i[draft published sold closed].sample }
+    status { :draft }
+    user
 
-    association :user
+    trait :published do
+      status { :published }
+    end
+
+    trait :sold do
+      status { :sold }
+    end
+
+    trait :closed do
+      status { :closed }
+    end
 
     trait :with_max_five_images do
       after(:build) do |item|

@@ -16,7 +16,7 @@ RSpec.describe Item, type: :model do
 
   describe "validate price_not_change_after_published" do
     let(:user) { create(:user, uid: "1234567890") }
-    let(:item) { create(:item, :with_max_five_images, user: user, price: 1000, status: :draft) }
+    let(:item) { create(:item, :with_max_five_images, user: user, price: 1000) }
 
     context "when item is already published" do
       before { item.update!(status: :published) }
@@ -73,7 +73,7 @@ RSpec.describe Item, type: :model do
 
   describe "validate deadline_not_change_earlier_after_published" do
     let(:user) { create(:user, uid: "1234567890") }
-    let(:item) { create(:item, :with_max_five_images, user: user, entry_deadline_at: Date.current + 5.days, status: :published) }
+    let(:item) { create(:item, :with_max_five_images, :published, user: user, entry_deadline_at: Date.current + 5.days) }
 
     context "when setting deadline to earlier date" do
       it "validates deadline to not change" do
