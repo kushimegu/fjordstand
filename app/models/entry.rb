@@ -5,10 +5,10 @@ class Entry < ApplicationRecord
 
   enum :status, { applied: 0, won: 1, lost: 2 }
 
-  validates :user_id, uniqueness: { scope: :item_id }
+  validates :user_id, uniqueness: { scope: :item_id, message: "はこの商品にすでに応募しています" }
 
   validate :cannot_apply_for_own_item
-  validate :cannot_apply_for_expired_item
+  validate :cannot_apply_for_expired_item, on: :create
   validate :cannot_apply_for_closed_item
 
   scope :by_target, ->(target) {

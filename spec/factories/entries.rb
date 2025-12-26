@@ -1,8 +1,15 @@
 FactoryBot.define do
   factory :entry do
-    status { %i[applied won lost].sample }
+    status { :applied }
+    user
+    item
 
-    association :user
-    association :item
+    trait :won do
+      status { :won }
+    end
+
+    trait :lost do
+      status { :lost }
+    end
   end
 end
