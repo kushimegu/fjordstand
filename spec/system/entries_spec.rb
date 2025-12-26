@@ -34,6 +34,7 @@ RSpec.describe "Entries", type: :system do
       expect(page).to have_button("購入希望を申請する")
     end
   end
+
   describe "entries tab switching" do
     it "shows applied entries when applied tab is clicked" do
       applied_entry = create(:entry, item: published_item, user: user)
