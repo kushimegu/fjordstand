@@ -16,6 +16,7 @@ class EntriesController < ApplicationController
     if @entry.save
       redirect_to @item, notice: "購入希望を申請しました"
     else
+      @comment = Comment.new
       render "items/show", status: :unprocessable_content
     end
   end

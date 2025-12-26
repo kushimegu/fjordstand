@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.describe "Notifications", type: :system do
   let(:user) { create(:user) }
 
-  let!(:closed_item) { create(:item, :with_max_five_images, user: user, status: :closed) }
-  let!(:sold_item) { create(:item, :with_max_five_images, user: user, status: :sold) }
+  let!(:closed_item) { create(:item, :with_max_five_images, :closed, user: user) }
+  let!(:sold_item) { create(:item, :with_max_five_images, :sold, user: user) }
 
   before do
     driven_by(:selenium_chrome_headless)
@@ -25,7 +25,7 @@ RSpec.describe "Notifications", type: :system do
 
     context "when no unread notification exists" do
       it "has link to all notification tab" do
-        create(:notification, :for_item, user: user, notifiable: closed_item, read: true)
+        create(:notification, :for_item, :read, user: user, notifiable: closed_item)
 
         visit items_path
 
@@ -95,7 +95,7 @@ RSpec.describe "Notifications", type: :system do
   describe "notification tab switching" do
     it "shows unread notifications when unread tab is clicked" do
       create(:notification, :for_item, user: user, notifiable: closed_item)
-      create(:notification, :for_item, user: user, notifiable: sold_item, read: true)
+      create(:notification, :for_item, :read, user: user, notifiable: sold_item)
 
       visit notifications_path
       click_on "未読"
@@ -106,7 +106,7 @@ RSpec.describe "Notifications", type: :system do
 
     it "shows all notifications when all tab is clicked" do
       create(:notification, :for_item, user: user, notifiable: closed_item)
-      create(:notification, :for_item, user: user, notifiable: sold_item, read: true)
+      create(:notification, :for_item, :read, user: user, notifiable: sold_item)
 
       visit notifications_path(status: "unread")
       click_on "全て", exact: true

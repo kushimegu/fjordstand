@@ -16,7 +16,7 @@ RSpec.describe Comment, type: :model do
 
   describe "#notify_seller" do
     let(:seller) { create(:user) }
-    let(:item) { create(:item, user: seller, status: :published) }
+    let(:item) { create(:item, :with_max_five_images, :published, user: seller) }
     let(:other_user) { create(:user) }
 
     context "when commentator is not seller" do

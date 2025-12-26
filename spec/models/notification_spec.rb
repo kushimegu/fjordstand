@@ -4,14 +4,14 @@ RSpec.describe Notification, type: :model do
   let(:seller) { create(:user) }
   let(:buyer) { create(:user) }
 
-  let!(:sold_item) { create(:item, user: seller, status: :sold) }
-  let!(:closed_item) { create(:item, user: seller, status: :closed) }
-  let!(:entry) { create(:entry, user: buyer, item: sold_item, status: :won) }
+  let!(:sold_item) { create(:item, :sold, user: seller) }
+  let!(:closed_item) { create(:item, :closed, user: seller) }
+  let!(:entry) { create(:entry, :won, user: buyer, item: sold_item) }
 
   describe ".unread" do
     it "returns only unread notification" do
       unread_notification = create(:notification, :for_item, user: seller, notifiable: sold_item)
-      read_notification = create(:notification, :for_item, user: seller, notifiable: closed_item, read: true)
+      read_notification = create(:notification, :for_item, :read, user: seller, notifiable: closed_item)
       result = described_class.unread
 
       expect(result).to include(unread_notification)
@@ -23,7 +23,7 @@ RSpec.describe Notification, type: :model do
     context "when target is unread" do
       it "returns unread notifications" do
         unread_notification = create(:notification, :for_item, user: seller, notifiable: sold_item)
-        read_notification = create(:notification, :for_item, user: seller, notifiable: closed_item, read: true)
+        read_notification = create(:notification, :for_item, :read, user: seller, notifiable: closed_item)
         result = described_class.by_target("unread")
 
         expect(result).to include(unread_notification)
@@ -34,7 +34,7 @@ RSpec.describe Notification, type: :model do
     context "when target is invalid" do
       it "returns all notifications" do
         unread_notification = create(:notification, :for_item, user: seller, notifiable: sold_item)
-        read_notification = create(:notification, :for_item, user: seller, notifiable: closed_item, read: true)
+        read_notification = create(:notification, :for_item, :read, user: seller, notifiable: closed_item)
         result = described_class.by_target("invalid_status")
 
         expect(result).to include(unread_notification)
@@ -64,7 +64,7 @@ RSpec.describe Notification, type: :model do
     context "when notifiable is lost entry" do
       it "returns lost notification message" do
         loser = create(:user)
-        lost_entry = create(:entry, user: loser, item: sold_item, status: :lost)
+        lost_entry = create(:entry, :lost,  user: loser, item: sold_item)
         notification = create(:notification, :for_entry, notifiable: lost_entry, user: loser)
 
         expect(notification.message).to include("落選しました")
@@ -109,7 +109,7 @@ RSpec.describe Notification, type: :model do
     context "when notifiable is lost entry" do
       it "returns link to item" do
         loser = create(:user)
-        lost_entry = create(:entry, user: loser, item: sold_item, status: :lost)
+        lost_entry = create(:entry, :lost, user: loser, item: sold_item)
         notification = create(:notification, :for_entry, notifiable: lost_entry, user: loser)
 
         expect(notification.link).to eq("/items/#{sold_item.id}")
