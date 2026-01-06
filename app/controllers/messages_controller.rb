@@ -4,7 +4,7 @@ class MessagesController < ApplicationController
 
   # GET /messages
   def index
-    @messages = @item.messages.includes(:user)
+    @messages = @item.messages.includes(:user).order(:created_at)
     @message = @item.messages.build
   end
 
@@ -16,11 +16,13 @@ class MessagesController < ApplicationController
     if @message.save
       redirect_to transaction_messages_path(@item), notice: "メッセージを送信しました"
     else
+      @messages = @item.messages.includes(:user).order(:created_at)
       render :index, status: :unprocessable_content
     end
   end
 
   private
+
   def set_item
     @item = Item.find(params[:transaction_id])
   end

@@ -24,6 +24,8 @@ ja:
         entry_deadline_at: 購入希望申請締切
       comment:
         body: コメント
+      message:
+        body: メッセージ
       entry:
         user_id: ユーザー
     errors:
