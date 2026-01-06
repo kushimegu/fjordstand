@@ -1,43 +1,51 @@
 .w-full.max-w-2xl.mx-auto.px-4
-  = link_to @item, class: "block my-2" do
-    .container.bg-white.shadow.rounded.p-4.hover:bg-gray-50.flex.gap-x-4
-      .aspect-square.h-25.flex.items-center.justify-center.bg-gray-100
-        = image_tag @item.images.first.variant(resize_to_limit: [ 400, 400 ]).processed,
-        class: "object-contain w-full h-full"
-      .flex.flex-col.justify-between.h-25
-        .text-2xl.line-clamp-1
-          = @item.title
-        div
-          .flex.items-center
-            span.text-xl = number_to_currency(@item.price)
-            span.text-base
-              = I18n.t("views.item.shipping_fee_label.#{@item.shipping_fee_payer}")
-          .flex.items-center.gap-1
-            span 希望するお支払い方法
-            span.text-lg = @item.payment_method
-  .flex.items-center.gap-2.text-lg.my-2
-    - if @item.user == current_user
-      - winner = @item.entries.find_by(status: :won)&.user
-      p 購入者
-      = image_tag (winner.avatar_url.presence || "default-avatar.png"), class: "w-10 h-10 rounded-full"
-      = winner.name
-      span さん
-    - else
-      p 出品者
-      = image_tag (@item.user.avatar_url.presence || "default-avatar.png"), class: "w-10 h-10 rounded-full"
-      = @item.user.name
-      span さん
+  .sticky.top-15.bg-white.py-2
+    = link_to @item, class: "block" do
+      .container.bg-white.shadow.rounded.p-4.hover:bg-gray-50.flex.gap-x-4
+        .aspect-square.h-25.flex.items-center.justify-center.bg-gray-100
+          = image_tag @item.images.first.variant(resize_to_limit: [ 400, 400 ]).processed,
+          class: "object-contain w-full h-full"
+        .flex.flex-col.justify-between.h-25
+          .text-2xl.line-clamp-1
+            = @item.title
+          div
+            .flex.items-center
+              span.text-xl = number_to_currency(@item.price)
+              span.text-base
+                = I18n.t("views.item.shipping_fee_label.#{@item.shipping_fee_payer}")
+            .flex.items-center.gap-1
+              span 希望するお支払い方法
+              span.text-lg = @item.payment_method
+    .flex.items-center.gap-2.text-lg.mt-2
+      - if @item.user == current_user
+        - winner = @item.entries.find_by(status: :won)&.user
+        p 購入者
+        = image_tag (winner.avatar_url.presence || "default-avatar.png"), class: "w-10 h-10 rounded-full"
+        = winner.name
+        span さん
+      - else
+        p 出品者
+        = image_tag (@item.user.avatar_url.presence || "default-avatar.png"), class: "w-10 h-10 rounded-full"
+        = @item.user.name
+        span さん
+
   - @messages.each do |message|
     - if message.user_id == current_user.id
-      .flex.justify-end.mb-3
+      .flex.flex-col.items-end.mb-3
+        span.text-sm.text-gray-500 = l message.created_at
         .bg-cyan-100.text-cyan-600.px-3.py-2.rounded-t-2xl.rounded-bl-2xl.max-w-md
           = simple_format(message.body)
     - else
-      .flex.justify-start.mb-3
+      .flex.flex-col.items-start.mb-3
+        span.text-sm.text-gray-500 = l message.created_at
         .bg-gray-200.px-3.py-2.rounded-t-2xl.rounded-br-2xl.max-w-md
           = simple_format(message.body)
-  = form_with(url: transaction_messages_path(@item), model: @message, class: "flex items-end space-x-2 my-4") do |form|
-    = form.textarea :body, rows: 1,
-      class: "flex-grow border rounded p-2 focus:outline-none focus:ring focus:border-cyan-600 field-sizing-content",
-      placeholder: "メッセージを入力..."
-    = form.submit "送信する", class: "bg-cyan-600 text-white font-semibold px-3 py-2.5 rounded hover:opacity-80"
+
+  = form_with(url: transaction_messages_path(@item), model: @message, class: "my-6") do |form|
+    = form.textarea :body,
+      class: "w-full border border-gray-300 rounded p-2 min-h-28 focus:outline-none focus:border-cyan-600 field-sizing-content",
+      placeholder: "メッセージを入力...",
+      required: true
+    = render "shared/error_messages", model: @message, attribute: :body
+    .flex.justify-center
+      = form.submit "送信する", class: "cursor-pointer w-1/2 border border-cyan-600 text-cyan-600 font-semibold px-3 py-1 rounded hover:opacity-80"
