@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_25_074424) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_06_072638) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -108,6 +108,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_25_074424) do
     t.index ["uid"], name: "index_users_on_uid", unique: true
   end
 
+  create_table "watches", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "item_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_watches_on_item_id"
+    t.index ["user_id", "item_id"], name: "index_watches_on_user_id_and_item_id", unique: true
+    t.index ["user_id"], name: "index_watches_on_user_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "comments", "items"
@@ -118,4 +128,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_25_074424) do
   add_foreign_key "messages", "items"
   add_foreign_key "messages", "users"
   add_foreign_key "notifications", "users"
+  add_foreign_key "watches", "items"
+  add_foreign_key "watches", "users"
 end
