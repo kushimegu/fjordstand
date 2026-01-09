@@ -5,12 +5,21 @@ class Comment < ApplicationRecord
 
   validates :body, presence: true
 
-  after_create_commit :notify_seller
+  after_create_commit :add_commentator_to_watchers
+  after_create_commit :notify_watchers
 
   private
 
-  def notify_seller
-    return if self.user_id == item.user_id
-    Notification.create!(user: item.user, notifiable: self)
+  def add_commentator_to_watchers
+    return if item.watchers.exists?(user_id)
+
+    item.watchers << self.user
+  end
+
+  def notify_watchers
+    item.watchers.each do |watcher|
+      next if self.user_id == watcher.id
+      Notification.create!(user: watcher, notifiable: self)
+    end
   end
 end
