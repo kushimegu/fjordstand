@@ -9,9 +9,11 @@ Rails.application.routes.draw do
   get "/drafts", to: "items#drafts"
   get "/entries", to: "entries#index"
   get "/listings", to: "items#listings"
+  get "/watches", to: "watches#index"
   resources :items do
     resource :entries, only: %i[create destroy]
     resources :comments, only: %i[create update]
+    resource :watches, only: %i[create destroy]
   end
   root to: "pages#home"
   resource :session, only: %i[create destroy]
