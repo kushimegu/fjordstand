@@ -14,29 +14,33 @@ RSpec.describe Comment, type: :model do
     end
   end
 
-  describe "#notify_seller" do
-    let(:seller) { create(:user) }
-    let(:item) { create(:item, :with_max_five_images, :published, user: seller) }
-    let(:other_user) { create(:user) }
+  describe "#add_commentator_to_watchers" do
+    let(:item) { create(:item, :with_max_five_images, :published)}
+    let(:user) { create(:user) }
 
-    context "when commentator is not seller" do
-      it "sends notification to seller" do
-        comment = build(:comment, user: other_user, item: item)
+    it "adds commentator to watchers" do
+      comment = build(:comment, item: item, user: user)
 
-        expect { comment.save! }.to change { seller.notifications.count }.by(1)
-
-        notification = Notification.last
-        expect(notification.user).to eq(seller)
-        expect(notification.notifiable).to eq(comment)
-      end
+      expect{ comment.save! }.to change{ item.watchers.count }.by(1)
+      expect(item.watchers).to include(user)
     end
+  end
 
-    context "when commentator is seller" do
-      it "does not send notification to seller" do
-        comment = build(:comment, user: seller, item: item)
+  describe "#notify_watchers" do
+    let(:seller) { create(:user)}
+    let(:item) { create(:item, :with_max_five_images, :published, user: seller) }
+    let(:commentator) { create(:user) }
+    let(:watcher) { create(:user) }
 
-        expect { comment.save! }.not_to change { seller.notifications.count }
-      end
+    it "sends notification to watchers except commentator" do
+      create(:watch, item: item, user: watcher)
+      comment = build(:comment, user: commentator, item: item)
+
+      expect { comment.save! }.to change(Notification, :count).by(2)
+      expect(item.watchers.count).to eq(3)
+
+      notified_users = Notification.where(notifiable: comment).pluck(:user_id)
+      expect(notified_users).to contain_exactly(seller.id, watcher.id)
     end
   end
 end
