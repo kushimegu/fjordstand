@@ -93,4 +93,15 @@ RSpec.describe Item, type: :model do
       end
     end
   end
+
+  describe "#comment_watch_by_seller" do
+    let(:user) { create(:user) }
+
+    context "when publishing item" do
+      it "create watch by seller" do
+        item = create(:item, :with_max_five_images, :published, user: user)
+        expect(item.watchers).to include(user)
+      end
+    end
+  end
 end

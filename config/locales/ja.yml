@@ -28,6 +28,8 @@ ja:
         body: メッセージ
       entry:
         user_id: ユーザー
+      watch:
+        user_id: ユーザー
     errors:
       messages:
         blank: 'を入力してください'

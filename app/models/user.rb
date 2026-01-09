@@ -4,6 +4,7 @@ class User < ApplicationRecord
   has_many :applied_items, through: :entries, source: :item
   has_many :messages, dependent: :destroy
   has_many :comments, dependent: :destroy
+  has_many :watches, dependent: :destroy
   has_many :notifications, dependent: :destroy
 
   def self.from_omniauth(auth)
@@ -21,5 +22,9 @@ class User < ApplicationRecord
 
   def entry_for(item)
     entries.find_by(item_id: item.id)
+  end
+
+  def watch_comment_of(item)
+    watches.find_by(item_id: item.id)
   end
 end

@@ -1,0 +1,10 @@
+- if @watches.empty?
+  p.mt-20.text-center.text-xl 該当する商品はありません
+- else
+  = paginate @watches
+  .grid.grid-cols-1.sm:grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-4
+    - @watches.each do |entry|
+      = link_to entry.item, data: { turbo: false }, class: "block" do
+        .container.bg-white.shadow.rounded.p-4.hover:bg-gray-50
+          = render "items/item", item: entry.item
+  = paginate @watches

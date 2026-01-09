@@ -4,6 +4,8 @@ class Item < ApplicationRecord
   has_many :entries, dependent: :destroy
   has_many :messages, dependent: :destroy
   has_many :comments, dependent: :destroy
+  has_many :watches, dependent: :destroy
+  has_many :watchers, through: :watches, source: :user
   has_many :notifications, as: :notifiable, dependent: :destroy
 
   enum :shipping_fee_payer, { buyer: 0, seller: 1 }
@@ -23,7 +25,7 @@ class Item < ApplicationRecord
   validates :images, limit: { max: 5 }, content_type: [ "image/png", "image/jpeg" ], size: { less_than: 5.megabytes }
 
   before_save :set_entry_deadline_at_end_of_day
-
+  after_create_commit :comment_watch_by_seller
   after_update :notify_destroy_entries, if: :saved_change_status_from_published_to_closed?
 
   scope :expired, -> { where("entry_deadline_at < ?", Time.current).where(status: :published) }
@@ -70,6 +72,12 @@ class Item < ApplicationRecord
         errors.add(:entry_deadline_at, "は元の締切日以降に設定してください")
       end
     end
+  end
+
+  def comment_watch_by_seller
+    return if watchers.exists?(user.id)
+
+    watchers << user
   end
 
   def saved_change_status_from_published_to_closed?
