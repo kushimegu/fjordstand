@@ -33,7 +33,7 @@ RSpec.describe "/watches", type: :request do
       it "creates a new Watch" do
         expect {
           post item_watches_path(item)
-        }.to change{ item.watches.where(user: user).count }.by(1)
+        }.to change { item.watches.where(user: user).count }.by(1)
       end
 
       it "redirects to the item" do

@@ -15,19 +15,19 @@ RSpec.describe Comment, type: :model do
   end
 
   describe "#add_commentator_to_watchers" do
-    let(:item) { create(:item, :with_max_five_images, :published)}
+    let(:item) { create(:item, :with_max_five_images, :published) }
     let(:user) { create(:user) }
 
     it "adds commentator to watchers" do
       comment = build(:comment, item: item, user: user)
 
-      expect{ comment.save! }.to change{ item.watchers.count }.by(1)
+      expect { comment.save! }.to change { item.watchers.count }.by(1)
       expect(item.watchers).to include(user)
     end
   end
 
   describe "#notify_watchers" do
-    let(:seller) { create(:user)}
+    let(:seller) { create(:user) }
     let(:item) { create(:item, :with_max_five_images, :published, user: seller) }
     let(:commentator) { create(:user) }
     let(:watcher) { create(:user) }
