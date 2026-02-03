@@ -1,6 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe Item, type: :model do
+  let(:webhook_double) { instance_double(DiscordWebhook, notify_item_published: true, notify_item_closed: true, notify_item_deadline_extended: true) }
+
+  before do
+    allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
+  end
+
   describe "set_entry_deadline_at_end_of_day" do
     let(:item) { build(:item, entry_deadline_at: entry_deadline_at) }
 

@@ -1,12 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe "Messages", type: :system do
+  let(:webhook_double) { instance_double(DiscordWebhook, notify_new_message: true) }
+
   let(:seller) { create(:user) }
   let(:buyer) { create(:user) }
   let(:item) { create(:item, :with_max_five_images, :published, user: seller) }
 
   before do
     driven_by(:selenium_chrome_headless)
+
+    allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
   end
 
   describe "send messages" do
@@ -15,6 +19,7 @@ RSpec.describe "Messages", type: :system do
         create(:entry, :won, item: item, user: buyer)
 
         login(buyer)
+        expect(page).to have_current_path(items_path)
         visit transaction_messages_path(item)
 
         fill_in "message_body", with: "こんにちは"
@@ -42,6 +47,7 @@ RSpec.describe "Messages", type: :system do
         create(:entry, :won, item: item, user: buyer)
 
         login(seller)
+        expect(page).to have_current_path(items_path)
         visit transaction_messages_path(item)
 
         fill_in "message_body", with: "\n"
