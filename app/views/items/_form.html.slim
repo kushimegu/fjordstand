@@ -111,6 +111,6 @@
   - if item.published?
     .mt-4
       p.text-gray-400.text-sm.text-left
-        | 商品を非公開にすると購入希望が全て取り消され、購入希望者に通知が送られます。再度公開する際は全ての項目を編集でき、新たに購入希望を受け付けることができます。
-      = form.submit "非公開にする", name: "close",
+        | 商品を取り下げると購入希望が全て取り消され、購入希望者に通知が送られます。再度公開する際は全ての項目を編集でき、新たに購入希望を受け付けることができます。
+      = form.submit "出品を取り下げる", name: "close",
       class: "cursor-pointer w-1/2 mx-auto block px-3 py-2 rounded border border-gray-500 text-gray-500 font-semibold hover:bg-gray-50"

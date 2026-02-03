@@ -18,10 +18,9 @@
               span.text-lg = @item.payment_method
     .flex.items-center.gap-2.text-lg.mt-2
       - if @item.user == current_user
-        - winner = @item.entries.find_by(status: :won)&.user
         p 購入者
-        = image_tag (winner.avatar_url.presence || "default-avatar.png"), class: "w-10 h-10 rounded-full"
-        = winner.name
+        = image_tag (@item.winner.avatar_url.presence || "default-avatar.png"), class: "w-10 h-10 rounded-full"
+        = @item.winner.name
         span さん
       - else
         p 出品者

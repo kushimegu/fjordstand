@@ -17,10 +17,9 @@ h1.font-bold.text-2xl.my-2.text-center 連絡ページ一覧
               = I18n.t("views.item.shipping_fee_label.#{item.shipping_fee_payer}")
             .flex.items-center.gap-2
               - if item.user == current_user
-                - winner = item.entries.find_by(status: :won)&.user
                 p 購入者
-                = image_tag (winner.avatar_url.presence || "default-avatar.png"), class: "w-10 h-10 rounded-full"
-                = winner.name
+                = image_tag (item.winner.avatar_url.presence || "default-avatar.png"), class: "w-10 h-10 rounded-full"
+                = item.winner.name
                 span さん
               - else
                 p 出品者

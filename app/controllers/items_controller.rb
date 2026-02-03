@@ -69,9 +69,11 @@ class ItemsController < ApplicationController
     if title_append.present?
       @item.title = [ @item.title, title_append ].join(" ")
     end
+
     if description_append.present?
       @item.description = [ @item.description.presence, description_append ].compact.join("\n")
     end
+
     if payment_method_append.present?
       @item.payment_method = [ @item.payment_method, payment_method_append ].join(" ")
     end
@@ -85,9 +87,8 @@ class ItemsController < ApplicationController
         render :edit, status: :unprocessable_content
       end
     elsif params[:close]
-      @item.status = :closed
-      @item.save!
-      redirect_to listings_path, notice: "商品を非公開にしました", status: :see_other
+      @item.close!(by: :user)
+      redirect_to listings_path, notice: "商品を取り下げました", status: :see_other
     else
       if @item.save
         redirect_to drafts_path, notice: "商品を更新しました", status: :see_other
