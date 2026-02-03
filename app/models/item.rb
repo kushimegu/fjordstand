@@ -2,6 +2,9 @@ class Item < ApplicationRecord
   belongs_to :user
   has_many_attached :images
   has_many :entries, dependent: :destroy
+  has_many :applicants, through: :entries, source: :user
+  has_one :winning_entry, -> { where(status: :won) }, class_name: "Entry"
+  has_one :winner, through: :winning_entry, source: :user
   has_many :messages, dependent: :destroy
   has_many :comments, dependent: :destroy
   has_many :watches, dependent: :destroy
@@ -26,7 +29,9 @@ class Item < ApplicationRecord
 
   before_save :set_entry_deadline_at_end_of_day
   after_create_commit :comment_watch_by_seller
-  after_update :notify_destroy_entries, if: :saved_change_status_from_published_to_closed?
+  after_create_commit :notify_publishing, if: :published?
+  after_update_commit :notify_publishing, if: -> { saved_change_to_attribute?(:status, to: :published) }
+  after_update_commit :notify_deadline_extension, if: :saved_only_change_deadline?
 
   scope :expired, -> { where("entry_deadline_at < ?", Time.current).where(status: :published) }
   scope :by_target, ->(target) {
@@ -39,8 +44,13 @@ class Item < ApplicationRecord
 
   def other_user_for(current_user)
     seller = user
-    winner = entries.find_by(status: :won).user
     [ seller, winner ].find { |user| user != current_user }
+  end
+
+  def close!(by:)
+    update!(status: :closed)
+    notify_close(by)
+    entries.destroy_all
   end
 
   private
@@ -80,15 +90,39 @@ class Item < ApplicationRecord
     watchers << user
   end
 
-  def saved_change_status_from_published_to_closed?
-    saved_change_to_attribute?(:status, from: :published, to: :closed)
+  def notify_publishing
+    DiscordWebhook.new.notify_item_published(self)
   end
 
-  def notify_destroy_entries
-    entries.each do |entry|
-      Notification.create!(user: entry.user, notifiable: self)
-    end
+  def notify_deadline_extension
+    DiscordWebhook.new.notify_item_deadline_extended(applicants, self)
+  end
 
-    entries.destroy_all
+  def saved_only_change_deadline?
+    return if saved_change_status_from_closed_to_published?
+    return if saved_change_status_from_draft_to_published?
+
+    saved_change_to_attribute?(:entry_deadline_at)
+  end
+
+  def saved_change_status_from_draft_to_published?
+    saved_change_to_attribute?(:status, from: :draft, to: :published)
+  end
+
+  def saved_change_status_from_closed_to_published?
+    saved_change_to_attribute?(:status, from: :closed, to: :published)
+  end
+
+  def notify_close(closed_by)
+    case closed_by
+    when :user
+      applicants.each do |applicant|
+        Notification.create!(user: applicant, notifiable: self)
+      end
+      DiscordWebhook.new.notify_item_closed(applicants, self)
+    when :lottery
+      Notification.create!(user: user, notifiable: self)
+      DiscordWebhook.new.notify_lottery_skipped(self.user, self)
+    end
   end
 end

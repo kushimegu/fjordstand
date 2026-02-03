@@ -15,9 +15,9 @@ class Lottery
         Notification.create!(user: entry.user, notifiable: entry)
       end
       Notification.create!(user: @item.user, notifiable: @item)
+      DiscordWebhook.new.notify_lottery_completed(@item.applicants + [@item.user], @item)
     else
-      @item.update!(status: :closed)
-      Notification.create!(user: @item.user, notifiable: @item)
+      @item.close!(by: :lottery)
     end
   end
 end

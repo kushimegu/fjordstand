@@ -17,6 +17,7 @@ class Comment < ApplicationRecord
   end
 
   def notify_watchers
+    DiscordWebhook.new.notify_new_comment(item.watchers.without(self.user), item)
     item.watchers.each do |watcher|
       next if self.user_id == watcher.id
       Notification.create!(user: watcher, notifiable: self)
