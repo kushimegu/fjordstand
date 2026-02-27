@@ -16,21 +16,21 @@ class Item < ApplicationRecord
 
   attr_accessor :title_append, :description_append, :payment_method_append
 
-  validates :title, length: { maximum: 255 }, presence: true, on: :publish
-  validates :price, presence: true, on: :publish
-  validates :payment_method, presence: true, on: :publish
-  validates :entry_deadline_at, presence: true, on: :publish
-  validates :images, attached: { message: "を1枚以上選択してください" }, on: :publish
-  validate :price_not_change_after_published, on: :publish
-  validate :deadline_today_or_later, on: :publish
-  validate :deadline_not_change_earlier_after_published, on: :publish
-
   validates :images, limit: { max: 5 }, content_type: [ "image/png", "image/jpeg" ], size: { less_than: 5.megabytes }
 
+  validates :title, length: { maximum: 255 }, presence: true, on: :publish
+  validates :price, presence: true, on: :publish
+  validates :payment_method, presence: { message: "を選択してください" }, on: :publish
+  validates :entry_deadline_at, presence: true, on: :publish
+  validates :images, attached: { message: "を1枚以上選択してください" }, on: :publish
+  validate :deadline_today_or_later, on: :publish
+  validate :price_not_change_after_published, on: :publish
+  validate :deadline_not_change_earlier_after_published, on: :publish
+
   before_save :set_entry_deadline_at_end_of_day
+
   after_create_commit :comment_watch_by_seller
-  after_create_commit :notify_publishing, if: :published?
-  after_update_commit :notify_publishing, if: -> { saved_change_to_attribute?(:status, to: :published) }
+  after_save_commit :notify_publishing, if: -> { saved_change_to_attribute?(:status, to: :published) }
   after_update_commit :notify_deadline_extension, if: :saved_only_change_deadline?
 
   scope :expired, -> { where("entry_deadline_at < ?", Time.current).where(status: :published) }
@@ -55,22 +55,16 @@ class Item < ApplicationRecord
 
   private
 
-  def set_entry_deadline_at_end_of_day
-    return if entry_deadline_at.nil?
+  def deadline_today_or_later
+    return if entry_deadline_at.nil? || entry_deadline_at.to_date >= Date.current
 
-    self.entry_deadline_at = entry_deadline_at.in_time_zone.end_of_day
+    errors.add(:entry_deadline_at, "は本日以降に設定してください")
   end
 
   def price_not_change_after_published
     if status_was == "published" && will_save_change_to_price?
       errors.add(:price, "は出品後に変更できません")
     end
-  end
-
-  def deadline_today_or_later
-    return if entry_deadline_at.nil? || entry_deadline_at.to_date >= Date.current
-
-    errors.add(:entry_deadline_at, "は本日以降に設定してください")
   end
 
   def deadline_not_change_earlier_after_published
@@ -82,6 +76,12 @@ class Item < ApplicationRecord
         errors.add(:entry_deadline_at, "は元の締切日以降に設定してください")
       end
     end
+  end
+
+  def set_entry_deadline_at_end_of_day
+    return if entry_deadline_at.nil?
+
+    self.entry_deadline_at = entry_deadline_at.in_time_zone.end_of_day
   end
 
   def comment_watch_by_seller
@@ -99,18 +99,9 @@ class Item < ApplicationRecord
   end
 
   def saved_only_change_deadline?
-    return if saved_change_status_from_closed_to_published?
-    return if saved_change_status_from_draft_to_published?
+    return if saved_change_to_attribute?(:status, to: :published)
 
     saved_change_to_attribute?(:entry_deadline_at)
-  end
-
-  def saved_change_status_from_draft_to_published?
-    saved_change_to_attribute?(:status, from: :draft, to: :published)
-  end
-
-  def saved_change_status_from_closed_to_published?
-    saved_change_to_attribute?(:status, from: :closed, to: :published)
   end
 
   def notify_close(closed_by)
