@@ -5,21 +5,10 @@ RSpec.describe "/messages", type: :request do
   let(:buyer) { create(:user) }
   let(:item) { create(:item, :with_max_five_images, :sold, user: seller) }
 
-  let(:valid_attributes) {
-    {
-      user: buyer,
-      item: item,
-      body: "有効なメッセージ"
-    }
-  }
-
-  let(:invalid_attributes) {
-    {
-      user: buyer,
-      item: item,
-      body: ""
-    }
-  }
+  before do
+    webhook_double = instance_double(DiscordWebhook, notify_item_published: true, notify_new_message: true)
+    allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
+  end
 
   describe "GET /index" do
     context "when other user login" do
@@ -35,7 +24,7 @@ RSpec.describe "/messages", type: :request do
       it "renders a successful response" do
         login(buyer)
         create(:entry, :won, item: item, user: buyer)
-        Message.create! valid_attributes
+        create(:message, user: buyer, item: item)
         get transaction_messages_path(item)
         expect(response).to be_successful
       end
@@ -46,6 +35,8 @@ RSpec.describe "/messages", type: :request do
     before { login(buyer) }
 
     context "with valid parameters" do
+      let(:valid_attributes) { attributes_for(:message, item: item, user: buyer) }
+
       it "creates a new Message" do
         create(:entry, :won, item: item, user: buyer)
         expect {
@@ -61,6 +52,8 @@ RSpec.describe "/messages", type: :request do
     end
 
     context "with invalid parameters" do
+      let(:invalid_attributes) { attributes_for(:message, item: item, user: buyer, body: "") }
+
       it "does not create a new Message" do
         create(:entry, :won, item: item, user: buyer)
         expect {

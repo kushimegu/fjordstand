@@ -3,6 +3,11 @@ require 'rails_helper'
 RSpec.describe Entry, type: :model do
   let(:seller) { create(:user) }
 
+  before do
+    webhook_double = instance_double(DiscordWebhook, notify_item_published: true)
+    allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
+  end
+
   describe "validations" do
     context "when user applies for same item twice" do
       let(:item) { create(:item, :with_max_five_images, :published, user: seller) }

@@ -8,6 +8,11 @@ RSpec.describe Notification, type: :model do
   let!(:closed_item) { create(:item, :closed, user: seller) }
   let!(:entry) { create(:entry, :won, user: buyer, item: sold_item) }
 
+  before do
+    webhook_double = instance_double(DiscordWebhook, notify_item_published: true, notify_new_message: true, notify_new_comment: true)
+    allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
+  end
+
   describe ".unread" do
     it "returns only unread notification" do
       unread_notification = create(:notification, :for_item, user: seller, notifiable: sold_item)
@@ -86,6 +91,15 @@ RSpec.describe Notification, type: :model do
         expect(notification.message).to include("公開終了しました")
       end
     end
+
+    context "when notifiable is comment" do
+      it "returns new comment notification message" do
+        comment = create(:comment, user: buyer, item: closed_item)
+        notification = create(:notification, :for_comment, notifiable: comment, user: buyer)
+
+        expect(notification.message).to include("についてコメントしました。")
+      end
+    end
   end
 
   describe "#link" do
@@ -127,6 +141,15 @@ RSpec.describe Notification, type: :model do
     context "when notifiable is closed item" do
       it "returns link to item" do
         notification = create(:notification, :for_item, notifiable: closed_item, user: seller)
+
+        expect(notification.link).to eq("/items/#{closed_item.id}")
+      end
+    end
+
+    context "when notifiable is comment" do
+      it "returns link to item" do
+        comment = create(:comment, user: buyer, item: closed_item)
+        notification = create(:notification, :for_comment, notifiable: comment, user: buyer)
 
         expect(notification.link).to eq("/items/#{closed_item.id}")
       end

@@ -29,7 +29,7 @@ RSpec.describe "Notifications", type: :request do
     end
 
     context "when no notifications exist" do
-      it "returns empty array with http success" do
+      it "returns message with http success" do
         get notifications_path
         expect(response).to have_http_status(:success)
 

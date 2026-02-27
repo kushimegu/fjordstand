@@ -61,6 +61,12 @@ class ItemsController < ApplicationController
 
   # PATCH/PUT /items/1
   def update
+    if params[:close]
+      @item.close!(by: :user)
+      redirect_to listings_path, notice: "商品を取り下げました", status: :see_other
+      return
+    end
+
     @item.assign_attributes(item_params)
     title_append = params[:item][:title_append]
     description_append = params[:item][:description_append]
@@ -86,12 +92,9 @@ class ItemsController < ApplicationController
       else
         render :edit, status: :unprocessable_content
       end
-    elsif params[:close]
-      @item.close!(by: :user)
-      redirect_to listings_path, notice: "商品を取り下げました", status: :see_other
     else
       if @item.save
-        redirect_to drafts_path, notice: "商品を更新しました", status: :see_other
+        redirect_to drafts_path, notice: "下書きを更新しました", status: :see_other
       else
         render :edit, status: :unprocessable_content
       end
@@ -117,7 +120,7 @@ class ItemsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def item_params
-      params.expect(item: [ :title, :description, :price, :shipping_fee_payer, :payment_method, :entry_deadline_at, :status, images: [] ])
+      params.expect(item: [ :title, :title_append, :description, :description_append, :price, :shipping_fee_payer, :payment_method, :payment_method_append, :entry_deadline_at, :status, images: [] ])
     end
 
     def ensure_user

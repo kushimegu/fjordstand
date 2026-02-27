@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Lottery do
-  let(:webhook_double) { instance_double(DiscordWebhook, notify_lottery_completed: true, notify_lottery_skipped: true) }
+  let(:webhook_double) { instance_double(DiscordWebhook, notify_item_published: true, notify_lottery_completed: true, notify_lottery_skipped: true) }
 
   before do
     allow(DiscordWebhook).to receive(:new).and_return(webhook_double)

@@ -12,7 +12,12 @@ RSpec.describe "/comments", type: :request do
     body: ""
   } }
 
-  before { login(user) }
+  let(:webhook_double) { instance_double(DiscordWebhook, notify_item_published: true, notify_new_comment: true) }
+
+  before do
+    login(user)
+    allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
+  end
 
   describe "POST /create" do
     context "with valid parameters" do
