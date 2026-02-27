@@ -7,6 +7,8 @@ RSpec.describe "Entries", type: :system do
   before do
     driven_by(:selenium_chrome_headless)
 
+    webhook_double = instance_double(DiscordWebhook, notify_item_published: true)
+    allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
     login(user)
   end
 

@@ -1,9 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Comment, type: :model do
-  let(:webhook_double) { instance_double(DiscordWebhook, notify_new_comment: true) }
-
   before do
+    webhook_double = instance_double(DiscordWebhook, notify_item_published: true, notify_new_comment: true)
     allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
   end
 

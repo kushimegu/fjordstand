@@ -4,7 +4,11 @@ RSpec.describe "/watches", type: :request do
   let(:item) { create(:item, :with_max_five_images, :published) }
   let(:user) { create(:user) }
 
-  before { login(user) }
+  before do
+    login(user)
+    webhook_double = instance_double(DiscordWebhook, notify_item_published: true)
+    allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
+  end
 
   describe "GET /index" do
     context "when watch exists" do

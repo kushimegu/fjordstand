@@ -7,7 +7,11 @@ RSpec.describe "/entries", type: :request do
   let(:sold_item_where_user_lost) { create(:item, :with_max_five_images, :sold) }
   let(:closed_item) { create(:item, :with_max_five_images, :closed) }
 
-  before { login(user) }
+  before do
+    login(user)
+    webhook_double = instance_double(DiscordWebhook, notify_item_published: true)
+    allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
+  end
 
   describe "GET /index" do
     context "when entry exists" do
@@ -25,7 +29,7 @@ RSpec.describe "/entries", type: :request do
       end
     end
 
-    context "when no notifications exist" do
+    context "when no entry exist" do
       it "returns empty array with http success" do
         get entries_path
         expect(response).to have_http_status(:success)
@@ -80,7 +84,7 @@ RSpec.describe "/entries", type: :request do
     end
 
     context "when filtering by invalid status" do
-      it "returns all notifications" do
+      it "returns all entries" do
         applied_entry = create(:entry, item: published_item, user: user)
         won_entry = create(:entry, :won, item: sold_item_where_user_won, user: user)
         lost_entry = create(:entry, :lost, item: sold_item_where_user_lost, user: user)

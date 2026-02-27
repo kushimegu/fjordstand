@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "Messages", type: :system do
-  let(:webhook_double) { instance_double(DiscordWebhook, notify_new_message: true) }
+  let(:webhook_double) { instance_double(DiscordWebhook, notify_item_published: true, notify_new_message: true) }
 
   let(:seller) { create(:user) }
   let(:buyer) { create(:user) }

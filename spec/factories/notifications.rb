@@ -15,6 +15,10 @@ FactoryBot.define do
       association :notifiable, factory: :message
     end
 
+    trait :for_comment do
+      association :notifiable, factory: :comment 
+    end
+
     trait :read do
       read { true }
     end

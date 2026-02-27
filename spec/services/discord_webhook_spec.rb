@@ -34,7 +34,9 @@ RSpec.describe "DiscordWebhooks" do
   describe "#notify_item_closed" do
     context "when item is closed by user" do
       it "sends webhook notification" do
-        item = create(:item, :with_max_five_images, :published, user: seller)
+        item = create(:item, :with_max_five_images, user: seller)
+        allow(item).to receive(:notify_publishing)
+        item.update!(status: :published)
         allow(client).to receive(:execute) do |&block|
           builder = instance_double(Discordrb::Webhooks::Builder)
           allow(builder).to receive(:content=).with("\n📢出品が取り下げられました")
@@ -50,7 +52,10 @@ RSpec.describe "DiscordWebhooks" do
   describe "#notify_item_deadline_extended" do
     context "when item entry deadline is extended" do
       it "sends webhook notification" do
-        item = create(:item, :with_max_five_images, :published, user: seller, entry_deadline_at: Date.current + 5.days)
+        item = create(:item, :with_max_five_images, user: seller, entry_deadline_at: Date.current + 5.days)
+        allow(item).to receive(:notify_publishing)
+        item.update!(status: :published)
+
         allow(client).to receive(:execute) do |&block|
           builder = instance_double(Discordrb::Webhooks::Builder)
           allow(builder).to receive(:content=).with("\n⏰購入希望申込期限が延長されました")
@@ -65,10 +70,13 @@ RSpec.describe "DiscordWebhooks" do
 
   describe "#notify_lottery_completed" do
     context "when lottery is completed" do
-      let(:item) { create(:item, :with_max_five_images, :published, user: seller) }
+      let(:item) { create(:item, :with_max_five_images, user: seller) }
       let(:applicant) { create(:user) }
 
       it "sends webhook notification" do
+        allow(item).to receive(:notify_publishing)
+        item.update!(status: :published)
+
         create(:entry, user: applicant, item: item)
         allow(client).to receive(:execute) do |&block|
           builder = instance_double(Discordrb::Webhooks::Builder)
@@ -85,7 +93,10 @@ RSpec.describe "DiscordWebhooks" do
   describe "#notify_lottery_skipped" do
     context "when lottery was skipped" do
       it "sends webhook notification" do
-        item = create(:item, :with_max_five_images, :published, user: seller)
+        item = create(:item, :with_max_five_images, user: seller)
+        allow(item).to receive(:notify_publishing)
+        item.update!(status: :published)
+
         allow(client).to receive(:execute) do |&block|
           builder = instance_double(Discordrb::Webhooks::Builder)
           allow(builder).to receive(:content=).with("<@#{seller.uid}>\n⏭️希望者がいなかったため当選者なしで公開終了しました")
@@ -101,7 +112,10 @@ RSpec.describe "DiscordWebhooks" do
   describe "#notify_new_comment" do
     context "when comment was created" do
       it "sends webhook notification" do
-        item = create(:item, :with_max_five_images, :published, user: seller)
+        item = create(:item, :with_max_five_images, user: seller)
+        allow(item).to receive(:notify_publishing)
+        item.update!(status: :published)
+
         commentator = create(:user)
         allow(client).to receive(:execute) do |&block|
           builder = instance_double(Discordrb::Webhooks::Builder)
