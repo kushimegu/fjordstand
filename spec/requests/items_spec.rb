@@ -166,7 +166,7 @@ RSpec.describe "/items", type: :request do
 
   describe "POST /create" do
     context "when save as published with valid parameters" do
-      let(:valid_attributes) { attributes_for(:item).merge(images: [fixture_file_upload("book1.png")]) }
+      let(:valid_attributes) { attributes_for(:item).merge(images: [ fixture_file_upload("book1.png") ]) }
 
       it "creates a new Item" do
         expect {
@@ -198,7 +198,7 @@ RSpec.describe "/items", type: :request do
     end
 
     context "when save as draft" do
-      let(:valid_attributes) { attributes_for(:item)}
+      let(:valid_attributes) { attributes_for(:item) }
 
       it "creates a new Item" do
         expect {
@@ -214,7 +214,7 @@ RSpec.describe "/items", type: :request do
   end
 
   describe "PATCH /update" do
-    context "update as closed" do
+    context "when update as closed" do
       it "updates the requested item" do
         item = create(:item, :with_max_five_images, :published, user: user)
         patch item_url(item), params: { close: true }
@@ -230,7 +230,7 @@ RSpec.describe "/items", type: :request do
       end
     end
 
-    context "update as published with valid parameters" do
+    context "when update as published with valid parameters" do
       let(:new_attributes) { { title_append: "初版" } }
 
       it "updates the requested item" do
@@ -248,7 +248,7 @@ RSpec.describe "/items", type: :request do
       end
     end
 
-    context "update as published with invalid parameters" do
+    context "when update as published with invalid parameters" do
       let(:invalid_attributes) { { price: 1200 } }
 
       it "renders a response with 422 status (i.e. to display the 'edit' template)" do
@@ -258,7 +258,7 @@ RSpec.describe "/items", type: :request do
       end
     end
 
-    context "update as draft" do
+    context "when update as draft" do
       let(:new_attributes) { { title: "初版" } }
 
       it "updates the requested item" do

@@ -16,7 +16,7 @@ FactoryBot.define do
     end
 
     trait :for_comment do
-      association :notifiable, factory: :comment 
+      association :notifiable, factory: :comment
     end
 
     trait :read do
