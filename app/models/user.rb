@@ -8,6 +8,9 @@ class User < ApplicationRecord
   has_many :notifications, dependent: :destroy
 
   def self.from_omniauth(auth)
+    guild_info = Discordrb::API::Server.resolve("Bot #{ENV['DISCORD_BOT_TOKEN']}", ENV['DISCORD_SERVER_ID'])
+    owner_id = JSON.parse(guild_info)['owner_id']
+
     Discordrb::API::Server.resolve_member("Bot #{ENV['DISCORD_BOT_TOKEN']}", ENV["DISCORD_SERVER_ID"], auth.uid)
 
     user = find_or_initialize_by(uid: auth.uid)
@@ -15,9 +18,10 @@ class User < ApplicationRecord
     user.update!(
       provider: auth.provider,
       name: display_name,
-      avatar_url: auth.info.image
+      avatar_url: auth.info.image,
+      admin: owner_id == auth.uid
       )
-      user
+    user
   end
 
   def entry_for(item)
