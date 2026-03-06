@@ -6,10 +6,11 @@ RSpec.describe "/items", type: :request do
   before do
     webhook_double = instance_double(DiscordWebhook, notify_item_published: true, notify_item_closed: true, notify_item_deadline_extended: true, notify_lottery_skipped: true)
     allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
-    login user
   end
 
   describe "GET /drafts" do
+    before { login(user) }
+
     context "when draft exists" do
       it "returns draft items with http success" do
         draft_item = create(:item, user: user)
@@ -36,6 +37,8 @@ RSpec.describe "/items", type: :request do
   end
 
   describe "GET /listings" do
+    before { login(user) }
+
     context "when listings exists" do
       it "returns items without draft with http success" do
         draft_item = create(:item, user: user)
@@ -121,6 +124,8 @@ RSpec.describe "/items", type: :request do
   end
 
   describe "GET /index" do
+    before { login(user) }
+
     context "when item exists" do
       it "returns item with http success" do
         item = create(:item, :with_max_five_images, :published)
@@ -142,6 +147,8 @@ RSpec.describe "/items", type: :request do
   end
 
   describe "GET /show" do
+    before { login(user) }
+
     it "renders a successful response" do
       item = create(:item, :with_max_five_images, :published)
       get item_url(item)
@@ -150,6 +157,8 @@ RSpec.describe "/items", type: :request do
   end
 
   describe "GET /new" do
+    before { login(user) }
+
     it "renders a successful response" do
       get new_item_url
       expect(response).to be_successful
@@ -157,6 +166,8 @@ RSpec.describe "/items", type: :request do
   end
 
   describe "GET /edit" do
+    before { login(user) }
+
     it "renders a successful response" do
       item = create(:item, :with_max_five_images, :published, user: user)
       get edit_item_url(item)
@@ -165,6 +176,8 @@ RSpec.describe "/items", type: :request do
   end
 
   describe "POST /create" do
+    before { login(user) }
+
     context "when save as published with valid parameters" do
       let(:valid_attributes) { attributes_for(:item).merge(images: [ fixture_file_upload("book1.png") ]) }
 
@@ -214,6 +227,8 @@ RSpec.describe "/items", type: :request do
   end
 
   describe "PATCH /update" do
+    before { login(user) }
+
     context "when update as closed" do
       it "updates the requested item" do
         item = create(:item, :with_max_five_images, :published, user: user)
@@ -278,17 +293,52 @@ RSpec.describe "/items", type: :request do
   end
 
   describe "DELETE /destroy" do
-    it "destroys the requested item" do
-      item = create(:item, :with_max_five_images, :published, user: user)
-      expect {
+    context "when user deletes draft" do
+      before { login(user) }
+
+      it "destroys the requested item" do
+        item = create(:item, user: user)
+        expect {
+          delete item_url(item)
+        }.to change(Item, :count).by(-1)
+      end
+
+      it "redirects to the drafts list" do
+        item = create(:item, user: user)
         delete item_url(item)
-      }.to change(Item, :count).by(-1)
+        expect(response).to redirect_to(drafts_url)
+      end
     end
 
-    it "redirects to the items list" do
-      item = create(:item, :with_max_five_images, :published, user: user)
-      delete item_url(item)
-      expect(response).to redirect_to(items_url)
+    context "when user deletes published item" do
+      it "redirects to the item" do
+        item = create(:item, :with_max_five_images, :published, user: user)
+        expect {
+          delete item_url(item)
+        }.not_to change(Item, :count)
+        expect(response).to redirect_to(item_url(item))
+      end
+    end
+
+    context "when admin deletes published item" do
+      let(:admin) { create(:user, :admin, uid: 123) }
+
+      before { login(admin) }
+
+      it "destroys the requested item" do
+        item = create(:item, :with_max_five_images, :published, user: user)
+
+        expect {
+          delete item_url(item)
+        }.to change(Item, :count).by(-1)
+      end
+
+      it "redirects to the items list" do
+        item = create(:item, user: user)
+
+        delete item_url(item)
+        expect(response).to redirect_to(items_url)
+      end
     end
   end
 end

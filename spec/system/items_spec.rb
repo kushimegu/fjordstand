@@ -1,17 +1,18 @@
 require 'rails_helper'
 
 RSpec.describe "Items", type: :system do
-  let(:user) { create(:user) }
+  let(:user) { create(:user, :admin) }
 
   before do
     driven_by(:selenium_chrome_headless)
 
     webhook_double = instance_double(DiscordWebhook, notify_item_published: true, notify_item_closed: true)
     allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
-    login(user)
   end
 
   describe "listings tab switching" do
+    before { login(user) }
+
     it "shows published items when published tab is clicked" do
       published_item = create(:item, :with_max_five_images, :published, user: user)
       closed_item = create(:item, :with_max_five_images, :closed, user: user)
@@ -68,6 +69,8 @@ RSpec.describe "Items", type: :system do
   describe "change big item image" do
     let(:item) { create(:item, :with_three_images, :published, user: user) }
 
+    before { login(user) }
+
     it "changes big image to the thumbnail image when clicked" do
       visit item_path(item)
       expect(page).to have_selector(".thumbnail")
@@ -93,6 +96,8 @@ RSpec.describe "Items", type: :system do
   end
 
   describe "save item" do
+    before { login(user) }
+
     context "when save item as draft" do
       it "shows on draft index page" do
         click_on '出品する'
@@ -122,6 +127,8 @@ RSpec.describe "Items", type: :system do
   end
 
   describe "update item" do
+    before { login(user) }
+
     context "when close published item" do
       it "shows item on listings page" do
         item = create(:item, :with_max_five_images, :published, user: user, title: '技術書')
@@ -179,6 +186,8 @@ RSpec.describe "Items", type: :system do
 
   describe "delete item" do
     context "when deleting draft" do
+      before { login(user) }
+
       it "deletes item and redirects to drafts index" do
         create(:item, user: user, title: '技術書')
         visit drafts_path
@@ -192,10 +201,16 @@ RSpec.describe "Items", type: :system do
     end
 
     context "when deleting published item" do
+      let(:admin) { create(:user, :admin, uid: "123") }
+
+      before { login(admin) }
+
       it "deletes item and redirects to items index" do
         create(:item, :with_max_five_images, :published, user: user, title: '技術書')
+
         visit items_path
         click_on '技術書'
+        expect(page).to have_content('削除する')
         click_on '削除する'
 
         expect(page).to have_current_path(items_path)

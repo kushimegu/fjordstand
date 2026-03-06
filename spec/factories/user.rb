@@ -4,5 +4,10 @@ FactoryBot.define do
     sequence(:uid) { |n| "123456789#{n}" }
     provider { "discord" }
     avatar_url { Faker::Avatar.image }
+    admin { false }
+  end
+
+  trait :admin do
+    admin { true }
   end
 end
