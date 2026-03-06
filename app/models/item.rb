@@ -53,6 +53,12 @@ class Item < ApplicationRecord
     entries.destroy_all
   end
 
+  def deletable_by?(user)
+    return true if draft? && user.id == self.user_id
+    return true if !draft? && user.admin?
+    false
+  end
+
   private
 
   def deadline_today_or_later

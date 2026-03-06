@@ -1,6 +1,6 @@
 class ItemsController < ApplicationController
   before_action :set_item, only: %i[show edit update destroy]
-  before_action :ensure_user, only: %i[edit update destroy]
+  before_action :ensure_user, only: %i[edit update]
 
   def drafts
     @items = current_user.items.draft.order(updated_at: :desc).page(params[:page])
@@ -103,6 +103,11 @@ class ItemsController < ApplicationController
 
   # DELETE /items/1
   def destroy
+    unless @item.deletable_by?(current_user)
+      redirect_to @item, alert: "削除する権限がありません"
+      return
+    end
+
     @item.destroy!
 
     if @item.draft?
@@ -113,19 +118,20 @@ class ItemsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_item
-      @item = Item.find(params.expect(:id))
-    end
 
-    # Only allow a list of trusted parameters through.
-    def item_params
-      params.expect(item: [ :title, :title_append, :description, :description_append, :price, :shipping_fee_payer, :payment_method, :payment_method_append, :entry_deadline_at, :status, images: [] ])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_item
+    @item = Item.find(params.expect(:id))
+  end
 
-    def ensure_user
-      @items = current_user.items
-      @item = @items.find_by(id: params[:id])
-      redirect_to items_path unless @item
-    end
+  # Only allow a list of trusted parameters through.
+  def item_params
+    params.expect(item: [ :title, :title_append, :description, :description_append, :price, :shipping_fee_payer, :payment_method, :payment_method_append, :entry_deadline_at, :status, images: [] ])
+  end
+
+  def ensure_user
+    @items = current_user.items
+    @item = @items.find_by(id: params[:id])
+    redirect_to items_path unless @item
+  end
 end
