@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   get "/watches", to: "watches#index"
   resources :items do
     resource :entries, only: %i[create destroy]
-    resources :comments, only: %i[create update]
+    resources :comments, only: %i[create destroy]
     resource :watches, only: %i[create destroy]
   end
   root to: "pages#home"

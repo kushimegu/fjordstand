@@ -119,6 +119,9 @@
             span.text-sm.text-gray-500 = l comment.created_at
           .px-3.py-2.rounded.bg-gray-100
             = simple_format(comment.body)
+      - if current_user.admin?
+        .flex.justify-end
+          = button_to "削除する", item_comment_path(@item, comment), method: :delete, data: {turbo_confirm: "本当に削除しますか？"}, class: "inline-block cursor-pointer text-sm text-gray-700 underline hover:text-red-400"
     = form_with(model: [ @item, @comment ], class: "my-6") do |form|
       .flex.items-start.space-x-3
         = image_tag (current_user.avatar_url.presence || "default-avatar.png"), class: "w-10 h-10 rounded-full"
