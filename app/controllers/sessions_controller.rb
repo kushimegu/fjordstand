@@ -4,7 +4,7 @@ class SessionsController < ApplicationController
     auth = request.env["omniauth.auth"]
     if (user = User.from_omniauth(auth))
       reset_session
-      log_in user
+      session[:user_id] = user.id
     end
     redirect_to items_path, notice: "ログインしました"
   end
