@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "/items", type: :request do
   let(:user) { create(:user) }
+  let(:admin) { create(:user, :admin, uid: "123") }
 
   before do
     webhook_double = instance_double(DiscordWebhook, notify_item_published: true, notify_item_closed: true, notify_item_deadline_extended: true, notify_lottery_skipped: true)
@@ -310,7 +311,9 @@ RSpec.describe "/items", type: :request do
       end
     end
 
-    context "when user deletes published item" do
+    context "when user tries to delete published item" do
+      before { login(user) }
+
       it "redirects to the item" do
         item = create(:item, :with_max_five_images, :published, user: user)
         expect {
@@ -320,9 +323,20 @@ RSpec.describe "/items", type: :request do
       end
     end
 
-    context "when admin deletes published item" do
-      let(:admin) { create(:user, :admin, uid: 123) }
+    context "when admin tries to delete draft item" do
+      before { login(admin) }
 
+      it "redirects to the item" do
+        item = create(:item, user: user)
+
+        expect {
+          delete item_url(item)
+        }.not_to change(Item, :count)
+        expect(response).to redirect_to(item_url(item))
+      end
+    end
+
+    context "when admin deletes published item" do
       before { login(admin) }
 
       it "destroys the requested item" do
@@ -333,8 +347,8 @@ RSpec.describe "/items", type: :request do
         }.to change(Item, :count).by(-1)
       end
 
-      it "redirects to the items list" do
-        item = create(:item, user: user)
+      it "redirects to the items index" do
+        item = create(:item, :with_max_five_images, :published, user: user)
 
         delete item_url(item)
         expect(response).to redirect_to(items_url)
