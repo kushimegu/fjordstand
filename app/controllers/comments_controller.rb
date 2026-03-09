@@ -1,7 +1,7 @@
 class CommentsController < ApplicationController
   before_action :set_item
-  before_action :set_comment, only: [:destroy]
-  before_action :require_admin, only: [:destroy]
+  before_action :set_comment, only: [ :destroy ]
+  before_action :require_admin, only: [ :destroy ]
 
   # POST /comments
   def create
