@@ -1,15 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe "Messages", type: :system do
-  let(:webhook_double) { instance_double(DiscordWebhook, notify_item_published: true, notify_new_message: true) }
-
   let(:seller) { create(:user) }
   let(:buyer) { create(:user) }
   let(:item) { create(:item, :with_max_five_images, :published, user: seller) }
+  let(:admin) { create(:user, :admin, uid: "123") }
 
   before do
     driven_by(:selenium_chrome_headless)
 
+    webhook_double = instance_double(DiscordWebhook, notify_item_published: true, notify_new_message: true)
     allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
   end
 
@@ -55,6 +55,25 @@ RSpec.describe "Messages", type: :system do
 
         expect(page).to have_content("メッセージを入力してください")
       end
+    end
+  end
+
+  describe "delete message" do
+    before { login(admin) }
+
+    it "destroys message and redirects to items index" do
+      create(:message, user: buyer, item: item, body: "支払いはPayPayで良いですか？")
+      create(:message, user: seller, item: item, body: "大丈夫です")
+
+      visit transaction_messages_path(item)
+      within(find(".message", text: "大丈夫です")) do
+        accept_confirm do
+          click_on "削除する"
+        end
+      end
+
+      expect(page).not_to have_content("大丈夫です")
+      expect(page).to have_content("支払いはPayPayで良いですか？")
     end
   end
 end

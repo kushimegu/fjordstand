@@ -43,8 +43,9 @@ class Item < ApplicationRecord
   }
 
   def other_user_for(current_user)
-    seller = user
-    [ seller, winner ].find { |user| user != current_user }
+    return nil if current_user.admin?
+
+    [ user, winner ].find { |user| user != current_user }
   end
 
   def close!(by:)
