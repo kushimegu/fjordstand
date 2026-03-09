@@ -1,6 +1,8 @@
 class MessagesController < ApplicationController
   before_action :set_item
   before_action :authorize_user
+  before_action :set_message, only: [ :destroy ]
+  before_action :require_admin, only: [ :destroy ]
 
   # GET /messages
   def index
@@ -21,6 +23,11 @@ class MessagesController < ApplicationController
     end
   end
 
+  # DELETE /messages/1
+  def destroy
+    @message.destroy!
+    redirect_to transaction_messages_path(@item), notice: "コメントを削除しました", status: :see_other
+  end
   private
 
   def set_item
@@ -37,5 +44,15 @@ class MessagesController < ApplicationController
     return if @item.entries.exists?(user_id: current_user.id, status: :won)
 
     redirect_to items_path, alert: "この連絡ページを閲覧する権限がありません"
+  end
+
+  def set_message
+    @message = @item.messages.find(params[:id])
+  end
+
+  def require_admin
+    unless current_user.admin?
+      redirect_to transaction_messages_path(@item), alert: "削除する権限がありません"
+    end
   end
 end

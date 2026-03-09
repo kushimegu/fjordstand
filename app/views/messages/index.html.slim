@@ -30,15 +30,25 @@
 
   - @messages.each do |message|
     - if message.user_id == current_user.id
-      .flex.flex-col.items-end.mb-3
-        span.text-sm.text-gray-500 = l message.created_at
-        .bg-cyan-100.text-cyan-600.px-3.py-2.rounded-t-2xl.rounded-bl-2xl.max-w-md
-          = simple_format(message.body)
+      .my-message.mb-3
+        .flex.flex-col.items-end
+          span.text-sm.text-gray-500 = l message.created_at
+          .bg-cyan-100.text-cyan-600.px-3.py-2.rounded-t-2xl.rounded-bl-2xl.max-w-md
+            = simple_format(message.body)
+        - if current_user.admin?
+          .flex.justify-end
+            = button_to "削除する", transaction_message_path(@item, message), method: :delete, data: { turbo_confirm: "本当に削除しますか？" },
+              class: "inline-block cursor-pointer text-sm text-gray-700 underline hover:text-red-400"
     - else
-      .flex.flex-col.items-start.mb-3
-        span.text-sm.text-gray-500 = l message.created_at
-        .bg-gray-200.px-3.py-2.rounded-t-2xl.rounded-br-2xl.max-w-md
-          = simple_format(message.body)
+      .others-message.mb-3
+        .flex.flex-col.items-start
+          span.text-sm.text-gray-500 = l message.created_at
+          .bg-gray-200.px-3.py-2.rounded-t-2xl.rounded-br-2xl.max-w-md
+            = simple_format(message.body)
+        - if current_user.admin?
+          .flex.justify-start
+            = button_to "削除する", transaction_message_path(@item, message), method: :delete, data: { turbo_confirm: "本当に削除しますか？" },
+              class: "inline-block cursor-pointer text-sm text-gray-700 underline hover:text-red-400"
 
   = form_with(url: transaction_messages_path(@item), model: @message, class: "my-6") do |form|
     = form.textarea :body,

@@ -4,7 +4,7 @@ Rails.application.routes.draw do
     patch :read_all, on: :collection
   end
   resources :transactions, only: [:index] do
-    resources :messages, only: %i[index create]
+    resources :messages, only: %i[index create destroy]
   end
   get "/drafts", to: "items#drafts"
   get "/entries", to: "entries#index"
