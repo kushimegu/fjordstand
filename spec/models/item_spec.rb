@@ -195,6 +195,64 @@ RSpec.describe Item, type: :model do
     end
   end
 
+  describe "#deletable_by?" do
+    let(:admin) { create(:user, :admin) }
+    let(:user) { create(:user) }
+    let(:other_user) { create(:user) }
+
+    context "when item is draft" do
+      let(:item) { create(:item, user: user) }
+
+      it "is deletable by item user" do
+        expect(item.deletable_by?(user)).to be true
+      end
+
+      it "is not deletable by other user" do
+        expect(item.deletable_by?(other_user)).to be false
+      end
+
+      it "is not deletable by other admin" do
+        expect(item.deletable_by?(admin)).to be false
+      end
+    end
+
+    context "when item is published" do
+      let(:item) { create(:item, :with_max_five_images, :published, user: user) }
+
+      it "is deletable by admin" do
+        expect(item.deletable_by?(admin)).to be true
+      end
+
+      it "is not deletable by user" do
+        expect(item.deletable_by?(user)).to be false
+      end
+    end
+
+    context "when item is sold" do
+      let(:item) { create(:item, :with_max_five_images, :sold, user: user) }
+
+      it "is deletable by admin" do
+        expect(item.deletable_by?(admin)).to be true
+      end
+
+      it "is not deletable by user" do
+        expect(item.deletable_by?(user)).to be false
+      end
+    end
+
+    context "when item is closed" do
+      let(:item) { create(:item, :with_max_five_images, :closed, user: user) }
+
+      it "is deletable by admin" do
+        expect(item.deletable_by?(admin)).to be true
+      end
+
+      it "is not deletable by user" do
+        expect(item.deletable_by?(user)).to be false
+      end
+    end
+  end
+
   describe "#deadline_today_or_later" do
     let(:item) { build(:item, :with_max_five_images, entry_deadline_at: entry_deadline_at) }
 

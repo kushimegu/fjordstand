@@ -43,14 +43,21 @@ class Item < ApplicationRecord
   }
 
   def other_user_for(current_user)
-    seller = user
-    [ seller, winner ].find { |user| user != current_user }
+    return nil if current_user.admin?
+
+    [ user, winner ].find { |user| user != current_user }
   end
 
   def close!(by:)
     update!(status: :closed)
     notify_close(by)
     entries.destroy_all
+  end
+
+  def deletable_by?(user)
+    return true if draft? && user.id == self.user_id
+    return true if !draft? && user.admin?
+    false
   end
 
   private

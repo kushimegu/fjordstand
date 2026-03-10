@@ -68,4 +68,39 @@ RSpec.describe "/messages", type: :request do
       end
     end
   end
+
+  describe "DELETE /destroy" do
+    context "when user tries to delete message" do
+      it "redirects to messages" do
+        create(:entry, :won, item: item, user: buyer)
+        login(buyer)
+        message = create(:message, user: buyer, item: item)
+        expect {
+          delete transaction_message_url(item, message)
+        }.not_to change(Message, :count)
+        expect(response).to redirect_to(transaction_messages_url(item))
+      end
+    end
+
+    context "when admin deletes message" do
+      let(:admin) { create(:user, :admin, uid: "123") }
+
+      before { login (admin) }
+
+      it "destroys the requested message" do
+        message = create(:message, user: buyer, item: item)
+
+        expect {
+          delete transaction_message_url(item, message)
+        }.to change(Message, :count).by(-1)
+      end
+
+      it "redirects to item" do
+        message = create(:message, user: buyer, item: item)
+
+        delete transaction_message_url(item, message)
+        expect(response).to redirect_to(transaction_messages_url(item))
+      end
+    end
+  end
 end
