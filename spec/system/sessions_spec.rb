@@ -24,6 +24,12 @@ RSpec.describe "Sessions", type: :system do
           }
         )
 
+        WebMock.stub_request(:get, "#{Discordrb::API.api_base}/guilds/#{ENV['DISCORD_SERVER_ID']}")
+        .to_return(
+          status: 200,
+          body: { "owner_id": "123" }.to_json,
+          headers: { "Content-Type" => "application/json" }
+        )
         WebMock.stub_request(:get, "#{Discordrb::API.api_base}/guilds/#{ENV['DISCORD_SERVER_ID']}/members/#{uid}")
         .to_return(
           status: 200,

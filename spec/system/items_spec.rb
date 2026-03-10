@@ -159,6 +159,7 @@ RSpec.describe "Items", type: :system do
       it "shows item on item index page" do
         item = create(:item, :with_max_five_images, user: user, title: '技術書')
 
+        expect(page).to have_current_path(items_path)
         visit drafts_path
         click_on '技術書'
         fill_in '商品名', with: '小説'
