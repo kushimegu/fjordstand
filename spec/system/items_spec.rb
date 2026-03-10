@@ -211,7 +211,9 @@ RSpec.describe "Items", type: :system do
         visit items_path
         click_on '技術書'
         expect(page).to have_content('削除する')
-        click_on '削除する'
+        accept_confirm do
+          click_on '削除する'
+        end
 
         expect(page).to have_current_path(items_path)
         expect(page).not_to have_content('技術書')

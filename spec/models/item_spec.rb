@@ -1,10 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Item, type: :model do
-  before do
-    webhook_double = instance_double(DiscordWebhook, notify_item_published: true, notify_item_closed: true, notify_item_deadline_extended: true, notify_lottery_skipped: true)
-    allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
-  end
+  let(:webhook_double) { instance_double(DiscordWebhook, notify_item_published: true, notify_item_closed: true, notify_item_deadline_extended: true, notify_lottery_skipped: true) }
+
+  before { allow(DiscordWebhook).to receive(:new).and_return(webhook_double) }
 
   describe "validations" do
     let(:item) { build(:item) }
