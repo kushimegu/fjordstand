@@ -57,3 +57,7 @@ ja:
         draft:
           update: '上書き保存する'
           new: '下書きに保存する'
+  notices:
+    item:
+      update: '商品情報を更新しました'
+      publish: '商品を出品しました'
