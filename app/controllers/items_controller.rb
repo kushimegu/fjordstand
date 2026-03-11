@@ -88,7 +88,8 @@ class ItemsController < ApplicationController
       if @item.valid?(:publish)
         @item.status = :published
         @item.save!
-        redirect_to @item, notice: "商品を出品しました", status: :see_other
+        notice_key = @item.saved_change_to_status? ? :publish : :update
+        redirect_to @item, notice: t("notices.item.#{notice_key}"), status: :see_other
       else
         render :edit, status: :unprocessable_content
       end
