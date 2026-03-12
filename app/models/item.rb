@@ -60,6 +60,12 @@ class Item < ApplicationRecord
     false
   end
 
+  def editable?
+    return false if published? && entry_deadline_at < Time.current
+    return false if sold?
+    true
+  end
+
   private
 
   def deadline_today_or_later

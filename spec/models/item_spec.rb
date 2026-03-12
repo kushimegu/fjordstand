@@ -253,6 +253,50 @@ RSpec.describe Item, type: :model do
     end
   end
 
+  describe "#editable?" do
+    let(:user) { create(:user) }
+
+    context "when item is published and past entry deadline" do
+      let(:item) { create(:item, :with_max_five_images, :published, user: user, entry_deadline_at: Date.yesterday) }
+
+      it "is not editable" do
+        expect(item.editable?).to be false
+      end
+    end
+
+    context "when item is sold" do
+      let(:item) { create(:item, :with_max_five_images, :sold, user: user) }
+
+      it "is not editable" do
+        expect(item.editable?).to be false
+      end
+    end
+
+    context "when item is published and before entry deadline" do
+      let(:item) { create(:item, :with_max_five_images, :published, user: user, entry_deadline_at: Date.tomorrow) }
+
+      it "is editable" do
+        expect(item.editable?).to be true
+      end
+    end
+
+    context "when item is draft" do
+      let(:item) { create(:item, user: user) }
+
+      it "is editable" do
+        expect(item.editable?).to be true
+      end
+    end
+
+    context "when item is closed" do
+      let(:item) { create(:item, :with_max_five_images, :closed, user: user) }
+
+      it "is editable" do
+        expect(item.editable?).to be true
+      end
+    end
+  end
+
   describe "#deadline_today_or_later" do
     let(:item) { build(:item, :with_max_five_images, entry_deadline_at: entry_deadline_at) }
 

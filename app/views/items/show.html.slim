@@ -1,6 +1,6 @@
 .flex.flex-col.space-y-2.lg:grid.grid-cols-2.mt-4.gap-6.px-2
   - if @item.images.attached?
-    .flex.flex-col.space-y-2.items-center.sticky.top-20[data-controller="image-gallery"]
+    .flex.flex-col.space-y-2.items-center.top-20[data-controller="image-gallery"]
       .aspect-square.h-108.flex.items-center.justify-center.bg-gray-100.relative
         = image_tag @item.images.first.variant(resize_to_limit: [ 400, 400 ]).processed, id: "big-image", data: { image_gallery_target: "bigImage" },
         class: "object-contain w-full h-full"
@@ -86,7 +86,7 @@
       = image_tag (@item.user.avatar_url.presence || "default-avatar.png"), class: "w-10 h-10 rounded-full"
       = @item.user.name
 
-    - if @item.user == current_user && !@item.sold?
+    - if @item.user == current_user && @item.editable?
       .flex.justify-end
         = link_to "編集する", edit_item_path(@item),
         class: "inline-block border border-gray-300 text-sm px-3 py-2 rounded hover:bg-gray-50"

@@ -129,6 +129,14 @@ RSpec.describe "Items", type: :system do
   describe "update item" do
     before { login(user) }
 
+    context "when item is sold" do
+      it "is not editable" do
+        item = create(:item, :with_max_five_images, :sold, user: user)
+        visit item_path(item)
+        expect(page).not_to have_content('編集する')
+      end
+    end
+
     context "when close published item" do
       it "shows item on listings page" do
         item = create(:item, :with_max_five_images, :published, user: user, title: '技術書')
@@ -174,6 +182,7 @@ RSpec.describe "Items", type: :system do
       it "shows item on item index page" do
         item = create(:item, :with_max_five_images, :published, user: user, title: '技術書セット')
 
+        expect(page).to have_current_path(items_path)
         visit item_path(item)
         click_on '編集する'
         fill_in "item[title_append]", with: '3冊'
