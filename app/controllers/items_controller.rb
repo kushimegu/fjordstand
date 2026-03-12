@@ -36,6 +36,9 @@ class ItemsController < ApplicationController
 
   # GET /items/1/edit
   def edit
+    unless @item.editable?
+      redirect_to @item, alert: "締切を過ぎた商品は編集できません"
+    end
   end
 
   # POST /items
@@ -61,6 +64,11 @@ class ItemsController < ApplicationController
 
   # PATCH/PUT /items/1
   def update
+    unless @item.editable?
+      redirect_to @item, alert: "締切を過ぎた商品は編集できません"
+      return
+    end
+
     if params[:close]
       @item.close!(by: :user)
       redirect_to listings_path, notice: "商品を取り下げました", status: :see_other
