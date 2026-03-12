@@ -45,6 +45,9 @@
       .text-xl.py-2
         span 締め切り未設定
 
+    = @item.applicants.count
+    span 人が応募しています
+
     - if @item.user == current_user && @item.sold?
       .flex.items-center
         p.text-xl.text-cyan-600 抽選が完了しました！
