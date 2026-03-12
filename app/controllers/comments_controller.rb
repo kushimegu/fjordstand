@@ -5,6 +5,11 @@ class CommentsController < ApplicationController
 
   # POST /comments
   def create
+    unless @item.commentable?
+      redirect_to @item, alert: "下書きにはコメントできません"
+      return
+    end
+
     @comment = current_user.comments.new(comment_params)
     @comment.item_id = @item.id
 
