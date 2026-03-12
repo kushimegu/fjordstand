@@ -169,10 +169,20 @@ RSpec.describe "/items", type: :request do
   describe "GET /edit" do
     before { login(user) }
 
-    it "renders a successful response" do
-      item = create(:item, :with_max_five_images, :published, user: user)
-      get edit_item_url(item)
-      expect(response).to be_successful
+    context "when item is editable" do
+      it "renders a successful response" do
+        item = create(:item, :with_max_five_images, :published, user: user)
+        get edit_item_url(item)
+        expect(response).to be_successful
+      end
+    end
+
+    context "when item is not editable" do
+      it "redirects to the item page" do
+        item = create(:item, :with_max_five_images, :sold, user: user)
+        get edit_item_url(item)
+        expect(response).to redirect_to(item_url(item))
+      end
     end
   end
 
@@ -229,6 +239,15 @@ RSpec.describe "/items", type: :request do
 
   describe "PATCH /update" do
     before { login(user) }
+
+    context "when item is not editable" do
+      it "redirects to the item page" do
+        item = create(:item, :with_max_five_images, :sold, user: user, title: "技術書")
+        patch item_url(item), params: { item: { title_append: "初版" } }
+        expect(response).to redirect_to(item_url(item))
+        expect(item.reload.title).to eq("技術書")
+      end
+    end
 
     context "when update as closed" do
       it "updates the requested item" do
