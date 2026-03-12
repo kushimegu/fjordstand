@@ -12,6 +12,16 @@ RSpec.describe "/comments", type: :request do
   describe "POST /create" do
     before { login(user) }
 
+    context "when item is not coommentable" do
+      let(:item) { create(:item, user: user) }
+      let(:valid_attributes) { attributes_for(:comment) }
+
+      it "redirects to item" do
+        post item_comments_path(item), params: { comment: valid_attributes }
+        expect(response).to redirect_to(item_path(item))
+      end
+    end
+
     context "with valid parameters" do
       let(:valid_attributes) { attributes_for(:comment) }
 

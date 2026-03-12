@@ -15,6 +15,15 @@ RSpec.describe "Items", type: :system do
   describe "create comment" do
     before { login(user) }
 
+    context "when item is not coommentable" do
+      let(:item) { create(:item, user: user) }
+
+      it "does not show comment form" do
+        visit item_path(item)
+        expect(page).not_to have_selector("textarea#comment_body")
+      end
+    end
+
     context "when comment is valid" do
       it "sends comment" do
         visit item_path(item)
