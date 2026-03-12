@@ -297,6 +297,26 @@ RSpec.describe Item, type: :model do
     end
   end
 
+  describe "#commentable?" do
+    let(:user) { create(:user) }
+
+    context "when item is draft" do
+      let(:item) { create(:item, user: user) }
+
+      it "is not commentable" do
+        expect(item.commentable?).to be false
+      end
+    end
+
+    context "when item is published" do
+      let(:item) { create(:item, :with_max_five_images, :published, user: user) }
+
+      it "is commentable" do
+        expect(item.commentable?).to be true
+      end
+    end
+  end
+
   describe "#deadline_today_or_later" do
     let(:item) { build(:item, :with_max_five_images, entry_deadline_at: entry_deadline_at) }
 
@@ -402,6 +422,13 @@ RSpec.describe Item, type: :model do
 
   describe "#comment_watch_by_seller" do
     let(:user) { create(:user) }
+
+    context "when item is draft" do
+      it "does not create watch by seller" do
+        item = create(:item, user: user)
+        expect(item.watchers).not_to include(user)
+      end
+    end
 
     context "when publishing item" do
       it "create watch by seller" do
