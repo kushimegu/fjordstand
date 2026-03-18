@@ -15,7 +15,7 @@ html
     = stylesheet_link_tag "tailwind", "data-turbo-track": "reload"
     = javascript_importmap_tags
     = favicon_link_tag 'favicon.ico'
-  body.min-h-screen.flex.flex-col
+  body.min-h-screen.flex.flex-col.text-gray-600
     - unless request.path == root_path
       = render "shared/header"
     = render "shared/flash"

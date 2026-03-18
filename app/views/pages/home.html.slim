@@ -21,9 +21,9 @@
         span.text-center 購入希望者は当落通知をDiscordで受け取ることができます
   .flex.flex-col.items-center.mt-6.mb-4
     .flex.text-center
-      = link_to "利用規約", terms_path, class: "underline decoration-1 hover:text-cyan-700"
+      = link_to "利用規約", terms_path, class: "underline decoration-1 hover:text-cyan-600"
       span と
-      = link_to "プライバシーポリシー", privacy_path, class: "underline decoration-1 hover:text-cyan-700"
+      = link_to "プライバシーポリシー", privacy_path, class: "underline decoration-1 hover:text-cyan-600"
       span に同意して
     = button_to "/auth/discord", data: { turbo: false },
       class: "inline-flex items-center gap-2 mt-1 px-6 py-3 rounded-lg bg-cyan-600 text-white font-semibold shadow hover:opacity-80" do
