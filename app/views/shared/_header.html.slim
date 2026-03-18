@@ -2,12 +2,13 @@ header.flex.justify-between.items-center.px-4.py-2.sticky.top-0.bg-white.z-10
   - if logged_in
     .flex.items-center.gap-1
       = link_to items_path do
-        = image_tag "fjordstand-logo.png", class: "w-11 h-11"
+        = image_tag "fjordstand-logo.png", alt: "FjordStandロゴ", class: "w-11 h-11"
     .flex.items-center.gap-1[data-controller="hamburger"]
       = link_to "出品する", new_item_path, class: "px-3 py-2.5 rounded bg-cyan-600 text-white font-semibold hover:opacity-80"
       - notifications = current_user.notifications.unread.exists? ? notifications_path(status: "unread") : notifications_path
       = link_to notifications, class: "relative p-2 cursor-pointer rounded hover:bg-gray-100"
         svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-7 text-gray-700"
+          title "通知一覧"
           path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6
           9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
         - if current_user.notifications.unread.exists?
@@ -16,7 +17,7 @@ header.flex.justify-between.items-center.px-4.py-2.sticky.top-0.bg-white.z-10
             = display_count
       .relative[data-hamburger-target="button" data-action="click->hamburger#toggle" aria-expanded="false" aria-controls="header__nav"]
         .flex.items-center.cursor-pointer.px-2.py-1.rounded.h-11.hover:bg-gray-100
-          = image_tag (current_user.avatar_url.presence || "default-avatar.png"), class: "w-9 h-9 rounded-full mr-2"
+          = image_tag (current_user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-9 h-9 rounded-full mr-2"
           span = current_user.name
         #header__nav.absolute.right-0.mt-2.w-50.bg-white.border.border-gray-300.divide-y.divide-gray-300.rounded.hidden data-hamburger-target="nav"
           = link_to "Watch中一覧", watches_path, class: "block px-4 py-2 text-gray-700 hover:bg-gray-50"
@@ -27,4 +28,4 @@ header.flex.justify-between.items-center.px-4.py-2.sticky.top-0.bg-white.z-10
           = link_to "ログアウト", logout_path, data: { turbo_method: :delete }, class: "block px-4 py-2 text-red-400 hover:bg-gray-50"
   - else
     = link_to root_path do
-      = image_tag "fjordstand-logo.png", class: "w-11 h-11"
+      = image_tag "fjordstand-logo.png", alt: "FjordStandロゴ", class: "w-11 h-11"

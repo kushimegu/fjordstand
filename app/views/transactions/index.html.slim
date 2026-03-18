@@ -7,6 +7,7 @@ h1.font-bold.text-2xl.my-2.text-center 連絡ページ一覧
       .container.bg-white.shadow.rounded.p-4.hover:bg-gray-50.flex.gap-x-4
         .aspect-square.h-25.flex.items-center.justify-center.bg-gray-100
           = image_tag item.images.first.variant(resize_to_limit: [ 400, 400 ]).processed,
+          alt: "#{item.title} 1枚目",
           class: "object-contain w-full h-full"
         .flex.flex-col.justify-between.h-25
           .text-2xl.line-clamp-1
@@ -18,11 +19,11 @@ h1.font-bold.text-2xl.my-2.text-center 連絡ページ一覧
             .flex.items-center.gap-2
               - if item.user == current_user
                 p 購入者
-                = image_tag (item.winner.avatar_url.presence || "default-avatar.png"), class: "w-10 h-10 rounded-full"
+                = image_tag (item.winner.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-10 h-10 rounded-full"
                 = item.winner.name
                 span さん
               - else
                 p 出品者
-                = image_tag (item.user.avatar_url.presence || "default-avatar.png"), class: "w-10 h-10 rounded-full"
+                = image_tag (item.user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-10 h-10 rounded-full"
                 = item.user.name
                 span さん
