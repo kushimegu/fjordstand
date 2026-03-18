@@ -10,7 +10,7 @@ class ItemsController < ApplicationController
     @items = current_user.items
                           .where.not(status: :draft)
                           .by_target(params[:status])
-                          .order(entry_deadline_at: :asc)
+                          .order(entry_deadline_at: :desc)
                           .page(params[:page])
                           .per(16)
   end
