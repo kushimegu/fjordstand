@@ -86,6 +86,15 @@ RSpec.describe Item, type: :model do
       end
     end
 
+    context "when shipping_fee_payer is blank" do
+      let(:item) { build(:item, :with_max_five_images, shipping_fee_payer: nil) }
+
+      it "is invalid" do
+        expect(item.valid?(:publish)).to be false
+        expect(item.errors[:shipping_fee_payer]).to include("を選択してください")
+      end
+    end
+
     context "when payment_method is blank" do
       let(:item) { build(:item, :with_max_five_images, payment_method: nil) }
 
