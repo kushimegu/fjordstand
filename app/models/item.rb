@@ -20,6 +20,7 @@ class Item < ApplicationRecord
 
   validates :title, length: { maximum: 255 }, presence: true, on: :publish
   validates :price, presence: true, on: :publish
+  validates :shipping_fee_payer, presence: { message: "を選択してください" }, on: :publish
   validates :payment_method, presence: { message: "を選択してください" }, on: :publish
   validates :entry_deadline_at, presence: true, on: :publish
   validates :images, attached: { message: "を1枚以上選択してください" }, on: :publish

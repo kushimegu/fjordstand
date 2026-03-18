@@ -28,7 +28,8 @@
     - if @item.price.present?
       .text-2xl.mt-2.flex.items-center
         = number_to_currency(@item.price)
-        span.text-base.pl-1 = I18n.t("views.item.shipping_fee_label.#{@item.shipping_fee_payer}")
+        - if @item.shipping_fee_payer.present?
+          span.text-base.pl-1 = I18n.t("views.item.shipping_fee_label.#{@item.shipping_fee_payer}")
     - else
       .text-xl.py-2
         span 価格未設定

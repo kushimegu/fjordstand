@@ -18,7 +18,8 @@ h1.font-bold.text-2xl.my-2.text-center 下書き一覧
               = number_to_currency(item.price)
               - if item.price.present?
                 span.text-base
-                  = I18n.t("views.item.shipping_fee_label.#{item.shipping_fee_payer}")
+                  - if item.shipping_fee_payer.present?
+                    = I18n.t("views.item.shipping_fee_label.#{item.shipping_fee_payer}")
           div
             = l item.updated_at
             span 更新
