@@ -59,17 +59,15 @@
     .flex.items-center.gap-x-2
       = form.label :shipping_fee_payer, style: "display: block", class: "font-bold text-lg block text-left"
       span.text-gray-400.text-sm ※出品後は変更できません
-    .relative
-      = form.select :shipping_fee_payer,
-                    Item.shipping_fee_payers.keys.map { |k| [ I18n.t("enums.item.shipping_fee_payer.#{k}"), k ] },
-                {},
-                { disabled: item.published?,
-                  class: "form-select w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500 \
-                  disabled:bg-gray-100 disabled:focus:border-gray-300" }
-      - if !item.published?
-        .pointer-events-none.absolute.inset-y-0.right-0.flex.items-center.pr-3
-          svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 text-gray-500"
-            path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"
+    .flex.flex-col.gap-1.mt-1
+      label.flex.items-center.gap-2.cursor-pointer
+        = form.radio_button :shipping_fee_payer, :buyer, class: "peer", disabled: @item.published?
+        span class="#{"opacity-50 cursor-not-allowed" if @item.published?}"
+          | 購入者
+      label.flex.items-center.gap-2.cursor-pointer
+        = form.radio_button :shipping_fee_payer, :seller, class: "peer", disabled: @item.published?
+        span class="#{"opacity-50 cursor-not-allowed" if @item.published?}"
+          | 出品者
       = render "shared/error_messages", model: item, attribute: :shipping_fee_payer
 
   .mt-4

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_03_073346) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_18_075610) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -69,7 +69,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_073346) do
     t.datetime "entry_deadline_at"
     t.string "payment_method"
     t.integer "price"
-    t.integer "shipping_fee_payer", default: 0
+    t.integer "shipping_fee_payer"
     t.integer "status", default: 0, null: false
     t.string "title"
     t.datetime "updated_at", null: false
