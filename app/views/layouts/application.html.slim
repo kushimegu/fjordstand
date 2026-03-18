@@ -14,8 +14,10 @@ html
     link[rel="apple-touch-icon" href="/icon.png"]
     = stylesheet_link_tag :app, "data-turbo-track": "reload"
     = javascript_importmap_tags
-  body
+  body.min-h-screen.flex.flex-col
     = render "shared/header"
     = render "shared/flash"
-    main.container.mx-auto
-      = yield
+    main.flex-1
+      .container.mx-auto
+        = yield
+    = render "shared/footer"

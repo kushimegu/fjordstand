@@ -16,6 +16,8 @@ Rails.application.routes.draw do
     resource :watches, only: %i[create destroy]
   end
   root to: "pages#home"
+  get "/terms", to: "pages#terms"
+  get "/privacy", to: "pages#privacy"
   resource :session, only: %i[create destroy]
   get 'auth/:provider/callback', to: 'sessions#create'
   get 'auth/failure', to: redirect('/')
