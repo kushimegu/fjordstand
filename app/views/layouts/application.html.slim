@@ -15,7 +15,8 @@ html
     = stylesheet_link_tag :app, "data-turbo-track": "reload"
     = javascript_importmap_tags
   body.min-h-screen.flex.flex-col
-    = render "shared/header"
+    - unless request.path == root_path
+      = render "shared/header"
     = render "shared/flash"
     main.flex-1
       .container.mx-auto
