@@ -1,4 +1,6 @@
 - content_for :title, @item.title
+- content_for :description, "FjordStandの商品詳細ページです。出品者が登録した商品の情報や画像を確認し、購入希望を申請できます。"
+
 .flex.flex-col.space-y-2.lg:grid.grid-cols-2.mt-4.gap-6.px-2
   - if @item.images.attached?
     .flex.flex-col.space-y-2.items-center.top-20[data-controller="image-gallery"]

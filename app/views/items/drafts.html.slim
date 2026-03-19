@@ -1,4 +1,6 @@
 - content_for(:title, "下書き一覧")
+- content_for :description, "作成中の下書き一覧です。公開前の商品を確認し、編集や出品の準備ができます。"
+
 h1.font-bold.text-2xl.my-2.text-center 下書き一覧
 - if @items.empty?
   p.mt-20.text-center.text-xl 下書きはありません

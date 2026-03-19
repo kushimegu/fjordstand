@@ -1,4 +1,6 @@
 - content_for :title, "出品した商品一覧"
+- content_for :description, "出品した商品の一覧です。公開状況で絞り込んで確認できます。"
+
 h1.font-bold.text-2xl.my-2.text-center 出品した商品一覧
 .flex.border-b.border-gray-300.mb-2[data-controller="action-button"]
   = link_to "全て", listings_path, class: "text-lg px-4 py-2 hover:bg-gray-100",
