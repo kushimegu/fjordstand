@@ -1,22 +1,24 @@
+- content_for :description, "FjordStandは、ユーザー同士で商品を出品し、購入希望を申請できるマーケットプレイスです。"
+
 .px-4.mt-4.lg:mt-20
   .flex.flex-col.items-center.justify-center
-    = image_tag "fjordstand.png", class: "h-20"
+    = image_tag "fjordstand.png", alt: "FjordStandタイトル", class: "h-20"
     h1.lg:text-lg.mt-2.mb-4.text-cyan-800.text-center.font-bold.leading-none
       | FjordBootCampメンバーのクローズドなフリマアプリ
   .grid.lg:grid-cols-3.gap-4.max-w-5xl.mx-auto
     .flex.flex-col.items-center.border.rounded-lg.max-w-sm.w-full.mx-auto.border-gray-300
       .flex.justify-center.items-center
-        = image_tag "listing-image.png", class: "h-20 p-4"
+        = image_tag "listing-image.png", alt: "出品のイメージ", class: "h-20 p-4"
       .bg-gray-100.rounded-b-lg.w-full.p-2.flex.flex-col.justify-center.items-center.flex-1
         span.text-center 購入希望の申請締切を設定して出品できます
     .flex.flex-col.items-center.border.rounded-lg.max-w-sm.w-full.mx-auto.border-gray-300
       .flex.justify-center.items-center
-        = image_tag "lottery-image.png", class: "h-20 p-2"
+        = image_tag "lottery-image.png", alt: "抽選のイメージ", class: "h-20 p-2"
       .bg-gray-100.rounded-b-lg.w-full.p-2.flex.flex-col.justify-center.items-center.flex-1
         span.text-center 締切後に抽選で購入者が決定します
     .flex.flex-col.items-center.border.rounded-lg.max-w-sm.w-full.mx-auto.border-gray-300
       .flex.justify-center.items-center
-        = image_tag "discord-notification-image.png", class: "h-20 p-2"
+        = image_tag "discord-notification-image.png", alt: "Discord通知のイメージ", class: "h-20 p-2"
       .bg-gray-100.rounded-b-lg.w-full.p-2.flex.flex-col.justify-center.items-center.flex-1
         span.text-center 購入希望者は当落通知をDiscordで受け取ることができます
   .flex.flex-col.items-center.mt-6.mb-4
@@ -26,8 +28,8 @@
       = link_to "プライバシーポリシー", privacy_path, class: "underline decoration-1 hover:text-cyan-600"
       span に同意して
     = button_to "/auth/discord", data: { turbo: false },
-      class: "inline-flex items-center gap-2 mt-1 px-6 py-3 rounded-lg bg-cyan-600 text-white font-semibold shadow hover:opacity-80" do
-      svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 126.644 96" class="w-5 h-5 fill-current"
+      class: "inline-flex items-center gap-2 mt-1 px-6 py-3 rounded-lg bg-cyan-600 text-white font-semibold shadow hover:opacity-80 cursor-pointer" do
+      svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 126.644 96" class="w-5 h-5 fill-current"
         path d="M81.15,0c-1.2376,2.1973-2.3489,4.4704-3.3591,6.794-9.5975-1.4396-19.3718-1.4396-28.9945,0-.985-2.3236-2.1216-4.5967-3.3591-6.794-9.0166,
         1.5407-17.8059,4.2431-26.1405,8.0568C2.779,32.5304-1.6914,56.3725.5312,79.8863c9.6732,7.1476,20.5083,12.603,32.0505,16.0884,2.6014-3.4854,4.8998-7.1981,
         6.8698-11.0623-3.738-1.3891-7.3497-3.1318-10.8098-5.1523.9092-.6567,1.7932-1.3386,2.6519-1.9953,20.281,9.547,43.7696,9.547,64.0758,0,.8587.7072,1.7427,

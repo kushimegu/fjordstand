@@ -1,9 +1,13 @@
+- content_for :title, "#{@item.title}の連絡ページ"
+- content_for :description, "出品者と当選者が連絡を取り合うためのページです。取引に関するメッセージを送受信できます。"
+
 .w-full.max-w-2xl.mx-auto.px-4
   .top-20.bg-white.py-2
     = link_to @item, class: "block" do
       .container.bg-white.shadow.rounded.p-4.hover:bg-gray-50.flex.gap-x-4
         .aspect-square.h-25.flex.items-center.justify-center.bg-gray-100
           = image_tag @item.images.first.variant(resize_to_limit: [ 400, 400 ]).processed,
+           alt: "#{@item.title} 1枚目",
           class: "object-contain w-full h-full"
         .flex.flex-col.justify-between.h-25
           .text-2xl.line-clamp-1
@@ -20,7 +24,7 @@
   - @messages.each do |message|
     .message.mb-3
       .flex.items-start.space-x-3
-        = image_tag (message.user.avatar_url.presence || "default-avatar.png"), class: "w-10 h-10 rounded-full"
+        = image_tag (message.user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-10 h-10 rounded-full"
         .flex-1.flex.flex-col.space-y-1.w-full
           .px-2.flex.justify-between.items-center
             span.text-lg = message.user.name
@@ -39,4 +43,4 @@
       required: true
     = render "shared/error_messages", model: @message, attribute: :body
     .flex.justify-center
-      = form.submit "送信する", class: "cursor-pointer w-1/2 border border-cyan-600 text-cyan-600 font-semibold px-3 py-1 rounded hover:opacity-80"
+      = form.submit "送信する", class: "cursor-pointer w-1/2 border border-cyan-600 text-cyan-600 font-semibold px-3 py-1 rounded hover:bg-cyan-100"

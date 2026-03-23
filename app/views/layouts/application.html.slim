@@ -2,19 +2,37 @@ doctype html
 html
   head
     title
-      = content_for(:title) || "Fjord Stand"
+      = page_title(yield(:title))
+    meta name="description" content=(content_for?(:description) ? yield(:description) : "FjordStandのトップページです。")
+
+    meta property="og:title" content=(content_for?(:title) ? yield(:title) : "FjordStand")
+    meta property="og:description" content=(content_for?(:description) ? yield(:description) : "FjordStandのトップページです。")
+    meta property="og:type" content="website"
+    meta property="og:url" content=request.original_url
+    meta property="og:image" content=image_url("ogp.png")
+
+    meta name="twitter:card" content="summary_large_image"
+    meta name="twitter:title" content=(content_for?(:title) ? yield(:title) : "FjordStand")
+    meta name="twitter:description" content=(content_for?(:description) ? yield(:description) : "FjordStandのトップページです。")
+    meta name="twitter:image" content=image_url("ogp.png")
+
     meta[name="viewport" content="width=device-width,initial-scale=1"]
     meta[name="apple-mobile-web-app-capable" content="yes"]
     meta[name="mobile-web-app-capable" content="yes"]
+
     = csrf_meta_tags
     = csp_meta_tag
+
     = yield :head
+
     link[rel="icon" href="/icon.png" type="image/png"]
     link[rel="icon" href="/icon.svg" type="image/svg+xml"]
     link[rel="apple-touch-icon" href="/icon.png"]
+
     = stylesheet_link_tag "tailwind", "data-turbo-track": "reload"
     = javascript_importmap_tags
     = favicon_link_tag "favicon.ico"
+
   body.min-h-screen.flex.flex-col.text-gray-600
     - unless request.path == root_path
       = render "shared/header"

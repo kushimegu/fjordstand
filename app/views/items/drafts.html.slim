@@ -1,3 +1,6 @@
+- content_for(:title, "下書き一覧")
+- content_for :description, "作成中の下書き一覧です。公開前の商品を確認し、編集や出品の準備ができます。"
+
 h1.font-bold.text-2xl.my-2.text-center 下書き一覧
 - if @items.empty?
   p.mt-20.text-center.text-xl 下書きはありません
@@ -9,6 +12,7 @@ h1.font-bold.text-2xl.my-2.text-center 下書き一覧
         - if item.images.attached?
           .aspect-square.h-25.flex.items-center.justify-center.bg-gray-100
             = image_tag item.images.first.variant(resize_to_limit: [ 400, 400 ]).processed,
+            alt: "#{item.title} 1枚目",
             class: "object-contain w-full h-full"
         .flex.flex-col.justify-between.h-25
           div
