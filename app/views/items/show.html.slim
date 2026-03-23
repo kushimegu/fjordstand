@@ -30,7 +30,7 @@
               data: { image_gallery_target: "thumbnail", action: "click->image-gallery#show", image: url_for(image) }
 
   div
-    h2.text-3xl = @item.title
+    h1.text-3xl = @item.title
 
     - if @item.price.present?
       .text-2xl.mt-2.flex.items-center
