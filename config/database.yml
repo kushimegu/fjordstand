@@ -80,14 +80,7 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: fjord_stand_production
-    username: fjord_stand
-    password: <%= ENV["FJORD_STAND_DATABASE_PASSWORD"] %>
-  cache:
-    <<: *primary_production
-    database: fjord_stand_production_cache
-    migrations_paths: db/cache_migrate
-  queue:
-    <<: *primary_production
-    database: fjord_stand_production_queue
-    migrations_paths: db/queue_migrate
+    host: <%= ENV["DB_HOST"] %>
+    database: fjordstand_production
+    username: fjordstand
+    password: <%= ENV["FJORDSTAND_DATABASE_PASSWORD"] %>
