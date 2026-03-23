@@ -83,4 +83,4 @@ production:
     host: <%= ENV["DB_HOST"] %>
     database: fjordstand_production
     username: fjordstand
-    password: <%= ENV["FJORDSTAND_DATABASE_PASSWORD"] %>
+    password: <%= ENV["POSTGRES_PASSWORD"] %>
