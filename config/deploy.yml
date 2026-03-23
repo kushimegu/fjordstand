@@ -96,11 +96,11 @@ accessories:
     image: postgres:14
     host: 153.120.120.6
     # Change to 3306 to expose port to the world instead of just local network.
-    # port: "127.0.0.1:3306:3306"
+    port: 5432
     env:
       clear:
         POSTGRES_USER: postgres
-        POSTGRES_DB: fjordstand
+        POSTGRES_DB: fjordstand_production
       secret:
         - POSTGRES_PASSWORD:FJORDSTAND_DB_PASSWORD
     #     files:

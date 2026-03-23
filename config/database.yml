@@ -78,9 +78,9 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  adapter: postgresql
-  host: <%= ENV["FJORDSTAND_DB_HOST"] %>
-  port: <%= ENV["FJORDSTAND_DB_PORT"] %>
-  database: <%= ENV["FJORDSTAND_DB_NAME"] %>
-  username: <%= ENV["FJORDSTAND_DB_USERNAME"] %>
-  password: <%= ENV["FJORDSTAND_DATABASE_PASSWORD"] %>
+  primary: &primary_production
+    <<: *default
+    host: <%= ENV["DB_HOST"] %>
+    database: fjordstand_production
+    username: fjordstand
+    password: <%= ENV["FJORDSTAND_DATABASE_PASSWORD"] %>
