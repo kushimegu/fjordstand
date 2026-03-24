@@ -49,5 +49,7 @@ module FjordStand
                         request_specs: true,
                         system_specs: true
     end
+
+    config.active_job.queue_adapter = :async
   end
 end

@@ -81,6 +81,6 @@ production:
   primary: &primary_production
     <<: *default
     host: <%= ENV["DB_HOST"] %>
-    database: fjordstand_production
-    username: fjordstand
-    password: <%= ENV["FJORDSTAND_DATABASE_PASSWORD"] %>
+    database: <%= ENV["POSTGRES_DB"] %>
+    username: <%= ENV["POSTGRES_USER"] %>
+    password: <%= ENV["POSTGRES_PASSWORD"] %>
