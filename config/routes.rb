@@ -22,4 +22,5 @@ Rails.application.routes.draw do
   get 'auth/:provider/callback', to: 'sessions#create'
   get 'auth/failure', to: redirect('/')
   delete 'logout', to: 'sessions#destroy', as: 'logout'
+  get 'up' => 'rails/health#show', as: :rails_health_check
 end
