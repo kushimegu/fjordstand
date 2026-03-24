@@ -49,5 +49,8 @@ module FjordStand
                         request_specs: true,
                         system_specs: true
     end
+
+    config.active_record.queue = false
+    config.active_record.cache = false
   end
 end
