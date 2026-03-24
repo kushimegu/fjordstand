@@ -78,9 +78,8 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  primary: &primary_production
-    <<: *default
-    host: <%= ENV["DB_HOST"] %>
-    database: <%= ENV["POSTGRES_DB"] %>
-    username: <%= ENV["POSTGRES_USER"] %>
-    password: <%= ENV["POSTGRES_PASSWORD"] %>
+  <<: *default
+  host: <%= ENV["DB_HOST"] %>
+  database: <%= ENV["POSTGRES_DB"] %>
+  username: <%= ENV["POSTGRES_USER"] %>
+  password: <%= ENV["POSTGRES_PASSWORD"] %>
