@@ -86,9 +86,9 @@ production:
     password: <%= ENV["POSTGRES_PASSWORD"] %>
   cache:
     <<: *primary_production
-    database: fjordstand_production_cache
+    database: <%= ENV["POSTGRES_DB"] %>_cache
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
-    database: fjordstand_production_queue
+    database: <%= ENV["POSTGRES_DB"] %>_queue
     migrations_paths: db/queue_migrate
