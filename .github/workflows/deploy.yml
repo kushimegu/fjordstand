@@ -23,14 +23,16 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+      - name: Create secrets file
+        run: |
+          echo "RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}" > .kamal/secrets
+          echo "KAMAL_REGISTRY_PASSWORD: ${{ secrets.KAMAL_REGISTRY_PASSWORD }}" >> .kamal/secrets
+          echo "POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}" >> .kamal/secrets
+          echo "DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}" >> .kamal/secrets
+          echo "DISCORD_CLIENT_SECRET: ${{ secrets.DISCORD_CLIENT_SECRET }}" >> .kamal/secrets
+          echo "DISCORD_REDIRECT_URI: ${{ secrets.DISCORD_REDIRECT_URI }}" >> .kamal/secrets
+          echo "DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}" >> .kamal/secrets
+          echo "DISCORD_SERVER_ID: ${{ secrets.DISCORD_SERVER_ID }}" >> .kamal/secrets
+
       - name: Deploy with Kamal
         run: bin/kamal deploy
-        env:
-          KAMAL_REGISTRY_PASSWORD: ${{ secrets.KAMAL_REGISTRY_PASSWORD }}
-          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
-          DISCORD_CLIENT_SECRET: ${{ secrets.DISCORD_CLIENT_SECRET }}
-          DISCORD_REDIRECT_URI: ${{ secrets.DISCORD_REDIRECT_URI }}
-          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
-          DISCORD_SERVER_ID: ${{ secrets.DISCORD_SERVER_ID }}
