@@ -7,7 +7,8 @@ image: kushimegu/fjordstand
 # Deploy to these servers.
 servers:
   web:
-    - 153.120.120.6
+    hosts:
+      - 153.120.120.6
   # job:
   #   hosts:
   #     - 192.168.0.1
