@@ -60,6 +60,8 @@ env:
     - POSTGRES_PASSWORD
     - DISCORD_CLIENT_ID
     - DISCORD_CLIENT_SECRET
+    - DISCORD_BOT_TOKEN
+    - DISCORD_SERVER_ID
     - DISCORD_REDIRECT_URI
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
