@@ -6,7 +6,7 @@ h1.font-bold.text-2xl.my-2.text-center Watch中の商品一覧
   p.mt-20.text-center.text-xl 該当する商品はありません
 - else
   = paginate @watches
-  .grid.grid-cols-1.sm:grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-4
+  .grid.grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-4
     - @watches.each do |entry|
       = link_to entry.item, data: { turbo: false }, class: "block" do
         .container.bg-white.shadow.rounded.p-4.hover:bg-gray-50

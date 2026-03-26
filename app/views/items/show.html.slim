@@ -4,7 +4,7 @@
 .flex.flex-col.space-y-2.lg:grid.grid-cols-2.mt-4.gap-6.px-2
   - if @item.images.attached?
     .flex.flex-col.space-y-2.items-center.top-20[data-controller="image-gallery"]
-      .aspect-square.h-108.flex.items-center.justify-center.bg-gray-100.relative
+      .aspect-square.h-83.sm:h-108.flex.items-center.justify-center.bg-gray-100.relative
         = image_tag @item.images.first.variant(resize_to_limit: [ 400, 400 ]).processed, id: "big-image", data: { image_gallery_target: "bigImage" },
         alt: "#{@item.title} 1枚目",
         class: "object-contain w-full h-full"
@@ -21,7 +21,7 @@
               bg-white/50 hover:bg-white rounded-full p-1 cursor-pointer"]
                 title "次の画像へ"
                 path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"
-      .grid.grid-cols-5.gap-2
+      .grid.grid-cols-3.sm:grid-cols-5.gap-2
         - @item.images.each do |image, index|
           .aspect-square.h-20.flex.items-center.justify-center.bg-gray-100
             = image_tag image.variant(resize_to_limit: [ 200, 200 ]).processed,
@@ -57,7 +57,7 @@
     span 人が応募しています
 
     - if @item.user == current_user && @item.sold?
-      .flex.items-center
+      .flex.items-center.flex-wrap
         p.text-xl.text-cyan-600 抽選が完了しました！
         = link_to "当選者との連絡ページへ", transaction_messages_path(@item), class: "underline text-cyan-600 hover:text-cyan-700"
 
@@ -97,15 +97,14 @@
       = image_tag (@item.user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-10 h-10 rounded-full"
       = @item.user.name
 
-    - if @item.user == current_user && @item.editable?
-      .flex.justify-end
+    .flex.items-center.justify-end.space-x-2
+      - if @item.user == current_user && @item.editable?
         = link_to "編集する", edit_item_path(@item),
         class: "inline-block border border-gray-300 text-sm px-3 py-2 rounded hover:bg-gray-50"
 
-    - if current_user.admin?
-      .flex.justify-end
+      - if current_user.admin?
         = button_to "削除する", @item, method: :delete, data: { turbo_confirm: "本当に削除しますか？" },
-          class: "inline-block cursor-pointer text-sm text-gray-700 underline hover:text-red-400"
+          class: "inline-block cursor-pointer text-sm  text-gray-700 underline hover:text-red-400"
 
     .flex.items-center.justify-between.mt-4.border-b.border-gray-300
       p.text-lg コメント
