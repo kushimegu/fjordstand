@@ -11,7 +11,11 @@ class User < ApplicationRecord
     guild_info = Discordrb::API::Server.resolve("Bot #{ENV['DISCORD_BOT_TOKEN']}", ENV["DISCORD_SERVER_ID"])
     owner_id = JSON.parse(guild_info)["owner_id"]
 
-    Discordrb::API::Server.resolve_member("Bot #{ENV['DISCORD_BOT_TOKEN']}", ENV["DISCORD_SERVER_ID"], auth.uid)
+    begin
+      Discordrb::API::Server.resolve_member("Bot #{ENV['DISCORD_BOT_TOKEN']}", ENV["DISCORD_SERVER_ID"], auth.uid)
+    rescue Discordrb::Errors::UnknownMember
+      return nil
+    end
 
     user = find_or_initialize_by(uid: auth.uid)
     display_name = auth.extra.raw_info["global_name"].presence || auth.info.name

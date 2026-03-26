@@ -20,7 +20,7 @@ Rails.application.routes.draw do
   get "/privacy", to: "pages#privacy"
   resource :session, only: %i[create destroy]
   get 'auth/:provider/callback', to: 'sessions#create'
-  get 'auth/failure', to: redirect('/')
+  get 'auth/failure', to: 'sessions#failure'
   delete 'logout', to: 'sessions#destroy', as: 'logout'
   get 'up' => 'rails/health#show', as: :rails_health_check
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
