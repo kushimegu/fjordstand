@@ -1,15 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Lottery do
-  let(:webhook_double) { instance_double(DiscordWebhook, notify_item_published: true, notify_lottery_completed: true, notify_lottery_skipped: true) }
-
-  before do
-    allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
-  end
-
   describe "run" do
     let(:seller) { create(:user) }
-    let!(:item) { create(:item, :with_max_five_images, :published, user: seller, entry_deadline_at: Date.today.end_of_day) }
+    let!(:item) { create(:item, :published, user: seller, entry_deadline_at: Date.today.end_of_day) }
     let(:buyer) { create(:user) }
 
     context "when one entry exists" do

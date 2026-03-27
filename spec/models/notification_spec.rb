@@ -8,11 +8,6 @@ RSpec.describe Notification, type: :model do
   let!(:closed_item) { create(:item, :closed, user: seller) }
   let!(:entry) { create(:entry, :won, user: buyer, item: sold_item) }
 
-  before do
-    webhook_double = instance_double(DiscordWebhook, notify_item_published: true, notify_new_message: true, notify_new_comment: true)
-    allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
-  end
-
   describe ".unread" do
     it "returns only unread notification" do
       unread_notification = create(:notification, :for_item, user: seller, notifiable: sold_item)

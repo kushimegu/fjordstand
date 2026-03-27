@@ -21,15 +21,13 @@ FactoryBot.define do
       status { :closed }
     end
 
-    trait :with_max_five_images do
+    trait :with_item_image do
       after(:build) do |item|
-        rand(1..5).times do |n|
-          item.images.attach(
-            io: File.open(Rails.root.join("spec/fixtures/files/book#{(n % 5) + 1}.png")),
-            filename: "book#{(n % 5) + 1}.png",
-            content_type: 'image/png'
-          )
-        end
+        item.images.attach(
+          io: File.open(Rails.root.join("spec/fixtures/files/book1.png")),
+          filename: "book1.png",
+          content_type: 'image/png'
+        )
       end
     end
 

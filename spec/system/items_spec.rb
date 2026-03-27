@@ -3,20 +3,17 @@ require 'rails_helper'
 RSpec.describe "Items", type: :system do
   let(:user) { create(:user, :admin) }
 
-  before do
-    driven_by(:selenium_chrome_headless)
-
-    webhook_double = instance_double(DiscordWebhook, notify_item_published: true, notify_item_closed: true)
-    allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
-  end
+  before { driven_by(:selenium_chrome_headless) }
 
   describe "listings tab switching" do
     before { login(user) }
 
     it "shows published items when published tab is clicked" do
-      published_item = create(:item, :with_max_five_images, :published, user: user)
-      closed_item = create(:item, :with_max_five_images, :closed, user: user)
-      sold_item = create(:item, :with_max_five_images, :sold, user: user)
+      published_item = create(:item, :published, user: user)
+      closed_item = create(:item, :closed, user: user)
+      sold_item = create(:item, :sold, user: user)
+      expect(page).to have_current_path(items_path)
+
       visit listings_path
       click_on "出品中"
 
@@ -27,9 +24,11 @@ RSpec.describe "Items", type: :system do
     end
 
     it "shows sold items when sold tab is clicked" do
-      published_item = create(:item, :with_max_five_images, :published, user: user)
-      closed_item = create(:item, :with_max_five_images, :closed, user: user)
-      sold_item = create(:item, :with_max_five_images, :sold, user: user)
+      published_item = create(:item, :published, user: user)
+      closed_item = create(:item, :closed, user: user)
+      sold_item = create(:item, :sold, user: user)
+      expect(page).to have_current_path(items_path)
+
       visit listings_path
       click_on "抽選済み"
 
@@ -40,9 +39,11 @@ RSpec.describe "Items", type: :system do
     end
 
     it "shows closed items when closed tab is clicked" do
-      published_item = create(:item, :with_max_five_images, :published, user: user)
-      closed_item = create(:item, :with_max_five_images, :closed, user: user)
-      sold_item = create(:item, :with_max_five_images, :sold, user: user)
+      published_item = create(:item, :published, user: user)
+      closed_item = create(:item, :closed, user: user)
+      sold_item = create(:item, :sold, user: user)
+      expect(page).to have_current_path(items_path)
+
       visit listings_path
       click_on "公開終了"
 
@@ -53,9 +54,11 @@ RSpec.describe "Items", type: :system do
     end
 
     it "shows all items when all tab is clicked" do
-      published_item = create(:item, :with_max_five_images, :published, user: user)
-      closed_item = create(:item, :with_max_five_images, :closed, user: user)
-      sold_item = create(:item, :with_max_five_images, :sold, user: user)
+      published_item = create(:item, :published, user: user)
+      closed_item = create(:item, :closed, user: user)
+      sold_item = create(:item, :sold, user: user)
+      expect(page).to have_current_path(items_path)
+
       visit listings_path
       click_on "全て"
 
@@ -72,6 +75,8 @@ RSpec.describe "Items", type: :system do
     before { login(user) }
 
     it "changes big image to the thumbnail image when clicked" do
+      expect(page).to have_current_path(items_path)
+
       visit item_path(item)
       expect(page).to have_selector(".thumbnail")
       all(".thumbnail")[1].click
@@ -79,6 +84,8 @@ RSpec.describe "Items", type: :system do
     end
 
     it "changes to next image when next button is clicked" do
+      expect(page).to have_current_path(items_path)
+
       visit item_path(item)
       expect(page).to have_selector("#big-image[src*='book1.png']")
       expect(page).to have_selector("#next")
@@ -87,6 +94,8 @@ RSpec.describe "Items", type: :system do
     end
 
     it "changes to prev image when prev button is clicked" do
+      expect(page).to have_current_path(items_path)
+
       visit item_path(item)
       expect(page).to have_selector("#big-image[src*='book1.png']")
       expect(page).to have_selector("#prev")
@@ -100,6 +109,8 @@ RSpec.describe "Items", type: :system do
 
     context "when save item as draft" do
       it "shows on draft index page" do
+        expect(page).to have_current_path(items_path)
+
         click_on '出品する'
         fill_in '商品名', with: '技術書'
         click_on '下書きに保存する'
@@ -111,12 +122,13 @@ RSpec.describe "Items", type: :system do
 
     context "when save item as published" do
       it "shows item on item page" do
-        click_on '出品する'
+        expect(page).to have_current_path(items_path)
 
+        click_on '出品する'
         fill_in '商品名', with: '技術書'
         attach_file '商品画像', "#{Rails.root}/spec/fixtures/files/book1.png"
         fill_in '価格', with: 1000
-        select '出品者', from: '送料負担'
+        choose '出品者'
         fill_in 'お支払い方法', with: 'PayPay'
         fill_in '購入希望申請締切', with: Date.tomorrow
         click_button '出品する'
@@ -131,7 +143,9 @@ RSpec.describe "Items", type: :system do
 
     context "when item is sold" do
       it "is not editable" do
-        item = create(:item, :with_max_five_images, :sold, user: user)
+        item = create(:item, :sold, user: user)
+        expect(page).to have_current_path(items_path)
+
         visit item_path(item)
         expect(page).not_to have_content('編集する')
       end
@@ -139,7 +153,9 @@ RSpec.describe "Items", type: :system do
 
     context "when close published item" do
       it "shows item on listings page" do
-        item = create(:item, :with_max_five_images, :published, user: user, title: '技術書')
+        item = create(:item, :published, user: user, title: '技術書')
+        expect(page).to have_current_path(items_path)
+
         visit item_path(item)
         click_on '編集する'
 
@@ -151,7 +167,8 @@ RSpec.describe "Items", type: :system do
 
     context "when update draft as draft" do
       it "shows item on draft index page" do
-        create(:item, :with_max_five_images, user: user, title: '技術書')
+        create(:item, user: user, title: '技術書')
+        expect(page).to have_current_path(items_path)
 
         visit drafts_path
         click_on '技術書'
@@ -165,9 +182,9 @@ RSpec.describe "Items", type: :system do
 
     context "when update draft as published item" do
       it "shows item on item index page" do
-        item = create(:item, :with_max_five_images, user: user, title: '技術書')
-
+        item = create(:item, :with_item_image, user: user, title: '技術書')
         expect(page).to have_current_path(items_path)
+
         visit drafts_path
         click_on '技術書'
         fill_in '商品名', with: '小説'
@@ -180,7 +197,7 @@ RSpec.describe "Items", type: :system do
 
     context "when update published item" do
       it "shows item on item index page" do
-        item = create(:item, :with_max_five_images, :published, user: user, title: '技術書セット')
+        item = create(:item, :published, :with_item_image, user: user, title: '技術書セット')
 
         expect(page).to have_current_path(items_path)
         visit item_path(item)
@@ -200,6 +217,8 @@ RSpec.describe "Items", type: :system do
 
       it "deletes item and redirects to drafts index" do
         create(:item, user: user, title: '技術書')
+        expect(page).to have_current_path(items_path)
+
         visit drafts_path
         click_on '技術書'
         click_on '削除する'
@@ -216,7 +235,8 @@ RSpec.describe "Items", type: :system do
       before { login(admin) }
 
       it "deletes item and redirects to items index" do
-        create(:item, :with_max_five_images, :published, user: user, title: '技術書')
+        create(:item, :published, user: user, title: '技術書')
+        expect(page).to have_current_path(items_path)
 
         visit items_path
         click_on '技術書'

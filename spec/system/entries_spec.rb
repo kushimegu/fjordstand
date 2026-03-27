@@ -2,20 +2,20 @@ require 'rails_helper'
 
 RSpec.describe "Entries", type: :system do
   let(:user) { create(:user) }
-  let(:published_item) { create(:item, :with_max_five_images, :published) }
-  let(:sold_item_where_user_won) { create(:item, :with_max_five_images, :sold) }
-  let(:sold_item_where_user_lost) { create(:item, :with_max_five_images, :sold) }
+  let(:published_item) { create(:item, :published) }
+  let(:sold_item_where_user_won) { create(:item, :sold) }
+  let(:sold_item_where_user_lost) { create(:item, :sold) }
 
   before do
     driven_by(:selenium_chrome_headless)
 
-    webhook_double = instance_double(DiscordWebhook, notify_item_published: true)
-    allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
     login(user)
   end
 
   describe "apply for item" do
     it "can make entry when button is clicked" do
+      expect(page).to have_current_path(items_path)
+
       visit item_path(published_item)
       click_on "購入希望を申請する"
       expect(page).to have_content("購入希望を申請しました")
@@ -28,8 +28,8 @@ RSpec.describe "Entries", type: :system do
   describe "cancel entry for item" do
     it "can cancel entry when button is clicked" do
       create(:entry, user: user, item: published_item)
-
       expect(page).to have_current_path(items_path)
+
       visit item_path(published_item)
       click_on "購入希望を取り消す"
 
@@ -44,6 +44,7 @@ RSpec.describe "Entries", type: :system do
       applied_entry = create(:entry, item: published_item, user: user)
       won_entry = create(:entry, :won, item: sold_item_where_user_won, user: user)
       lost_entry = create(:entry, :lost, item: sold_item_where_user_lost, user: user)
+      expect(page).to have_current_path(items_path)
 
       visit entries_path
       click_on "希望中"
@@ -57,6 +58,7 @@ RSpec.describe "Entries", type: :system do
       applied_entry = create(:entry, item: published_item, user: user)
       won_entry = create(:entry, :won, item: sold_item_where_user_won, user: user)
       lost_entry = create(:entry, :lost, item: sold_item_where_user_lost, user: user)
+      expect(page).to have_current_path(items_path)
 
       visit entries_path
       click_on "当選"
@@ -70,6 +72,7 @@ RSpec.describe "Entries", type: :system do
       applied_entry = create(:entry, item: published_item, user: user)
       won_entry = create(:entry, :won, item: sold_item_where_user_won, user: user)
       lost_entry = create(:entry, :lost, item: sold_item_where_user_lost, user: user)
+      expect(page).to have_current_path(items_path)
 
       visit entries_path
       click_on "落選"
@@ -83,6 +86,7 @@ RSpec.describe "Entries", type: :system do
       applied_entry = create(:entry, item: published_item, user: user)
       won_entry = create(:entry, :won, item: sold_item_where_user_won, user: user)
       lost_entry = create(:entry, :lost, item: sold_item_where_user_lost, user: user)
+      expect(page).to have_current_path(items_path)
 
       visit entries_path
       click_on "全て"

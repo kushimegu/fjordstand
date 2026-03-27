@@ -1,11 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe Comment, type: :model do
-  before do
-    webhook_double = instance_double(DiscordWebhook, notify_item_published: true, notify_new_comment: true)
-    allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
-  end
-
   describe "validations" do
     context "when body is blank" do
       let(:comment) { build(:comment, body: nil) }
@@ -20,7 +15,7 @@ RSpec.describe Comment, type: :model do
   end
 
   describe "#add_commentator_to_watchers" do
-    let(:item) { create(:item, :with_max_five_images, :published) }
+    let(:item) { create(:item, :published) }
     let(:user) { create(:user) }
 
     it "adds commentator to watchers" do
@@ -33,7 +28,7 @@ RSpec.describe Comment, type: :model do
 
   describe "#notify_watchers" do
     let(:seller) { create(:user) }
-    let(:item) { create(:item, :with_max_five_images, :published, user: seller) }
+    let(:item) { create(:item, :published, user: seller) }
     let(:commentator) { create(:user) }
     let(:watcher) { create(:user) }
 

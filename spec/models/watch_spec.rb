@@ -1,14 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Watch, type: :model do
-  before do
-    webhook_double = instance_double(DiscordWebhook, notify_item_published: true)
-    allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
-  end
-
   describe "validations" do
     context "when user registers for same item twice" do
-      let(:item) { create(:item, :with_max_five_images, :published) }
+      let(:item) { create(:item, :published) }
       let(:user) { create(:user) }
 
       it "validates duplicate registration" do

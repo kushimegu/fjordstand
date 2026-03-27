@@ -2,12 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "/comments", type: :request do
   let(:user) { create(:user) }
-  let(:item) { create(:item, :with_max_five_images, :published, user: user) }
-
-  before do
-    webhook_double = instance_double(DiscordWebhook, notify_item_published: true, notify_new_comment: true)
-    allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
-  end
+  let(:item) { create(:item, :published, user: user) }
 
   describe "POST /create" do
     before { login(user) }

@@ -3,15 +3,10 @@ require 'rails_helper'
 RSpec.describe "Messages", type: :system do
   let(:seller) { create(:user) }
   let(:buyer) { create(:user) }
-  let(:item) { create(:item, :with_max_five_images, :published, user: seller) }
+  let(:item) { create(:item, :published, :with_item_image, user: seller) }
   let(:admin) { create(:user, :admin, uid: "123") }
 
-  before do
-    driven_by(:selenium_chrome_headless)
-
-    webhook_double = instance_double(DiscordWebhook, notify_item_published: true, notify_new_message: true)
-    allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
-  end
+  before { driven_by(:selenium_chrome_headless) }
 
   describe "send messages" do
     context "when authorized user is logged in" do
@@ -20,6 +15,7 @@ RSpec.describe "Messages", type: :system do
 
         login(buyer)
         expect(page).to have_current_path(items_path)
+
         visit transaction_messages_path(item)
 
         fill_in "message_body", with: "こんにちは"
@@ -35,6 +31,7 @@ RSpec.describe "Messages", type: :system do
       it "cannot access to messages index page" do
         login(other_user)
         expect(page).to have_current_path(items_path)
+
         visit transaction_messages_path(item)
 
         expect(page).to have_current_path(items_path)
@@ -48,6 +45,7 @@ RSpec.describe "Messages", type: :system do
 
         login(seller)
         expect(page).to have_current_path(items_path)
+
         visit transaction_messages_path(item)
 
         fill_in "message_body", with: "\n"
@@ -64,8 +62,10 @@ RSpec.describe "Messages", type: :system do
     it "destroys message and redirects to items index" do
       create(:message, user: buyer, item: item, body: "支払いはPayPayで良いですか？")
       create(:message, user: seller, item: item, body: "大丈夫です")
+      expect(page).to have_current_path(items_path)
 
       visit transaction_messages_path(item)
+
       within(find(".message", text: "大丈夫です")) do
         accept_confirm do
           click_on "削除する"

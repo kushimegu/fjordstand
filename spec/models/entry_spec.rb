@@ -3,14 +3,9 @@ require 'rails_helper'
 RSpec.describe Entry, type: :model do
   let(:seller) { create(:user) }
 
-  before do
-    webhook_double = instance_double(DiscordWebhook, notify_item_published: true)
-    allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
-  end
-
   describe "validations" do
     context "when user applies for same item twice" do
-      let(:item) { create(:item, :with_max_five_images, :published, user: seller) }
+      let(:item) { create(:item, :published, user: seller) }
       let(:applier) { create(:user) }
 
       it "validates applying twice" do
@@ -26,9 +21,9 @@ RSpec.describe Entry, type: :model do
 
   describe ".by_target" do
     let(:applier) { create(:user) }
-    let(:published_item) { create(:item, :with_max_five_images, :published) }
-    let(:sold_item_where_applier_won) { create(:item, :with_max_five_images, :sold) }
-    let(:sold_item_where_applier_lost) { create(:item, :with_max_five_images, :sold) }
+    let(:published_item) { create(:item, :published) }
+    let(:sold_item_where_applier_won) { create(:item, :sold) }
+    let(:sold_item_where_applier_lost) { create(:item, :sold) }
 
     context "when target is applied" do
       it "returns applied entries" do
@@ -85,7 +80,7 @@ RSpec.describe Entry, type: :model do
   end
 
   describe "#cannot_apply_for_own_item" do
-    let(:item) { create(:item, :with_max_five_images, :published, user: seller) }
+    let(:item) { create(:item, :published, user: seller) }
     let(:entry) { build(:entry, item: item, user: seller) }
 
     it "validates applying for own item" do
@@ -96,7 +91,7 @@ RSpec.describe Entry, type: :model do
   end
 
   describe "#cannot_apply_for_expired_item" do
-    let(:item) { create(:item, :with_max_five_images, :published, user: seller, entry_deadline_at: entry_deadline_at) }
+    let(:item) { create(:item, :published, user: seller, entry_deadline_at: entry_deadline_at) }
     let(:applier) { create(:user) }
 
     context "when applying for item whose deadline was yesterday" do
@@ -123,7 +118,7 @@ RSpec.describe Entry, type: :model do
   end
 
   describe "#cannot_apply_for_closed_item" do
-    let(:item) { create(:item, :with_max_five_images, :closed, user: seller) }
+    let(:item) { create(:item, :closed, user: seller) }
     let(:applier) { create(:user) }
     let(:entry) { build(:entry, item: item, user: applier) }
 

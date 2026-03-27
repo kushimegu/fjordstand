@@ -3,12 +3,7 @@ require 'rails_helper'
 RSpec.describe "/messages", type: :request do
   let(:seller) { create(:user) }
   let(:buyer) { create(:user) }
-  let(:item) { create(:item, :with_max_five_images, :sold, user: seller) }
-
-  before do
-    webhook_double = instance_double(DiscordWebhook, notify_item_published: true, notify_new_message: true)
-    allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
-  end
+  let(:item) { create(:item, :with_item_image, :sold, user: seller) }
 
   describe "GET /index" do
     context "when other user login" do
