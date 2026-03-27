@@ -54,6 +54,12 @@ RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 # Final stage for app image
 FROM base
 
+# Install cron
+RUN apt-get update -qq && \ 
+    apt-get install --no-install-recommends -y cron && \ 
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives && \ 
+    rm -rf /etc/cron.*/*
+
 # Copy built artifacts: gems, application
 COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --from=build /rails /rails
