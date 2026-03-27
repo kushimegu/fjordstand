@@ -33,6 +33,7 @@ jobs:
           echo "DISCORD_REDIRECT_URI: ${{ secrets.DISCORD_REDIRECT_URI }}" >> .kamal/secrets
           echo "DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}" >> .kamal/secrets
           echo "DISCORD_SERVER_ID: ${{ secrets.DISCORD_SERVER_ID }}" >> .kamal/secrets
+          echo "WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}" >> .kamal/secrets
 
       - name: Deploy with Kamal
         run: bin/kamal deploy
