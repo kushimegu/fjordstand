@@ -5,7 +5,7 @@ RSpec.describe "Items", type: :system do
   let(:item) { create(:item, :published, user: user) }
   let(:admin) { create(:user, :admin, uid: "123") }
 
-  before{ driven_by(:selenium_chrome_headless) }
+  before { driven_by(:selenium_chrome_headless) }
 
   describe "create comment" do
     before { login(user) }

@@ -6,7 +6,7 @@ RSpec.describe "Messages", type: :system do
   let(:item) { create(:item, :published, :with_item_image, user: seller) }
   let(:admin) { create(:user, :admin, uid: "123") }
 
-  before{ driven_by(:selenium_chrome_headless) }
+  before { driven_by(:selenium_chrome_headless) }
 
   describe "send messages" do
     context "when authorized user is logged in" do

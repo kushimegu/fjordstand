@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Item, type: :model, discord_stub: false do
+RSpec.describe Item, discord_stub: false, type: :model do
   let(:webhook_double) { instance_double(DiscordWebhook, notify_item_published: true, notify_item_closed: true, notify_item_deadline_extended: true, notify_lottery_skipped: true) }
 
   before { allow(DiscordWebhook).to receive(:new).and_return(webhook_double) }

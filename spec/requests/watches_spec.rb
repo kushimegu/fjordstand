@@ -4,7 +4,7 @@ RSpec.describe "/watches", type: :request do
   let(:item) { create(:item, :published) }
   let(:user) { create(:user) }
 
-  before {login(user) }
+  before { login(user) }
 
   describe "GET /index" do
     context "when watch exists" do

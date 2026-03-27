@@ -155,7 +155,7 @@ RSpec.describe "Items", type: :system do
       it "shows item on listings page" do
         item = create(:item, :published, user: user, title: '技術書')
         expect(page).to have_current_path(items_path)
-        
+
         visit item_path(item)
         click_on '編集する'
 

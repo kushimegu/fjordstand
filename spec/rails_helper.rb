@@ -75,7 +75,7 @@ RSpec.configure do |config|
   config.include LoginSupport::System, type: :system
   config.include LoginSupport
   config.include DiscordWebhookStub
-  config.before(:each) do |test|
+  config.before do |test|
     stub_discord_webhook unless test.metadata[:discord_stub] == false
   end
   config.include ActiveSupport::Testing::TimeHelpers
