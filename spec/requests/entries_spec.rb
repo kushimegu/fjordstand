@@ -2,16 +2,12 @@ require 'rails_helper'
 
 RSpec.describe "/entries", type: :request do
   let(:user) { create(:user) }
-  let(:published_item) { create(:item, :with_max_five_images, :published) }
-  let(:sold_item_where_user_won) { create(:item, :with_max_five_images, :sold) }
-  let(:sold_item_where_user_lost) { create(:item, :with_max_five_images, :sold) }
-  let(:closed_item) { create(:item, :with_max_five_images, :closed) }
+  let(:published_item) { create(:item, :published) }
+  let(:sold_item_where_user_won) { create(:item, :sold) }
+  let(:sold_item_where_user_lost) { create(:item, :sold) }
+  let(:closed_item) { create(:item, :closed) }
 
-  before do
-    login(user)
-    webhook_double = instance_double(DiscordWebhook, notify_item_published: true)
-    allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
-  end
+  before { login(user) }
 
   describe "GET /index" do
     context "when entry exists" do

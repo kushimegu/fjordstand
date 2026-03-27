@@ -1,16 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Message, type: :model do
-  let(:webhook_double) { instance_double(DiscordWebhook, notify_item_published: true, notify_new_message: true) }
-
-  before do
-    allow(DiscordWebhook).to receive(:new).and_return(webhook_double)
-  end
-
   describe "#create_notifications" do
     let(:seller) { create(:user) }
     let(:buyer) { create(:user) }
-    let!(:item) { create(:item, :with_max_five_images, :sold, user: seller) }
+    let!(:item) { create(:item, :sold, user: seller) }
 
     context "when sender is seller" do
       it "creates notification to buyer" do

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Item, type: :model do
+RSpec.describe Item, type: :model, discord_stub: false do
   let(:webhook_double) { instance_double(DiscordWebhook, notify_item_published: true, notify_item_closed: true, notify_item_deadline_extended: true, notify_lottery_skipped: true) }
 
   before { allow(DiscordWebhook).to receive(:new).and_return(webhook_double) }
@@ -52,7 +52,7 @@ RSpec.describe Item, type: :model do
 
   describe "validations on publish" do
     context "when all attributes are valid" do
-      let(:item) { build(:item, :with_max_five_images) }
+      let(:item) { build(:item, :with_item_image) }
 
       it "is valid" do
         expect(item.valid?(:publish)).to be true
@@ -60,7 +60,7 @@ RSpec.describe Item, type: :model do
     end
 
     context "when title is too long" do
-      let(:item) { build(:item, :with_max_five_images, title: Faker::Lorem.characters(number: 256)) }
+      let(:item) { build(:item, :with_item_image, title: Faker::Lorem.characters(number: 256)) }
 
       it "is invalid" do
         expect(item.valid?(:publish)).to be false
@@ -69,7 +69,7 @@ RSpec.describe Item, type: :model do
     end
 
     context "when title is blank" do
-      let(:item) { build(:item, :with_max_five_images, title: nil) }
+      let(:item) { build(:item, :with_item_image, title: nil) }
 
       it "is invalid" do
         expect(item.valid?(:publish)).to be false
@@ -78,7 +78,7 @@ RSpec.describe Item, type: :model do
     end
 
     context "when price is blank" do
-      let(:item) { build(:item, :with_max_five_images, price: nil) }
+      let(:item) { build(:item, :with_item_image, price: nil) }
 
       it "is invalid" do
         expect(item.valid?(:publish)).to be false
@@ -87,7 +87,7 @@ RSpec.describe Item, type: :model do
     end
 
     context "when shipping_fee_payer is blank" do
-      let(:item) { build(:item, :with_max_five_images, shipping_fee_payer: nil) }
+      let(:item) { build(:item, :with_item_image, shipping_fee_payer: nil) }
 
       it "is invalid" do
         expect(item.valid?(:publish)).to be false
@@ -96,7 +96,7 @@ RSpec.describe Item, type: :model do
     end
 
     context "when payment_method is blank" do
-      let(:item) { build(:item, :with_max_five_images, payment_method: nil) }
+      let(:item) { build(:item, :with_item_image, payment_method: nil) }
 
       it "is invalid" do
         expect(item.valid?(:publish)).to be false
@@ -105,7 +105,7 @@ RSpec.describe Item, type: :model do
     end
 
     context "when entry_deadline_at is blank" do
-      let(:item) { build(:item, :with_max_five_images, entry_deadline_at: nil) }
+      let(:item) { build(:item, :with_item_image, entry_deadline_at: nil) }
 
       it "is invalid" do
         expect(item.valid?(:publish)).to be false
@@ -124,8 +124,8 @@ RSpec.describe Item, type: :model do
   end
 
   describe ".expired" do
-    let(:expired_item) { create(:item, :with_max_five_images, :published, entry_deadline_at: Date.yesterday) }
-    let(:unexpired_item) { create(:item, :with_max_five_images, :published, entry_deadline_at: Date.current) }
+    let(:expired_item) { create(:item, :published, entry_deadline_at: Date.yesterday) }
+    let(:unexpired_item) { create(:item, :published, entry_deadline_at: Date.current) }
 
     it "returns only expired items" do
       expect(described_class.expired).to include(expired_item)
@@ -134,9 +134,9 @@ RSpec.describe Item, type: :model do
   end
 
   describe ".by_target" do
-    let(:published_item) { create(:item, :with_max_five_images, :published) }
-    let(:closed_item) { create(:item, :with_max_five_images, :closed) }
-    let(:sold_item) { create(:item, :with_max_five_images, :sold) }
+    let(:published_item) { create(:item, :published) }
+    let(:closed_item) { create(:item, :closed) }
+    let(:sold_item) { create(:item, :sold) }
 
     context "when target is published" do
       it "returns published item" do
@@ -171,7 +171,7 @@ RSpec.describe Item, type: :model do
 
   describe "#other_user_for" do
     let(:seller) { create(:user) }
-    let(:item) { create(:item, :with_max_five_images, :sold, user: seller) }
+    let(:item) { create(:item, :sold, user: seller) }
     let(:buyer) { create(:user) }
 
     context "when current user is seller" do
@@ -194,7 +194,7 @@ RSpec.describe Item, type: :model do
   describe "#close!" do
     context "when item is closed" do
       let(:user) { create(:user) }
-      let(:item) { create(:item, :with_max_five_images, :published, user: user) }
+      let(:item) { create(:item, :published, user: user) }
 
       it "changes status and clears entries" do
         item.close!(by: :user)
@@ -226,7 +226,7 @@ RSpec.describe Item, type: :model do
     end
 
     context "when item is published" do
-      let(:item) { create(:item, :with_max_five_images, :published, user: user) }
+      let(:item) { create(:item, :published, user: user) }
 
       it "is deletable by admin" do
         expect(item.deletable_by?(admin)).to be true
@@ -238,7 +238,7 @@ RSpec.describe Item, type: :model do
     end
 
     context "when item is sold" do
-      let(:item) { create(:item, :with_max_five_images, :sold, user: user) }
+      let(:item) { create(:item, :sold, user: user) }
 
       it "is deletable by admin" do
         expect(item.deletable_by?(admin)).to be true
@@ -250,7 +250,7 @@ RSpec.describe Item, type: :model do
     end
 
     context "when item is closed" do
-      let(:item) { create(:item, :with_max_five_images, :closed, user: user) }
+      let(:item) { create(:item, :closed, user: user) }
 
       it "is deletable by admin" do
         expect(item.deletable_by?(admin)).to be true
@@ -266,7 +266,7 @@ RSpec.describe Item, type: :model do
     let(:user) { create(:user) }
 
     context "when item is published and past entry deadline" do
-      let(:item) { create(:item, :with_max_five_images, :published, user: user, entry_deadline_at: Date.yesterday) }
+      let(:item) { create(:item, :published, user: user, entry_deadline_at: Date.yesterday) }
 
       it "is not editable" do
         expect(item.editable?).to be false
@@ -274,7 +274,7 @@ RSpec.describe Item, type: :model do
     end
 
     context "when item is sold" do
-      let(:item) { create(:item, :with_max_five_images, :sold, user: user) }
+      let(:item) { create(:item, :sold, user: user) }
 
       it "is not editable" do
         expect(item.editable?).to be false
@@ -282,7 +282,7 @@ RSpec.describe Item, type: :model do
     end
 
     context "when item is published and before entry deadline" do
-      let(:item) { create(:item, :with_max_five_images, :published, user: user, entry_deadline_at: Date.tomorrow) }
+      let(:item) { create(:item, :published, user: user, entry_deadline_at: Date.tomorrow) }
 
       it "is editable" do
         expect(item.editable?).to be true
@@ -298,7 +298,7 @@ RSpec.describe Item, type: :model do
     end
 
     context "when item is closed" do
-      let(:item) { create(:item, :with_max_five_images, :closed, user: user) }
+      let(:item) { create(:item, :closed, user: user) }
 
       it "is editable" do
         expect(item.editable?).to be true
@@ -318,7 +318,7 @@ RSpec.describe Item, type: :model do
     end
 
     context "when item is published" do
-      let(:item) { create(:item, :with_max_five_images, :published, user: user) }
+      let(:item) { create(:item, :published, user: user) }
 
       it "is commentable" do
         expect(item.commentable?).to be true
@@ -327,7 +327,7 @@ RSpec.describe Item, type: :model do
   end
 
   describe "#deadline_today_or_later" do
-    let(:item) { build(:item, :with_max_five_images, entry_deadline_at: entry_deadline_at) }
+    let(:item) { build(:item, :with_item_image, entry_deadline_at: entry_deadline_at) }
 
     context "when setting deadline to yesterday" do
       let(:entry_deadline_at) { Date.yesterday }
@@ -359,7 +359,7 @@ RSpec.describe Item, type: :model do
 
   describe "#price_not_change_after_published" do
     context "when item is already published" do
-      let(:item) { create(:item, :with_max_five_images, :published, price: 1000) }
+      let(:item) { create(:item, :published, price: 1000) }
 
       it "validates price to not change" do
         item.assign_attributes(price: 1200)
@@ -383,7 +383,7 @@ RSpec.describe Item, type: :model do
 
   describe "#deadline_not_change_earlier_after_published" do
     context "when setting deadline to earlier date" do
-      let(:item) { create(:item, :with_max_five_images, :published, entry_deadline_at: Date.current + 5.days) }
+      let(:item) { create(:item, :published, entry_deadline_at: Date.current + 5.days) }
 
       it "validates deadline to not change" do
         item.assign_attributes(entry_deadline_at: Date.current + 2.days)
@@ -394,7 +394,7 @@ RSpec.describe Item, type: :model do
     end
 
     context "when setting deadline to later date" do
-      let(:item) { create(:item, :with_max_five_images, :published, entry_deadline_at: Date.current + 5.days) }
+      let(:item) { create(:item, :with_item_image, :published, entry_deadline_at: Date.current + 5.days) }
 
       it "allows deadline change" do
         item.assign_attributes(entry_deadline_at: Date.current + 7.days)
@@ -405,7 +405,7 @@ RSpec.describe Item, type: :model do
     end
 
     context "when item is draft" do
-      let(:item) { create(:item, :with_max_five_images, entry_deadline_at: Date.current + 5.days) }
+      let(:item) { create(:item, :with_item_image, entry_deadline_at: Date.current + 5.days) }
 
       it "allows deadline change to earlier date" do
         item.assign_attributes(entry_deadline_at: Date.current + 2.days)
@@ -441,7 +441,9 @@ RSpec.describe Item, type: :model do
 
     context "when publishing item" do
       it "create watch by seller" do
-        item = create(:item, :with_max_five_images, :published, user: user)
+        item = create(:item, user: user)
+        item.update!(status: :published)
+
         expect(item.watchers).to include(user)
       end
     end
@@ -450,14 +452,15 @@ RSpec.describe Item, type: :model do
   describe "#notify_publishing" do
     context "when published item is created" do
       it "sends webhook notification" do
-        item = create(:item, :with_max_five_images, :published)
+        item = create(:item)
+        item.update!(status: :published)
 
         expect(webhook_double).to have_received(:notify_item_published).with(item)
       end
     end
 
     context "when draft item is created" do
-      let(:item) { build(:item, :with_max_five_images) }
+      let(:item) { build(:item, :with_item_image) }
 
       it "does not send webhook notification" do
         item.save!
@@ -467,7 +470,7 @@ RSpec.describe Item, type: :model do
     end
 
     context "when status is not changed from published" do
-      let(:item) { create(:item, :with_max_five_images, :published, entry_deadline_at: Date.current) }
+      let(:item) { create(:item, :published, entry_deadline_at: Date.current) }
 
       it "does not send webhook notification" do
         expect(webhook_double).to have_received(:notify_item_published).with(item).once
@@ -481,7 +484,7 @@ RSpec.describe Item, type: :model do
 
   describe "#notify_deadline_extension" do
     context "when entry_deadline_at is extended" do
-      let(:item) { create(:item, :with_max_five_images, :published, entry_deadline_at: Date.current) }
+      let(:item) { create(:item, :published, entry_deadline_at: Date.current) }
 
       it "sends webhook notification" do
         item.update!(entry_deadline_at: Date.tomorrow)
@@ -491,7 +494,7 @@ RSpec.describe Item, type: :model do
     end
 
     context "when entry_deadline_at and status is changed" do
-      let(:item) { create(:item, :with_max_five_images, entry_deadline_at: Date.current) }
+      let(:item) { create(:item, entry_deadline_at: Date.current) }
 
       it "does not send webhook notification" do
         item.status = :published
@@ -505,7 +508,7 @@ RSpec.describe Item, type: :model do
 
   describe "#notify_close" do
     context "when item is closed by user" do
-      let(:item) { create(:item, :with_max_five_images, :published) }
+      let(:item) { create(:item, :published) }
       let(:applicant) { create(:user) }
 
       it "sends notification to applicants" do
@@ -520,7 +523,7 @@ RSpec.describe Item, type: :model do
 
     context "when item is closed by deadline" do
       let(:seller) { create(:user) }
-      let(:item) { create(:item, :with_max_five_images, :published, user: seller, entry_deadline_at: Date.yesterday) }
+      let(:item) { create(:item, :published, user: seller, entry_deadline_at: Date.yesterday) }
 
       it "sends notification to seller" do
         item.close!(by: :lottery)

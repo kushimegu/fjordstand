@@ -8,9 +8,7 @@ RSpec.describe "Notifications", type: :request do
   let!(:closed_item) { create(:item, :closed, user: seller) }
   let!(:entry) { create(:entry, :won, user: buyer, item: sold_item) }
 
-  before do
-    login(seller)
-  end
+  before { login(seller) }
 
   describe "GET /index" do
     context "when notifications exists" do

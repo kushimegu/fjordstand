@@ -2,11 +2,9 @@ require 'rails_helper'
 require 'webmock/rspec'
 
 RSpec.describe "Sessions", type: :system do
-  before do
-    driven_by(:rack_test)
-  end
+  before { driven_by(:rack_test) }
 
-  describe 'login' do
+    describe 'login' do
     context 'when user is a guild member' do
       before do
         uid = '12345678890'
