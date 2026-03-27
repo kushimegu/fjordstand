@@ -1,5 +1,5 @@
 - flash.each do |flash_type, message|
-  div data-controller="flash" class="flex items-center justify-between p-2 rounded fixed w-full #{css_class_for_flash(flash_type)} shadow relative"
+  div data-controller="flash" class="flex items-center justify-between px-4 py-2 rounded fixed w-full #{css_class_for_flash(flash_type)} shadow relative"
     = message
     button type="button" data-action="flash#dismiss"
       svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="cursor-pointer size-6 pl-1"

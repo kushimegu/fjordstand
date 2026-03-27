@@ -4,13 +4,12 @@ div id="#{dom_id item}"
       = image_tag item.images.first.variant(resize_to_limit: [ 400, 400 ]).processed,
       alt: "#{item.title} 1枚目",
       class: "object-contain w-full h-full"
-  .text-xl.line-clamp-2.h-14
+  .text-xl.line-clamp-1
     = item.title
   .text-lg.text-right
     = number_to_currency(item.price)
     span.text-base
       = I18n.t("views.item.shipping_fee_label.#{item.shipping_fee_payer}")
   - if item.entry_deadline_at.present?
-    .text-lg
-      = l item.entry_deadline_at.to_date
-      span.text-base まで
+    = l item.entry_deadline_at.to_date
+    span まで

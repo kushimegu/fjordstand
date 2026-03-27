@@ -27,7 +27,7 @@ html
 
     = yield :head
 
-    link[rel="icon" type="image/svg+xml" href=asset_path('favicon.svg')]
+    link[rel="icon" type="image/svg+xml" href=asset_path("favicon.svg")]
     link[rel="apple-touch-icon" sizes="180x180" href=asset_path("apple-touch-icon.png")]
     link[rel="icon"type="image/png" sizes="192x192" href=asset_path("web-app-manifest-192x192.png")]
     = favicon_link_tag "favicon.ico"
@@ -36,12 +36,16 @@ html
     = stylesheet_link_tag "tailwind", "data-turbo-track": "reload"
     = javascript_importmap_tags
 
-
   body.min-h-screen.flex.flex-col.text-gray-600
     - unless request.path == root_path
       = render "shared/header"
     = render "shared/flash"
-    main.flex-1
-      .container.mx-auto
-        = yield
+    - if request.path == root_path
+      main.flex-1.flex.items-center.justify-center
+        .container.mx-auto
+          = yield
+    - else
+      main.flex-1
+        .container.mx-auto.px-4
+          = yield
     = render "shared/footer"

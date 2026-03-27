@@ -1,7 +1,7 @@
 - content_for :title, "#{@item.title}の連絡ページ"
 - content_for :description, "出品者と当選者が連絡を取り合うためのページです。取引に関するメッセージを送受信できます。"
 
-.w-full.max-w-2xl.mx-auto.px-4
+.w-full.max-w-2xl.mx-auto
   .top-20.bg-white.py-2
     = link_to @item, class: "block" do
       .container.bg-white.shadow.rounded.p-4.hover:bg-gray-50.flex.gap-x-4
@@ -9,7 +9,7 @@
           = image_tag @item.images.first.variant(resize_to_limit: [ 400, 400 ]).processed,
            alt: "#{@item.title} 1枚目",
           class: "object-contain w-full h-full"
-        .flex.flex-col.justify-between.h-25
+        .flex.flex-col.justify-between.min-h-25
           .text-2xl.line-clamp-1
             = @item.title
           div
@@ -17,7 +17,7 @@
               span.text-xl = number_to_currency(@item.price)
               span.text-base
                 = I18n.t("views.item.shipping_fee_label.#{@item.shipping_fee_payer}")
-            .flex.items-center.gap-1
+            .flex.items-center.gap-x-1.flex-wrap
               span 希望するお支払い方法
               span.text-lg = @item.payment_method
 
