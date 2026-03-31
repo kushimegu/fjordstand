@@ -14,8 +14,6 @@
   - if @item.published?
     .m-4
       => link_to "商品ページへ", @item
-      '|
-      =< link_to "商品一覧へ", items_path
   - if @item.closed?
     .m-4
       = link_to "出品した商品一覧へ", listings_path
