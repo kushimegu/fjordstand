@@ -56,9 +56,11 @@ FROM base
 
 # Install cron
 RUN apt-get update -qq && \ 
-    apt-get install --no-install-recommends -y cron && \ 
+    apt-get install --no-install-recommends -y tzdata cron && \ 
     rm -rf /var/lib/apt/lists /var/cache/apt/archives && \ 
     rm -rf /etc/cron.*/*
+
+ENV TZ=Asia/Tokyo
 
 # Copy built artifacts: gems, application
 COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
