@@ -3,7 +3,7 @@
 .p-4.flex.flex-col.items-center.justify-center.h-full
   .flex.flex-col.items-center.justify-center
     = image_tag "fjordstand.png", alt: "FjordStandタイトル", class: "h-20 lg:h-25"
-    h1.text-lg.lg:text-xl.mt-3.mb-6.lg:mb-8.text-cyan-800.text-center.font-bold.leading-none
+    h1.text-lg.lg:text-xl.mt-4.mb-6.lg:mb-12.text-cyan-800.text-center.font-bold.leading-none
       | FjordBootCampメンバーのクローズドなフリマアプリ
   .grid.lg:grid-cols-3.gap-6.lg:gap-8.max-w-6xl.mx-auto
     .flex.flex-col.items-center.border.rounded-lg.max-w-lg.w-full.mx-auto.border-gray-300
@@ -21,8 +21,9 @@
         = image_tag "discord-notification-image.png", alt: "Discord通知のイメージ", class: "h-20 p-2"
       .bg-gray-100.rounded-b-lg.w-full.p-3.flex.flex-col.justify-center.items-center.flex-1
         span.text-center 購入希望者は当落通知をDiscordで受け取ることができます
-  .flex.flex-col.items-center.mt-6.mb-4.lg:mt-16
-    .flex.text-center.lg:mb-2
+  .flex.flex-col.items-center
+    p.mt-4.lg:mt-8.lg:text-lg.text-center FjordBootCampのDiscordサーバーに参加しているアカウントでのみログインできます
+    .flex.text-center.mt-6.lg:mt-10
       = link_to "利用規約", terms_path, class: "underline decoration-1 hover:text-cyan-600"
       span と
       = link_to "プライバシーポリシー", privacy_path, class: "underline decoration-1 hover:text-cyan-600"
