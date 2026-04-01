@@ -18,9 +18,10 @@ servers:
       - 153.120.120.6
     cmd: >
       bash -c "mkdir -p /var/spool/cron/crontabs &&
-      chmod 1733 /var/spool/cron/crontabs &&
+      chmod 1730 /var/spool/cron/crontabs &&
       env > /etc/environment &&
       bundle exec whenever --update-crontab -u root --set 'environment=production' &&
+      chmod 640 /var/spool/cron/crontabs/root &&
       cron -f"
     options:
       user: root
