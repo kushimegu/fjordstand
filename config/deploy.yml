@@ -15,7 +15,7 @@ servers:
   #   cmd: bin/jobs
   cron:
     hosts:
-      - cron-host.fjordstand.com
+      - 153.120.120.6
     cmd: bash -c "bundle exec whenever --update-crontab && (env && crontab -l) | crontab - && cron -f"
     options:
       user: root
