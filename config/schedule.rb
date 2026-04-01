@@ -15,7 +15,3 @@ end
 every 1.day, at: '8:00 am' do
   rake "lottery:select_winner"
 end
-
-every 1.minute do
-  rake "test:log"
-end
