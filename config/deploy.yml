@@ -20,7 +20,7 @@ servers:
       bash -c "mkdir -p /var/spool/cron/crontabs && 
       chmod 1733 /var/spool/cron/crontabs && 
       bundle exec whenever --update-crontab -u root --set 'environment=production' && 
-      (env; crontab -l) | crontab -u root - && 
+      env > /etc/environment && 
       cron -f"
     options:
       user: root
