@@ -1,8 +1,8 @@
 require File.expand_path(File.dirname(__FILE__) + "/environment")
-rails_env = ENV['RAILS_ENV'] || :development
+rails_env = ENV['RAILS_ENV'] || "development"
 set :environment, rails_env
 
-if rails_env == :production
+if rails_env == "production"
   set :output, { standard: '/proc/1/fd/1', error: '/proc/1/fd/2' }
   job_type :rake, "/rails/bin/cron_executor bundle exec rake :task :output"
   set :job_template, "/usr/bin/bash -l -c ':job'"
