@@ -497,9 +497,7 @@ RSpec.describe Item, discord_stub: false, type: :model do
       let(:item) { create(:item, entry_deadline_at: Date.current) }
 
       it "does not send webhook notification" do
-        item.status = :published
-        item.entry_deadline_at = Date.tomorrow
-        item.save!
+        item.update!(status: :published, entry_deadline_at: Date.tomorrow)
 
         expect(webhook_double).not_to have_received(:notify_item_deadline_extended).with(item.applicants, item)
       end
