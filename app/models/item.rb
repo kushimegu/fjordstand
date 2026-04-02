@@ -28,7 +28,7 @@ class Item < ApplicationRecord
   validate :price_not_change_after_published, on: :publish
   validate :deadline_not_change_earlier_after_published, on: :publish
 
-  before_save :set_entry_deadline_at_end_of_day
+  before_save :set_entry_deadline_at_end_of_day, if: :will_save_change_to_entry_deadline_at?
 
   after_save_commit :comment_watch_by_seller, if: -> { saved_change_to_attribute?(:status, to: :published) }
   after_save_commit :notify_publishing, if: -> { saved_change_to_attribute?(:status, to: :published) }
@@ -103,6 +103,10 @@ class Item < ApplicationRecord
     self.entry_deadline_at = entry_deadline_at.in_time_zone.end_of_day
   end
 
+  def will_save_change_to_entry_deadline_at?
+    will_save_change_to_attribute?(:entry_deadline_at)
+  end
+
   def comment_watch_by_seller
     return if watchers.exists?(user.id)
 
@@ -118,7 +122,7 @@ class Item < ApplicationRecord
   end
 
   def saved_only_change_deadline?
-    return if saved_change_to_attribute?(:status, to: :published)
+    return false if saved_change_to_attribute?(:status)
 
     saved_change_to_attribute?(:entry_deadline_at)
   end
