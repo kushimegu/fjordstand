@@ -37,10 +37,13 @@
             class: "inline-block cursor-pointer text-sm text-gray-700 underline hover:text-red-400"
 
   = form_with(url: transaction_messages_path(@item), model: @message, class: "my-6") do |form|
-    = form.textarea :body,
-      class: "w-full border border-gray-300 rounded p-2 min-h-28 focus:outline-none focus:border-cyan-600 field-sizing-content",
-      placeholder: "メッセージを入力...",
-      required: true
-    = render "shared/error_messages", model: @message, attribute: :body
-    .flex.justify-center
-      = form.submit "送信する", class: "cursor-pointer w-1/2 border border-cyan-600 text-cyan-600 font-semibold px-3 py-1 rounded hover:bg-cyan-100"
+    .flex.items-start.space-x-3
+      = image_tag (current_user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-10 h-10 rounded-full"
+      .flex-1
+        = form.textarea :body,
+          class: "w-full border border-gray-300 rounded p-2 min-h-28 focus:outline-none focus:border-cyan-600 field-sizing-content",
+          placeholder: "メッセージを入力...",
+          required: true
+        = render "shared/error_messages", model: @message, attribute: :body
+        .flex.justify-center
+          = form.submit "送信する", class: "cursor-pointer w-1/2 border border-cyan-600 text-cyan-600 font-semibold px-3 py-1 rounded hover:bg-cyan-100"
