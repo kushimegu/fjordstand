@@ -44,7 +44,9 @@ class Item < ApplicationRecord
   }
 
   def other_user_for(current_user)
-    return nil if current_user.admin?
+    if current_user.admin?
+      return nil unless [ user, winner ].include?(current_user)
+    end
 
     [ user, winner ].find { |user| user != current_user }
   end

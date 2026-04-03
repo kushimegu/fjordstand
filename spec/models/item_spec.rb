@@ -189,6 +189,24 @@ RSpec.describe Item, discord_stub: false, type: :model do
         expect(item.other_user_for(buyer)).to eq(seller)
       end
     end
+
+    context "when current user is admin and not involved" do
+      it "returns nil" do
+        admin = create(:user, :admin)
+        create(:entry, :won, item: item, user: buyer)
+
+        expect(item.other_user_for(admin)).to be_nil
+      end
+    end
+
+    context "when current user is admin and is seller" do
+      it "returns buyer" do
+        admin = seller
+        create(:entry, :won, item: item, user: buyer)
+
+        expect(item.other_user_for(admin)).to eq(buyer)
+      end
+    end
   end
 
   describe "#close!" do
