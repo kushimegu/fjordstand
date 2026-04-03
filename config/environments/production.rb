@@ -72,4 +72,8 @@ Rails.application.configure do
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
   Rails.application.routes.default_url_options[:host] = "fjordstand.com"
+  config.active_storage.url_options = {
+    host: "https://fjordstand.com",
+    protocol: "https"
+  }
 end
