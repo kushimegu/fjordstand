@@ -59,7 +59,9 @@ env:
     DB_HOST: fjordstand-db
 
     # Log everything from Rails
-    # RAILS_LOG_LEVEL: debug
+    RAILS_LOG_LEVEL: warn
+
+    RAILS_MAX_THREADS: 2
 
     RAILS_ENV: production
     POSTGRES_DB: fjordstand_production
