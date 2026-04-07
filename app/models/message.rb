@@ -10,9 +10,6 @@ class Message < ApplicationRecord
   private
 
   def create_notifications
-    if (other_user = item.other_user_for(user))
-      Notification.create!(user: other_user, notifiable: self)
-      DiscordWebhook.new.notify_new_message(other_user, item)
-    end
+    ActiveSupport::Notifications.instrument("message.created", message: self)
   end
 end

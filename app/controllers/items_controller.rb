@@ -70,7 +70,7 @@ class ItemsController < ApplicationController
     end
 
     if params[:close]
-      @item.close!(by: :user)
+      @item.close(reason: :user_action)
       redirect_to listings_path, notice: "商品を取り下げました", status: :see_other
       return
     end
