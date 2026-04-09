@@ -17,6 +17,6 @@ class Comment < ApplicationRecord
   end
 
   def notify_watchers
-    ActiveSupport::Notifications.instrument("comment.created", comment: self)
+    NotifyNewCommentJob.perform_later(id)
   end
 end

@@ -10,6 +10,6 @@ class Message < ApplicationRecord
   private
 
   def create_notifications
-    ActiveSupport::Notifications.instrument("message.created", message: self)
+    NotifyNewMessageJob.perform_later(id)
   end
 end

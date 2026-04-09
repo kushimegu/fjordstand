@@ -4,6 +4,8 @@ class Lottery
   end
 
   def run
+    return if @item.winner.present?
+
     if @item.entries.exists?
       entries = @item.entries
       winner = entries.offset(rand(entries.count)).first
@@ -11,7 +13,6 @@ class Lottery
       losers.update_all(status: :lost)
       winner.update!(status: :won)
       @item.update!(status: :sold)
-      ActiveSupport::Notifications.instrument("lottery.completed", item: @item)
     else
       @item.close(reason: :no_applicants)
     end
