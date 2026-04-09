@@ -11,13 +11,9 @@ class Lottery
       losers.update_all(status: :lost)
       winner.update!(status: :won)
       @item.update!(status: :sold)
-      entries.each do |entry|
-        Notification.create!(user: entry.user, notifiable: entry)
-      end
-      Notification.create!(user: @item.user, notifiable: @item)
-      DiscordWebhook.new.notify_lottery_completed(@item.applicants + [ @item.user ], @item)
+      ActiveSupport::Notifications.instrument("lottery.completed", item: @item)
     else
-      @item.close!(by: :lottery)
+      @item.close(reason: :no_applicants)
     end
   end
 end

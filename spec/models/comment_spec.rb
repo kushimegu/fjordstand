@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Comment, type: :model do
+  let!(:webhook) { stub_discord_webhook }
+
   describe "validations" do
     context "when body is blank" do
       let(:comment) { build(:comment, body: nil) }
@@ -35,12 +37,12 @@ RSpec.describe Comment, type: :model do
     it "sends notification to watchers except commentator" do
       create(:watch, item: item, user: watcher)
       comment = build(:comment, user: commentator, item: item)
-
       expect { comment.save! }.to change(Notification, :count).by(2)
       expect(item.watchers.count).to eq(3)
 
       notified_users = Notification.where(notifiable: comment).pluck(:user_id)
       expect(notified_users).to contain_exactly(seller.id, watcher.id)
+      expect(webhook).to have_received(:notify_new_comment).with([ seller, watcher ], item)
     end
   end
 end

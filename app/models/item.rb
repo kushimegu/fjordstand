@@ -51,9 +51,9 @@ class Item < ApplicationRecord
     [ user, winner ].find { |user| user != current_user }
   end
 
-  def close!(by:)
+  def close(reason: :user_action)
     update!(status: :closed)
-    notify_close(by)
+    ActiveSupport::Notifications.instrument("item.closed", item: self, reason: reason)
     entries.destroy_all
   end
 
@@ -116,29 +116,16 @@ class Item < ApplicationRecord
   end
 
   def notify_publishing
-    DiscordWebhook.new.notify_item_published(self)
+    ActiveSupport::Notifications.instrument("item.published", item: self)
   end
 
   def notify_deadline_extension
-    DiscordWebhook.new.notify_item_deadline_extended(applicants, self)
+    ActiveSupport::Notifications.instrument("item.deadline_extended", item: self)
   end
 
   def saved_only_change_deadline?
     return false if saved_change_to_attribute?(:status)
 
     saved_change_to_attribute?(:entry_deadline_at)
-  end
-
-  def notify_close(closed_by)
-    case closed_by
-    when :user
-      applicants.each do |applicant|
-        Notification.create!(user: applicant, notifiable: self)
-      end
-      DiscordWebhook.new.notify_item_closed(applicants, self)
-    when :lottery
-      Notification.create!(user: user, notifiable: self)
-      DiscordWebhook.new.notify_lottery_skipped(self.user, self)
-    end
   end
 end

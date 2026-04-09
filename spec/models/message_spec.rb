@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Message, type: :model do
+  let!(:webhook) { stub_discord_webhook }
+
   describe "#create_notifications" do
     let(:seller) { create(:user) }
     let(:buyer) { create(:user) }
@@ -10,6 +12,7 @@ RSpec.describe Message, type: :model do
       it "creates notification to buyer" do
         create(:entry, :won, item: item, user: buyer)
         expect { create(:message, item: item, user: seller) }.to change { buyer.notifications.count }.by(1)
+        expect(webhook).to have_received(:notify_new_message).with(buyer, item)
       end
     end
 
@@ -17,6 +20,7 @@ RSpec.describe Message, type: :model do
       it "creates notification to seller" do
         create(:entry, :won, item: item, user: buyer)
         expect { create(:message, item: item, user: buyer) }.to change { seller.notifications.count }.by(1)
+        expect(webhook).to have_received(:notify_new_message).with(seller, item)
       end
     end
   end
