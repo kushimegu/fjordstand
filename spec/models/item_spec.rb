@@ -1,9 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe Item, discord_stub: false, type: :model do
-  let(:webhook_double) { instance_double(DiscordWebhook, notify_item_published: true, notify_item_closed: true, notify_item_deadline_extended: true, notify_lottery_skipped: true) }
-
-  before { allow(DiscordWebhook).to receive(:new).and_return(webhook_double) }
+RSpec.describe Item, type: :model do
+  let!(:webhook) { stub_discord_webhook }
 
   describe "validations" do
     let(:item) { build(:item) }
@@ -209,15 +207,16 @@ RSpec.describe Item, discord_stub: false, type: :model do
     end
   end
 
-  describe "#close!" do
+  describe "#close" do
     context "when item is closed" do
       let(:user) { create(:user) }
       let(:item) { create(:item, :published, user: user) }
 
       it "changes status and clears entries" do
-        item.close!(by: :user)
+        item.close(reason: :user_action)
         expect(item.status).to eq("closed")
         expect(item.entries).to be_empty
+        expect(webhook).to have_received(:notify_item_closed)
       end
     end
   end
@@ -473,7 +472,7 @@ RSpec.describe Item, discord_stub: false, type: :model do
         item = create(:item)
         item.update!(status: :published)
 
-        expect(webhook_double).to have_received(:notify_item_published).with(item)
+        expect(webhook).to have_received(:notify_item_published).with(item)
       end
     end
 
@@ -483,7 +482,7 @@ RSpec.describe Item, discord_stub: false, type: :model do
       it "does not send webhook notification" do
         item.save!
 
-        expect(webhook_double).not_to have_received(:notify_item_published).with(item)
+        expect(webhook).not_to have_received(:notify_item_published).with(item)
       end
     end
 
@@ -491,11 +490,11 @@ RSpec.describe Item, discord_stub: false, type: :model do
       let(:item) { create(:item, :published, entry_deadline_at: Date.current) }
 
       it "does not send webhook notification" do
-        expect(webhook_double).to have_received(:notify_item_published).with(item).once
+        expect(webhook).to have_received(:notify_item_published).with(item).once
 
         item.update!(entry_deadline_at: Date.tomorrow)
 
-        expect(webhook_double).to have_received(:notify_item_published).with(item).once
+        expect(webhook).to have_received(:notify_item_published).with(item).once
       end
     end
   end
@@ -507,7 +506,7 @@ RSpec.describe Item, discord_stub: false, type: :model do
       it "sends webhook notification" do
         item.update!(entry_deadline_at: Date.tomorrow)
 
-        expect(webhook_double).to have_received(:notify_item_deadline_extended).with(item.applicants, item)
+        expect(webhook).to have_received(:notify_item_deadline_extended).with(item.applicants, item)
       end
     end
 
@@ -517,7 +516,7 @@ RSpec.describe Item, discord_stub: false, type: :model do
       it "does not send webhook notification" do
         item.update!(status: :published, entry_deadline_at: Date.tomorrow)
 
-        expect(webhook_double).not_to have_received(:notify_item_deadline_extended).with(item.applicants, item)
+        expect(webhook).not_to have_received(:notify_item_deadline_extended).with(item.applicants, item)
       end
     end
   end
@@ -530,10 +529,10 @@ RSpec.describe Item, discord_stub: false, type: :model do
       it "sends notification to applicants" do
         create(:entry, item: item, user: applicant)
 
-        item.close!(by: :user)
+        item.close(reason: :user_action)
 
         expect(Notification.last.user).to eq(applicant)
-        expect(webhook_double).to have_received(:notify_item_closed).with(item.applicants, item)
+        expect(webhook).to have_received(:notify_item_closed).with(item.applicants, item)
       end
     end
 
@@ -542,10 +541,10 @@ RSpec.describe Item, discord_stub: false, type: :model do
       let(:item) { create(:item, :published, user: seller, entry_deadline_at: Date.yesterday) }
 
       it "sends notification to seller" do
-        item.close!(by: :lottery)
+        item.close(reason: :no_applicants)
 
         expect(Notification.last.user).to eq(seller)
-        expect(webhook_double).to have_received(:notify_lottery_skipped).with(item.user, item)
+        expect(webhook).to have_received(:notify_lottery_skipped).with(item.user, item)
       end
     end
   end
