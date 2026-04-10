@@ -79,6 +79,7 @@ RSpec.configure do |config|
     stub_discord_webhook unless test.metadata[:discord_stub] == false
   end
   config.include ActiveSupport::Testing::TimeHelpers
+  config.include ActiveJob::TestHelper
 end
 
 OmniAuth.config.test_mode = true

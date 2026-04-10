@@ -3,7 +3,7 @@ class NotifyDeadlineExtendedJob < ApplicationJob
 
   def perform(item_id)
     item = Item.includes(
-      applicants:
+      :applicants,
       :user,
       images_attachments: :blob
     ).find(item_id)

@@ -47,7 +47,7 @@ RSpec.describe Notification, type: :model do
     context "when notifiable is message" do
       it "returns notification message" do
         message = create(:message, user: buyer, item: sold_item)
-        notification = seller.notifications.last
+        notification = create(:notification, :for_message, user: seller, notifiable: message)
 
         expect(notification.message).to include("メッセージが届きました")
       end
@@ -101,7 +101,7 @@ RSpec.describe Notification, type: :model do
     context "when notifiable is message" do
       it "returns link to messages" do
         message = create(:message, user: buyer, item: sold_item)
-        notification = seller.notifications.last
+        notification = create(:notification, :for_message, user: seller, notifiable: message)
 
         expect(notification.link).to eq("/transactions/#{sold_item.id}/messages")
       end

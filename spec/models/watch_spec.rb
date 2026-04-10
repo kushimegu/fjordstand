@@ -1,6 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Watch, type: :model do
+  
+  before { ActiveJob::Base.queue_adapter = :test }
+
   describe "validations" do
     context "when user registers for same item twice" do
       let(:item) { create(:item, :published) }

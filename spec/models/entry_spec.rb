@@ -3,6 +3,8 @@ require 'rails_helper'
 RSpec.describe Entry, type: :model do
   let(:seller) { create(:user) }
 
+  before { ActiveJob::Base.queue_adapter = :test }
+
   describe "validations" do
     context "when user applies for same item twice" do
       let(:item) { create(:item, :published, user: seller) }

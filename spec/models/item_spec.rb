@@ -3,6 +3,8 @@ require 'rails_helper'
 RSpec.describe Item, type: :model do
   let!(:webhook) { stub_discord_webhook }
 
+  before { ActiveJob::Base.queue_adapter = :test }
+
   describe "validations" do
     let(:item) { build(:item) }
 
@@ -212,11 +214,18 @@ RSpec.describe Item, type: :model do
       let(:user) { create(:user) }
       let(:item) { create(:item, :published, user: user) }
 
-      it "changes status and clears entries" do
-        item.close(reason: :user_action)
-        expect(item.status).to eq("closed")
-        expect(item.entries).to be_empty
-        expect(webhook).to have_received(:notify_item_closed)
+      context "by user action" do
+        it "changes status and queues job" do
+          expect{ item.close(reason: :user_action) }.to have_enqueued_job(NotifyItemClosedJob).with(item.id, { reason: :user_action })
+          expect(item.status).to eq("closed")
+        end
+      end
+
+      context "by deadline" do
+        it "changes status and queues job" do
+          expect{ item.close(reason: :no_applicants) }.to have_enqueued_job(NotifyItemClosedJob).with(item.id, { reason: :no_applicants })
+          expect(item.status).to eq("closed")
+        end
       end
     end
   end
@@ -472,7 +481,7 @@ RSpec.describe Item, type: :model do
         item = create(:item)
         item.update!(status: :published)
 
-        expect(webhook).to have_received(:notify_item_published).with(item)
+        expect(NotifyItemPublishedJob).to have_been_enqueued.with(item.id)
       end
     end
 
@@ -482,7 +491,7 @@ RSpec.describe Item, type: :model do
       it "does not send webhook notification" do
         item.save!
 
-        expect(webhook).not_to have_received(:notify_item_published).with(item)
+        expect(NotifyItemPublishedJob).not_to have_been_enqueued.with(item.id)
       end
     end
 
@@ -490,11 +499,9 @@ RSpec.describe Item, type: :model do
       let(:item) { create(:item, :published, entry_deadline_at: Date.current) }
 
       it "does not send webhook notification" do
-        expect(webhook).to have_received(:notify_item_published).with(item).once
-
         item.update!(entry_deadline_at: Date.tomorrow)
 
-        expect(webhook).to have_received(:notify_item_published).with(item).once
+        expect(NotifyItemPublishedJob).to have_been_enqueued.with(item.id).once
       end
     end
   end
@@ -506,7 +513,7 @@ RSpec.describe Item, type: :model do
       it "sends webhook notification" do
         item.update!(entry_deadline_at: Date.tomorrow)
 
-        expect(webhook).to have_received(:notify_item_deadline_extended).with(item.applicants, item)
+        expect(NotifyDeadlineExtendedJob).to have_been_enqueued.with(item.id)
       end
     end
 
@@ -516,35 +523,7 @@ RSpec.describe Item, type: :model do
       it "does not send webhook notification" do
         item.update!(status: :published, entry_deadline_at: Date.tomorrow)
 
-        expect(webhook).not_to have_received(:notify_item_deadline_extended).with(item.applicants, item)
-      end
-    end
-  end
-
-  describe "#notify_close" do
-    context "when item is closed by user" do
-      let(:item) { create(:item, :published) }
-      let(:applicant) { create(:user) }
-
-      it "sends notification to applicants" do
-        create(:entry, item: item, user: applicant)
-
-        item.close(reason: :user_action)
-
-        expect(Notification.last.user).to eq(applicant)
-        expect(webhook).to have_received(:notify_item_closed).with(item.applicants, item)
-      end
-    end
-
-    context "when item is closed by deadline" do
-      let(:seller) { create(:user) }
-      let(:item) { create(:item, :published, user: seller, entry_deadline_at: Date.yesterday) }
-
-      it "sends notification to seller" do
-        item.close(reason: :no_applicants)
-
-        expect(Notification.last.user).to eq(seller)
-        expect(webhook).to have_received(:notify_lottery_skipped).with(item.user, item)
+        expect(NotifyDeadlineExtendedJob).not_to have_been_enqueued.with(item.id)
       end
     end
   end

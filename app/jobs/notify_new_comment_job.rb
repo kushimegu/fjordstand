@@ -10,10 +10,19 @@ class NotifyNewCommentJob < ApplicationJob
       ]
     ).find(comment_id)
     recipients = comment.item.watchers.where.not(id: comment.user_id)
-    next if recipients.empty?
+    return if recipients.empty?
     DiscordWebhook.new.notify_new_comment(recipients, comment.item)
-    recipients.each do |recipient|
-      Notification.create!(user: recipient, notifiable: comment)
+    now = Time.current
+    notifications = recipients.map do |recipient|
+      {
+        user_id: recipient.id,
+        notifiable_id: comment.id,
+        notifiable_type: 'Comment',
+        read: false,
+        created_at: now,
+        updated_at: now
+      }
     end
+    Notification.insert_all!(notifications) if notifications.any?
   end
 end

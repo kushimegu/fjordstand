@@ -52,7 +52,7 @@ class Item < ApplicationRecord
 
   def close(reason: :user_action)
     update!(status: :closed)
-    NotifyItemClosedJob.perform_later(id, reason)
+    NotifyItemClosedJob.perform_later(id, reason: reason)
   end
 
   def deletable_by?(user)
