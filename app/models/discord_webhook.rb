@@ -51,7 +51,7 @@ class DiscordWebhook
   def build_item_embed(embed, item, use_image: false)
     embed.title = item.title
     embed.url = item_url(item)
-    embed.description = item.description
+    embed.description = item.description.to_s
     embed.add_field(name: "価格", value: "#{item.price}円", inline: true)
     embed.add_field(name: "送料負担", value: "#{I18n.t("enums.item.shipping_fee_payer.#{item.shipping_fee_payer}")}", inline: true)
     embed.add_field(name: "お支払い方法", value: "#{item.payment_method}", inline: true)

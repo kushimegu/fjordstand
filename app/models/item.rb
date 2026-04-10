@@ -47,14 +47,12 @@ class Item < ApplicationRecord
     if current_user.admin?
       return nil unless [ user, winner ].include?(current_user)
     end
-
-    [ user, winner ].find { |user| user != current_user }
+    user == current_user ? winner : user
   end
 
   def close(reason: :user_action)
     update!(status: :closed)
-    ActiveSupport::Notifications.instrument("item.closed", item: self, reason: reason)
-    entries.destroy_all
+    NotifyItemClosedJob.perform_later(id, reason: reason)
   end
 
   def deletable_by?(user)
@@ -116,11 +114,11 @@ class Item < ApplicationRecord
   end
 
   def notify_publishing
-    ActiveSupport::Notifications.instrument("item.published", item: self)
+    NotifyItemPublishedJob.perform_later(id)
   end
 
   def notify_deadline_extension
-    ActiveSupport::Notifications.instrument("item.deadline_extended", item: self)
+    NotifyDeadlineExtendedJob.perform_later(id)
   end
 
   def saved_only_change_deadline?

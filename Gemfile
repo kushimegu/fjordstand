@@ -75,5 +75,6 @@ gem "slim-rails"
 gem "ruby-vips"
 gem "rails-i18n"
 gem "active_storage_validations"
-gem "whenever", require: false
 gem "kaminari"
+
+gem "solid_queue", "~> 1.4"
