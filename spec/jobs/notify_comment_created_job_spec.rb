@@ -19,7 +19,7 @@ RSpec.describe NotifyCommentCreatedJob, type: :job do
 
     it "sends webhook notification" do
       described_class.perform_now(comment.id)
-      expect(webhook).to have_received(:notify_new_comment).with(match_array([seller]), item)
+      expect(webhook).to have_received(:notify_new_comment).with(contain_exactly([ seller ]), item)
     end
   end
 end

@@ -16,7 +16,7 @@ class NotifyLotteryResultsJob < ApplicationJob
       {
         user_id: entry.user_id,
         notifiable_id: entry.id,
-        notifiable_type: 'Entry',
+        notifiable_type: "Entry",
         read: false,
         created_at: now,
         updated_at: now

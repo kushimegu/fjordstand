@@ -16,7 +16,7 @@ class NotifyItemClosedJob < ApplicationJob
         {
           user_id: applicant.id,
           notifiable_id: item.id,
-          notifiable_type: 'Item',
+          notifiable_type: "Item",
           read: false,
           created_at: now,
           updated_at: now

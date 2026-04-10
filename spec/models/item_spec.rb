@@ -1,9 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Item, type: :model do
-  let!(:webhook) { stub_discord_webhook }
-
-  before { ActiveJob::Base.queue_adapter = :test }
+  before do
+    ActiveJob::Base.queue_adapter = :test
+    webhook = stub_discord_webhook
+  end
 
   describe "validations" do
     let(:item) { build(:item) }
@@ -210,22 +211,20 @@ RSpec.describe Item, type: :model do
   end
 
   describe "#close" do
-    context "when item is closed" do
-      let(:user) { create(:user) }
-      let(:item) { create(:item, :published, user: user) }
+    let(:user) { create(:user) }
+    let(:item) { create(:item, :published, user: user) }
 
-      context "by user action" do
-        it "changes status and queues job" do
-          expect{ item.close(reason: :user_action) }.to have_enqueued_job(NotifyItemClosedJob).with(item.id, { reason: :user_action })
-          expect(item.status).to eq("closed")
-        end
+    context "when closed by user action" do
+      it "changes status and queues job" do
+        expect { item.close(reason: :user_action) }.to have_enqueued_job(NotifyItemClosedJob).with(item.id, { reason: :user_action })
+        expect(item.status).to eq("closed")
       end
+    end
 
-      context "by deadline" do
-        it "changes status and queues job" do
-          expect{ item.close(reason: :no_applicants) }.to have_enqueued_job(NotifyItemClosedJob).with(item.id, { reason: :no_applicants })
-          expect(item.status).to eq("closed")
-        end
+    context "when closed by deadline" do
+      it "changes status and queues job" do
+        expect { item.close(reason: :no_applicants) }.to have_enqueued_job(NotifyItemClosedJob).with(item.id, { reason: :no_applicants })
+        expect(item.status).to eq("closed")
       end
     end
   end

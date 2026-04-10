@@ -1,9 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Comment, type: :model do
-  let!(:webhook) { stub_discord_webhook }
-
-  before { ActiveJob::Base.queue_adapter = :test }
+  before do
+    ActiveJob::Base.queue_adapter = :test
+    webhook = stub_discord_webhook
+  end
 
   describe "validations" do
     context "when body is blank" do

@@ -17,7 +17,7 @@ class NotifyCommentCreatedJob < ApplicationJob
       {
         user_id: recipient.id,
         notifiable_id: comment.id,
-        notifiable_type: 'Comment',
+        notifiable_type: "Comment",
         read: false,
         created_at: now,
         updated_at: now

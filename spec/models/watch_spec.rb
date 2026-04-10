@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe Watch, type: :model do
-  
   before { ActiveJob::Base.queue_adapter = :test }
 
   describe "validations" do
