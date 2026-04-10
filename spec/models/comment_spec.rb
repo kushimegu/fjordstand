@@ -41,7 +41,7 @@ RSpec.describe Comment, type: :model do
       comment = create(:comment, user: commentator, item: item)
       expect(item.watchers.count).to eq(3)
 
-      expect(NotifyNewCommentJob).to have_been_enqueued.with(comment.id)
+      expect(NotifyCommentCreatedJob).to have_been_enqueued.with(comment.id)
     end
   end
 end

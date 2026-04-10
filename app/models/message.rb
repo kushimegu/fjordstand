@@ -10,6 +10,6 @@ class Message < ApplicationRecord
   private
 
   def create_notifications
-    NotifyNewMessageJob.perform_later(id)
+    NotifyMessageCreatedJob.perform_later(id)
   end
 end

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe LotteryJob, type: :job do
+RSpec.describe RunLotteryJob, type: :job do
   let(:seller) { create(:user) }
   let(:item) { create(:item, :published, user: seller) }
 

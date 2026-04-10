@@ -16,7 +16,7 @@ RSpec.describe ScheduleLotteryJob, type: :job do
 
     it "sends webhook notification" do
       described_class.perform_now
-      expect { described_class.perform_now }.to have_enqueued_job(LotteryJob).with(item.id)
+      expect { described_class.perform_now }.to have_enqueued_job(RunLotteryJob).with(item.id)
     end
   end
 end

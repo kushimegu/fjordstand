@@ -17,6 +17,6 @@ class Comment < ApplicationRecord
   end
 
   def notify_watchers
-    NotifyNewCommentJob.perform_later(id)
+    NotifyCommentCreatedJob.perform_later(id)
   end
 end

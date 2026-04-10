@@ -1,4 +1,4 @@
-class LotteryJob < ApplicationJob
+class RunLotteryJob < ApplicationJob
   queue_as :default
 
   def perform(item_id)

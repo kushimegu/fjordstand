@@ -13,7 +13,7 @@ RSpec.describe Message, type: :model do
     it "creates notification job" do
       create(:entry, :won, item: item, user: buyer)
       message = create(:message, item: item, user: buyer)
-      expect(NotifyNewMessageJob).to have_been_enqueued.with(message.id)
+      expect(NotifyMessageCreatedJob).to have_been_enqueued.with(message.id)
     end
   end
 end

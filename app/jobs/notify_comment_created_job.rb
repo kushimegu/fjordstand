@@ -1,4 +1,4 @@
-class NotifyNewCommentJob < ApplicationJob
+class NotifyCommentCreatedJob < ApplicationJob
   queue_as :default
 
   def perform(comment_id)

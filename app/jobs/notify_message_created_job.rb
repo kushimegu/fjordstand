@@ -1,4 +1,4 @@
-class NotifyNewMessageJob < ApplicationJob
+class NotifyMessageCreatedJob < ApplicationJob
   queue_as :default
 
   def perform(message_id)

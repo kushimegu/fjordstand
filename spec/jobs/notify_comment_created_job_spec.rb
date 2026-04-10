@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe NotifyNewCommentJob, type: :job do
+RSpec.describe NotifyCommentCreatedJob, type: :job do
   let!(:webhook) { stub_discord_webhook }
 
   let(:seller) { create(:user) }
