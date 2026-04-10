@@ -12,30 +12,48 @@ class DiscordWebhook
   end
 
   def notify_item_closed(users, item)
-    send_webhook("#{create_mentions(users)}\n📢出品が取り下げられました", item, use_image: false)
+    mentions = create_mentions(users)
+    prefix = create_prefix(mentions)
+    send_webhook("#{prefix}📢出品が取り下げられました", item, use_image: false)
   end
 
   def notify_item_deadline_extended(users, item)
-    send_webhook("#{create_mentions(users)}\n⏰購入希望申込期限が延長されました", item, use_image: false)
+    mentions = create_mentions(users)
+    prefix = create_prefix(mentions)
+    send_webhook("#{prefix}⏰購入希望申込期限が延長されました", item, use_image: false)
   end
 
   def notify_lottery_completed(users, item)
-    send_webhook("#{create_mentions(users)}\n🎉抽選が完了し#{item.winner.name}さんが当選しました！", item, use_image: false)
+    mentions = create_mentions(users)
+    prefix = create_prefix(mentions)
+    send_webhook("#{prefix}🎉抽選が完了し#{item.winner.name}さんが当選しました！", item, use_image: false)
   end
 
   def notify_lottery_skipped(users, item)
-    send_webhook("#{create_mentions(users)}\n⏭️希望者がいなかったため当選者なしで公開終了しました", item, use_image: false)
+    mentions = create_mentions(users)
+    prefix = create_prefix(mentions)
+    send_webhook("#{prefix}⏭️希望者がいなかったため当選者なしで公開終了しました", item, use_image: false)
   end
 
   def notify_new_comment(users, item)
-    send_webhook("#{create_mentions(users)}\n📝新しいコメントがつきました", item, use_image: false)
+    mentions = create_mentions(users)
+    prefix = create_prefix(mentions)
+    send_webhook("#{prefix}📝新しいコメントがつきました", item, use_image: false)
   end
 
   def notify_new_message(users, item)
-    send_webhook("#{create_mentions(users)}\n💬新しいメッセージが届きました", item, use_image: false)
+    mentions = create_mentions(users)
+    prefix = create_prefix(mentions)
+    send_webhook("#{prefix}💬新しいメッセージが届きました", item, use_image: false)
   end
 
   private
+
+  def create_prefix(mentions)
+    return "" if mentions.blank?
+
+    mentions + "\n"
+  end
 
   def create_mentions(users)
     Array.wrap(users).map { |user| "<@#{user.uid}>" }.join(" ")
