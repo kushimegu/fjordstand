@@ -68,22 +68,29 @@ class DiscordWebhook
 
   def build_item_embed(embed, item, use_image: false)
     embed.title = item.title
-    embed.url = item_url(item)
-    embed.description = item.description.to_s
+    embed.url = Rails.env.development? ? nil : item_url(item)
+    embed.description = item.description.present? ? item.description.truncate(100) : nil
+
     embed.add_field(name: "価格", value: "#{item.price}円", inline: true)
     embed.add_field(name: "送料負担", value: "#{I18n.t("enums.item.shipping_fee_payer.#{item.shipping_fee_payer}")}", inline: true)
     embed.add_field(name: "お支払い方法", value: "#{item.payment_method}", inline: true)
     embed.add_field(name: "購入希望申込期限", value: "#{I18n.l(item.entry_deadline_at, format: :default)}", inline: false)
 
-    image_url = url_for(item.images.first)
-    if use_image
-      embed.image = Discordrb::Webhooks::EmbedImage.new(url: image_url)
-      embed.thumbnail = nil
+    if !Rails.env.development? && item.images.attached?
+      image_url = url_for(item.images.first)
+      if use_image
+        embed.image = Discordrb::Webhooks::EmbedImage.new(url: image_url)
+        embed.thumbnail = nil
+      else
+        embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(url: image_url)
+        embed.image = nil
+      end
     else
-      embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(url: image_url)
       embed.image = nil
+      embed.thumbnail = nil
     end
 
-    embed.footer = Discordrb::Webhooks::EmbedFooter.new(text: "出品者: #{item.user.name}", icon_url: "#{item.user.avatar_url.presence || "default-avatar.png"}")
+    icon_url = item.user.avatar_url.present? ? url_for(item.user.avatar_url) : nil
+    embed.footer = Discordrb::Webhooks::EmbedFooter.new(text: "出品者: #{item.user.name}", icon_url: icon_url)
   end
 end
