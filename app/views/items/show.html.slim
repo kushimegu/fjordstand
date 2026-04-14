@@ -1,151 +1,197 @@
 - content_for :title, @item.title
 - content_for :description, "FjordStandの商品詳細ページです。出品者が登録した商品の情報や画像を確認し、購入希望を申請できます。"
 
-.flex.flex-col.space-y-2.lg:grid.grid-cols-2.mt-4.gap-6.px-2
-  - if @item.images.attached?
-    .flex.flex-col.space-y-2.items-center.top-20[data-controller="image-gallery"]
-      .aspect-square.h-83.sm:h-108.flex.items-center.justify-center.bg-gray-100.relative
-        = image_tag @item.images.first.variant(resize_to_limit: [ 400, 400 ]).processed, id: "big-image", data: { image_gallery_target: "bigImage" },
-        alt: "#{@item.title} 1枚目",
-        class: "object-contain w-full h-full"
-        - if @item.images.length > 1
-          .absolute.inset-y-0.left-0.flex.items-center.pl-3
-            button#prev type="button" data-action="image-gallery#prev"
-              svg[xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8
-              bg-white/50 hover:bg-white rounded-full p-1 cursor-pointer"]
-                title "前の画像へ"
-                path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"
-          .absolute.inset-y-0.right-0.flex.items-center.pr-3
-            button#next type="button" data-action="image-gallery#next"
-              svg[xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8
-              bg-white/50 hover:bg-white rounded-full p-1 cursor-pointer"]
-                title "次の画像へ"
-                path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"
-      .grid.grid-cols-3.sm:grid-cols-5.gap-2
-        - @item.images.each do |image, index|
-          .aspect-square.h-20.flex.items-center.justify-center.bg-gray-100
-            = image_tag image.variant(resize_to_limit: [ 200, 200 ]).processed,
-              alt: "#{@item.title}({index + 1}枚目)",
-              class: "thumbnail object-contain w-full h-full hover:ring hover:ring-gray-300 cursor-pointer",
-              data: { image_gallery_target: "thumbnail", action: "click->image-gallery#show", image: url_for(image) }
+article.item-detail.mt-2.flex.flex-col.lg:grid.lg:grid-cols-2.lg:gap-6.px-2
+  section.gallery
+    - if @item.images.attached?
+      figure.flex.flex-col.space-y-4.mb-6.sm:space-y-6.items-center.top-20[data-controller="image-gallery"]
+        .aspect-square.h-83.sm:h-108.flex.items-center.justify-center.bg-gray-100.relative
+          = image_tag @item.images.first.variant(resize_to_limit: [ 400, 400 ]).processed,
+            id: "big-image", data: { image_gallery_target: "bigImage" }, alt: "#{@item.title} 1枚目", class: "object-contain w-full h-full"
+          - if @item.images.length > 1
+            .absolute.inset-y-0.left-0.flex.items-center.pl-3
+              button#prev type="button" data-action="image-gallery#prev" aria_label="前の画像へ"
+                svg[xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                  class="size-8 bg-white/50 hover:bg-white rounded-full p-1 cursor-pointer"]
+                  title "前の画像へ"
+                  path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"
+            .absolute.inset-y-0.right-0.flex.items-center.pr-3
+              button#next type="button" data-action="image-gallery#next" aria_label="次の画像へ"
+                svg[xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                  class="size-8 bg-white/50 hover:bg-white rounded-full p-1 cursor-pointer"]
+                  title "次の画像へ"
+                  path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"
+        .grid.grid-cols-3.sm:grid-cols-5.gap-2.justify-items-center
+          - @item.images.each_with_index do |image, index|
+            .aspect-square.h-20.flex.items-center.justify-center.bg-gray-100.hover:ring.hover:ring-gray-300
+              = image_tag image.variant(resize_to_limit: [ 200, 200 ]).processed,
+                alt: "#{@item.title}({index + 1}枚目)",
+                class: "thumbnail object-contain mx-auto max-h-full cursor-pointer",
+                data: { image_gallery_target: "thumbnail", action: "click->image-gallery#show", image: url_for(image) }
 
-  div
-    h1.text-3xl = @item.title
+  section.item-info
+    header
+      h1.text-3xl = @item.title
 
-    - if @item.price.present?
-      .text-2xl.mt-2.flex.items-center
-        = number_to_currency(@item.price)
-        - if @item.shipping_fee_payer.present?
-          span.text-base.pl-1 = I18n.t("views.item.shipping_fee_label.#{@item.shipping_fee_payer}")
-    - else
-      .text-xl.py-2
-        span 価格未設定
+    dl.mt-2.flex.flex-wrap.justify-between.items-center.gap-y-2
+      - if @item.price.present?
+        dt.sr-only 価格
+        dd.text-2xl.flex.items-center
+          = number_to_currency(@item.price)
+          - if @item.shipping_fee_payer.present?
+            span.text-base.pl-1 = I18n.t("views.item.shipping_fee_label.#{@item.shipping_fee_payer}")
+      - else
+        dt.sr-only 価格
+        dd.text-xl.py-2
+          span 価格未設定
+
+      dt.sr-only 出品者
+      dd.flex.gap-2.items-center
+        = image_tag (@item.user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-8 h-8 rounded-full"
+        = @item.user.name
 
     - if @item.entry_deadline_at.present?
-      .text-xl.py-2
+      p.text-sm.border.border-gray-300.rounded-full.flex.flex-wrap.justify-center.gap-2.py-1.mt-2
+        span 購入希望締切
         = l @item.entry_deadline_at.to_date
-        span 締切
         - if @item.closed?
-          span.pl-2.text-red-400 公開終了しました
+          span.text-red-400 公開終了しました
         - elsif @item.entry_deadline_at < Time.current
-          span.pl-2.text-red-400 締め切りました
+          span.text-red-400 締め切りました
     - else
-      .text-xl.py-2
+      p.text-sm.border.border-gray-300.rounded-full.text-center.py-1.mt-2
         span 締め切り未設定
 
-    = @item.applicants.count
-    span 人が応募しています
+    p class=(@item.applicants.count.zero? ? "text-red-400 mt-2" : "mt-2")
+      | #{@item.applicants.count}人
+      span.text-gray-600 が応募しています
 
     - if @item.user == current_user && @item.sold?
-      .flex.items-center.flex-wrap
-        p.text-xl.text-cyan-600 抽選が完了しました！
-        = link_to "当選者との連絡ページへ", transaction_messages_path(@item), class: "underline text-cyan-600 hover:text-cyan-700"
+      section.status.mt-2
+        .border.border-gray-300.rounded-xl.p-6
+          .flex.items-center.gap-2.mb-3
+            svg.text-cyan-600 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"
+              path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+            h2.text-xl.font-semibold 抽選が完了しました！
+          p.mb-4
+            | 当選者の
+            span.font-semibold
+              = @item.winner.name
+            | さんに代金の送り先を伝えるなどのやり取りを行ってください。
+          = link_to transaction_messages_path(@item),
+            class: "flex items-center justify-center gap-2 bg-cyan-600 text-white font-bold py-3 px-6 rounded-lg hover:opacity-80" do
+            svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"
+              path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98
+              2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095
+              48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155
+              1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76
+              3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"
+            | 当選者と連絡をとる
 
     - if @item.user != current_user
-      - if @item.published? && @item.entry_deadline_at.presence && @item.entry_deadline_at >= Time.current
-        - if current_user.entry_for(@item)&.applied?
-          p.text-lg.text-cyan-600 購入希望を出しています
-          = button_to "購入希望を取り消す", item_entries_path(@item), method: :delete,
-          class: "w-full mx-auto px-3 py-2 rounded border border-gray-500 text-gray-500 font-semibold hover:bg-gray-50 cursor-pointer"
+      section.actions
+        - if @item.published? && @item.entry_deadline_at.presence && @item.entry_deadline_at >= Time.current
+          - if current_user.entry_for(@item)&.applied?
+            p.text-lg.text-cyan-600 購入希望を出しています
+            = button_to "購入希望を取り消す", item_entries_path(@item), method: :delete,
+              class: "w-full mx-auto px-3 py-2 rounded border border-gray-500 text-gray-500 font-semibold hover:bg-gray-50 cursor-pointer"
+          - else
+            = button_to "購入希望を申請する", item_entries_path(@item), method: :post,
+              class: "w-full mx-auto px-3 py-2 rounded bg-cyan-600 text-white font-semibold hover:opacity-80 cursor-pointer"
         - else
-          = button_to "購入希望を申請する", item_entries_path(@item), method: :post,
-          class: "w-full mx-auto px-3 py-2 rounded bg-cyan-600 text-white font-semibold hover:opacity-80 cursor-pointer"
-      - else
-        - if current_user.entry_for(@item)&.won?
-          .flex.items-center
-            p.text-xl.text-cyan-600 当選しました！
-            = link_to "出品者との連絡ページへ", transaction_messages_path(@item), class: "underline text-cyan-600 hover:text-cyan-700"
-        - elsif current_user.entry_for(@item)&.lost?
-          p.text-xl.text-red-400 落選しました
-        - elsif current_user.entry_for(@item)&.applied?
-          p.text-xl.text-cyan-600 購入希望中です
-        - else
-          p.text-xl 応募していません
+          - if current_user.entry_for(@item)&.won?
+            .border.border-gray-300.rounded-xl.p-6
+              .flex.items-center.gap-2.mb-3
+                svg.text-cyan-600 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"
+                  path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                h2.text-xl.font-semibold 当選しました！
+              p.mb-4
+                | 出品者の
+                span.font-semibold
+                  = @item.user.name
+                | さんに商品の配送先を伝えるなどのやり取りを行ってください。
+              = link_to transaction_messages_path(@item),
+                class: "flex items-center justify-center gap-2 bg-cyan-600 text-white font-bold py-3 px-6 rounded-lg hover:opacity-80" do
+                svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"
+                  path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98
+                  2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0
+                  0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155
+                  1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76
+                  3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"
+                | 出品者と連絡をとる
+          - elsif current_user.entry_for(@item)&.lost?
+            p.text-xl.text-red-400 落選しました
+          - elsif current_user.entry_for(@item)&.applied?
+            p.text-xl.text-cyan-600 購入希望中です
+          - else
+            p.text-xl 応募していません
+
     = render "shared/error_messages", model: @entry, attribute: :base
 
     - if @item.payment_method.present?
-      p.mt-6.text-lg.border-b.border-gray-300 希望する支払い方法
-      p.text-lg.mt-1 = @item.payment_method
+      section.payment-method.mt-6
+        h2.text-lg.border-b.border-gray-300 希望する支払い方法
+        p.text-lg.mt-1 = @item.payment_method
 
     - if @item.description.present?
-      p.text-lg.mt-4.border-b.border-gray-300 商品説明
-      .mt-1 = simple_format(@item.description)
-
-    .mt-4.border-b.border-gray-300
-      p.text-lg 出品者
-    .mt-2.flex.items-center.gap-2
-      = image_tag (@item.user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-10 h-10 rounded-full"
-      = @item.user.name
+      section.description.mt-4
+        h2.text-lg.border-b.border-gray-300 商品説明
+        .mt-1 = simple_format(@item.description)
 
     .flex.items-center.justify-end.space-x-2
       - if @item.user == current_user && @item.editable?
-        = link_to "編集する", edit_item_path(@item),
-        class: "inline-block border border-gray-300 text-sm px-3 py-2 rounded hover:bg-gray-50"
+        = link_to "編集する", edit_item_path(@item), class: "inline-block border border-gray-300 text-sm px-3 py-2 rounded hover:bg-gray-50"
 
       - if current_user.admin?
         = button_to "削除する", @item, method: :delete, data: { turbo_confirm: "本当に削除しますか？" },
           class: "inline-block cursor-pointer text-sm  text-gray-700 underline hover:text-red-400"
 
-    .flex.items-center.justify-between.mt-4.border-b.border-gray-300
-      p.text-lg コメント
-      - if current_user.watch_comment_of(@item)
-        = link_to item_watches_path(@item), data: { "turbo-method": :delete }, class: "border border-gray-400 p-1 cursor-pointer rounded hover:bg-gray-100"
-          svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"
-            title "通知オン"
-            path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6
-            9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0M3.124 7.5A8.969
-            8.969 0 0 1 5.292 3m13.416 0a8.969 8.969 0 0 1 2.168 4.5"
-      - else
-        = link_to item_watches_path(@item), data: { "turbo-method": :post }, class: "border border-gray-400 p-1 cursor-pointer rounded hover:bg-gray-100"
-          svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"
-            title "通知オフ"
-            path stroke-linecap="round" stroke-linejoin="round" d="M9.143 17.082a24.248 24.248 0 0 0 3.844.148m-3.844-.148a23.856 23.856 0 0 1-5.455-1.31 8.964
-            8.964 0 0 0 2.3-5.542m3.155 6.852a3 3 0 0 0 5.667 1.97m1.965-2.277L21 21m-4.225-4.225a23.81 23.81 0 0 0 3.536-1.003A8.967 8.967 0 0 1 18 9.75V9A6
-            6 0 0 0 6.53 6.53m10.245 10.245L6.53 6.53M3 3l3.53 3.53"
-    - @item.comments.each do |comment|
-      .comment.mt-4
-        .flex.items-start.space-x-3
-          = image_tag (comment.user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-10 h-10 rounded-full"
-          .flex-1.flex.flex-col.space-y-1.w-full
-            .px-2.flex.justify-between.items-center
-              span.text-lg = comment.user.name
-              span.text-sm.text-gray-500 = l comment.created_at
-            .px-3.py-2.rounded.bg-gray-100
-              = simple_format(comment.body)
+    section.comments.mt-4
+      .flex.items-center.justify-between.mt-4.border-b.border-gray-300
+        h2.text-lg コメント
+        - if current_user.watch_comment_of(@item)
+          = link_to item_watches_path(@item), \
+                    data: { "turbo-method": :delete }, \
+                    class: "border border-gray-400 p-1 cursor-pointer rounded hover:bg-gray-100", \
+                    aria_label: "通知をオフにする" do
+            svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"
+              title "通知オン"
+              path[stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6
+                    9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714
+                    0M3.124 7.5A8.969 8.969 0 0 1 5.292 3m13.416 0a8.969 8.969 0 0 1 2.168 4.5"]
+        - else
+          = link_to item_watches_path(@item), data: { "turbo-method": :post }, class: "border border-gray-400 p-1 cursor-pointer rounded hover:bg-gray-100",
+            aria_label: "通知をオンにする" do
+            svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"
+              title "通知オフ"
+              path stroke-linecap="round" stroke-linejoin="round" d="M9.143 17.082a24.248 24.248 0 0 0 3.844.148m-3.844-.148a23.856 23.856 0 0
+              1-5.455-1.31 8.964 8.964 0 0 0 2.3-5.542m3.155 6.852a3 3 0 0 0 5.667 1.97m1.965-2.277L21 21m-4.225-4.225a23.81 23.81 0 0 0 3.536-1.003A8.967
+              8.967 0 0 1 18 9.75V9A6 6 0 0 0 6.53 6.53m10.245 10.245L6.53 6.53M3 3l3.53 3.53"
+      - @item.comments.each do |comment|
+        article.comment.mt-4.flex.flex-col.gap-2 class=(comment.user == @item.user ? "flex-row" : "flex-row-reverse")
+            .flex-1.bg-gray-100.rounded.p-3.border.border-gray-100
+              header.flex.flex-wrap.justify-between.items-center.border-b.mb-2.border-gray-200
+                span = comment.user.name
+                span = l comment.created_at
+              div
+                = simple_format(comment.body)
+            div
+              = image_tag (comment.user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-10 h-10 rounded-full"
         - if current_user.admin?
           .flex.justify-end
             = button_to "削除する", item_comment_path(@item, comment), method: :delete, data: { turbo_confirm: "本当に削除しますか？" },
               class: "inline-block cursor-pointer text-sm text-gray-700 underline hover:text-red-400"
 
     - if @item.commentable?
-      = form_with(model: [ @item, @comment ], class: "my-6") do |form|
-        .flex.items-start.space-x-3
-          = image_tag (current_user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-10 h-10 rounded-full"
-          .flex-1
-            = form.textarea :body,
-              class: "w-full rounded p-2 min-h-28 border border-gray-300 focus:outline-none focus:border-cyan-600 field-sizing-content",
-              placeholder: "コメントを入力...",
-              required: true
-            = render "shared/error_messages", model: @comment, attribute: :body
-            .flex.justify-center
-              = form.submit "送信する", class: "cursor-pointer w-1/2 border border-cyan-600 text-cyan-600 font-semibold px-3 py-1 rounded hover:bg-cyan-100"
+      section.comment-form.my-6
+        = form_with(model: [ @item, @comment ], class: "my-6") do |form|
+          .flex.items-start.gap-2 class=(current_user == @item.user ? "flex-row-reverse" : "flex-row")
+            = image_tag (current_user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-10 h-10 rounded-full"
+            .flex-1
+              = form.textarea :body, class: "w-full rounded p-2 min-h-28 border border-gray-300 focus:outline-none focus:border-cyan-600 field-sizing-content",
+                placeholder: "コメントを入力...", required: true
+              = render "shared/error_messages", model: @comment, attribute: :body
+              .flex.justify-center
+                = form.submit "送信する", class: "cursor-pointer w-1/2 border border-cyan-600 text-cyan-600 font-semibold px-3 py-1 rounded-lg hover:bg-cyan-100"

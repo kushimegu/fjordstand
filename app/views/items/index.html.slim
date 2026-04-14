@@ -1,6 +1,7 @@
 - content_for :title, "商品一覧"
 - content_for :description, "FjordStandの商品一覧です。購入希望を申請できる出品中の商品をまとめて確認できます。"
 
+h1.font-bold.text-2xl.my-2.text-center 現在販売中の商品
 - if @items.length < 1
   .mt-40.text-center.gap-y-3
     h.text-2xl 現在購入希望を出せる商品がありません
@@ -9,6 +10,6 @@
   #items.grid.grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-4
     - @items.each do |item|
       = link_to item, class: "block" do
-        .container.bg-white.shadow.rounded.p-4.hover:bg-gray-50
+        .container.bg-white.border.border-gray-300.rounded.p-4.hover:bg-gray-50
           == render item
   = paginate @items

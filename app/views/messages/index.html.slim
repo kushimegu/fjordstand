@@ -2,47 +2,73 @@
 - content_for :description, "出品者と当選者が連絡を取り合うためのページです。取引に関するメッセージを送受信できます。"
 
 .w-full.max-w-2xl.mx-auto
-  .top-20.bg-white.py-2
-    = link_to @item, class: "block" do
-      .container.bg-white.shadow.rounded.p-4.hover:bg-gray-50.flex.gap-x-4
-        .aspect-square.h-25.flex.items-center.justify-center.bg-gray-100
-          = image_tag @item.images.first.variant(resize_to_limit: [ 400, 400 ]).processed,
-           alt: "#{@item.title} 1枚目",
-          class: "object-contain w-full h-full"
-        .flex.flex-col.justify-between.min-h-25
-          .text-2xl.line-clamp-1
-            = @item.title
-          div
-            .flex.items-center
-              span.text-xl = number_to_currency(@item.price)
-              span.text-base
-                = I18n.t("views.item.shipping_fee_label.#{@item.shipping_fee_payer}")
-            .flex.items-center.gap-x-1.flex-wrap
-              span 希望するお支払い方法
-              span.text-lg = @item.payment_method
+  .top-20.rounded-lg.border.border-gray-200.mb-4
+    .bg-gray-100.px-4.py-3.border-b.rounded-t-lg.border-gray-200.flex.items-center.gap-2
+      svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6"
+        path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 0 0-5.25 5.25v3a3 3 0 0 0-3 3v6.75a3 3 0 0 0 3
+        3h10.5a3 3 0 0 0 3-3v-6.75a3 3 0 0 0-3-3v-3c0-2.9-2.35-5.25-5.25-5.25Zm3.75 8.25v-3a3.75 3.75 0 1 0-7.5 0v3h7.5Z" clip-rule="evenodd"
+      span.font-semibold このやり取りは非公開です
+
+    .p-4.bg-white
+      p.text-sm
+        | この連絡ページの内容は、
+        span.font-semibold 出品者・購入者・サービス管理者
+        | 以外の第三者が閲覧することはできません。
+        br
+        | 住所や連絡先なども、安心してご記入いただけます。
+
+    .bg-white.px-4.mb-4
+      = link_to @item, class: "block" do
+        .container.bg-white.border.border-gray-200.rounded-lg.p-4.hover:bg-gray-50.flex.gap-x-4
+          .aspect-square.h-25.flex.items-center.justify-center.bg-gray-100
+            = image_tag @item.images.first.variant(resize_to_limit: [ 400, 400 ]).processed,
+            alt: "#{@item.title} 1枚目",
+            class: "object-contain w-full h-full"
+          .flex.flex-col.justify-between.min-h-25
+            .text-2xl.line-clamp-1
+              = @item.title
+            .flex.flex-wrap
+              .flex.items-center
+                span.text-xl = number_to_currency(@item.price)
+                span.text-base
+                  = I18n.t("views.item.shipping_fee_label.#{@item.shipping_fee_payer}")
+              .flex.items-center.gap-x-1.flex-wrap
+                span お支払い方法
+                span.text-lg = @item.payment_method
+            .flex.gap-2.md:gap-4.flex-wrap
+              .flex.items-center.gap-1
+                p 出品者
+                = image_tag (@item.user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-6 h-6 md:w-8 md:h-8 rounded-full"
+                = @item.user.name
+              .flex.items-center.gap-1
+                p 購入者
+                = image_tag (@item.winner.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-6 h-6 md:w-8 md:h-8 rounded-full"
+                = @item.winner.name
 
   - @messages.each do |message|
-    .message.mb-3
-      .flex.items-start.space-x-3
-        = image_tag (message.user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-10 h-10 rounded-full"
-        .flex-1.flex.flex-col.space-y-1.w-full
-          .px-2.flex.justify-between.items-center
+    .message.mt-3
+      .flex.flex-col.gap-2 class=(message.user == current_user ? "flex-row" : "flex-row-reverse")
+        .flex-1.bg-gray-100.rounded.p-3.border.border-gray-100
+          .flex.flex-wrap.justify-between.items-center.border-b.mb-2.border-gray-200
             span.text-lg = message.user.name
             span.text-sm.text-gray-500 = l message.created_at
-          .px-3.py-2.rounded.bg-gray-100
+          div
             = simple_format(message.body)
+        div
+          = image_tag (message.user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-10 h-10 rounded-full"
       - if current_user.admin?
         .flex.justify-end
           = button_to "削除する", transaction_message_path(@item, message), method: :delete, data: { turbo_confirm: "本当に削除しますか？" },
             class: "inline-block cursor-pointer text-sm text-gray-700 underline hover:text-red-400"
 
   = form_with(url: transaction_messages_path(@item), model: @message, class: "my-6") do |form|
-    .flex.items-start.space-x-3
+    .flex.items-start.gap-2.flex-row-reverse
       = image_tag (current_user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-10 h-10 rounded-full"
       .flex-1
+        - placeholder = current_user == @item.user ? "代金の支払い先など必要な情報を入力してください" : "住所、氏名、電話番号など、配送に必要な情報を入力してください"
         = form.textarea :body,
           class: "w-full border border-gray-300 rounded p-2 min-h-28 focus:outline-none focus:border-cyan-600 field-sizing-content",
-          placeholder: "メッセージを入力...",
+          placeholder: placeholder,
           required: true
         = render "shared/error_messages", model: @message, attribute: :body
         .flex.justify-center

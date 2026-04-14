@@ -7,8 +7,8 @@ ja:
   views:
     item:
       shipping_fee_label:
-        seller: （送料込み）
-        buyer: ＋送料
+        seller: （送料込）
+        buyer: （送料別）
   activerecord:
     models:
       item: 商品
