@@ -23,7 +23,7 @@ RSpec.describe NotifyItemClosedJob, type: :job do
 
       it "sends notifications" do
         expect { described_class.perform_now(item.id, reason: :user_action) }.to have_enqueued_job(DestroyEntriesJob).with(item.id)
-        expect(webhook).to have_received(:notify_item_closed).with(contain_exactly([ applicant ]), item)
+        expect(webhook).to have_received(:notify_item_closed).with([ applicant ], item)
         expect(Notification.where(user: applicant, notifiable: item)).to exist
       end
     end

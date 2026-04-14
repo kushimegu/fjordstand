@@ -20,7 +20,7 @@ RSpec.describe NotifyLotteryResultsJob, type: :job do
 
     it "sends webhook notification" do
       described_class.perform_now(item.id)
-      expect(webhook).to have_received(:notify_lottery_completed).with(contain_exactly([ winner, seller ]), item)
+      expect(webhook).to have_received(:notify_lottery_completed).with([ winner, seller ], item)
     end
   end
 end

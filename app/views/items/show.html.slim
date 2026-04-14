@@ -170,19 +170,19 @@ article.item-detail.mt-2.flex.flex-col.lg:grid.lg:grid-cols-2.lg:gap-6.px-2
               1-5.455-1.31 8.964 8.964 0 0 0 2.3-5.542m3.155 6.852a3 3 0 0 0 5.667 1.97m1.965-2.277L21 21m-4.225-4.225a23.81 23.81 0 0 0 3.536-1.003A8.967
               8.967 0 0 1 18 9.75V9A6 6 0 0 0 6.53 6.53m10.245 10.245L6.53 6.53M3 3l3.53 3.53"
       - @item.comments.each do |comment|
-        article.comment.mt-4.flex.flex-col.gap-2 class=(comment.user == @item.user ? "flex-row" : "flex-row-reverse")
+        article.comment.mt-4
+          .flex.flex-col.gap-2 class=(comment.user == @item.user ? "flex-row" : "flex-row-reverse")
             .flex-1.bg-gray-100.rounded.p-3.border.border-gray-100
               header.flex.flex-wrap.justify-between.items-center.border-b.mb-2.border-gray-200
                 span = comment.user.name
                 span = l comment.created_at
               div
                 = simple_format(comment.body)
-            div
-              = image_tag (comment.user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-10 h-10 rounded-full"
-        - if current_user.admin?
-          .flex.justify-end
-            = button_to "削除する", item_comment_path(@item, comment), method: :delete, data: { turbo_confirm: "本当に削除しますか？" },
-              class: "inline-block cursor-pointer text-sm text-gray-700 underline hover:text-red-400"
+            = image_tag (comment.user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-10 h-10 rounded-full"
+          - if current_user.admin?
+            .flex.justify-end
+              = button_to "削除する", item_comment_path(@item, comment), method: :delete, data: { turbo_confirm: "本当に削除しますか？" },
+                class: "inline-block cursor-pointer text-sm text-gray-700 underline hover:text-red-400"
 
     - if @item.commentable?
       section.comment-form.my-6

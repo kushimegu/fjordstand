@@ -47,8 +47,8 @@ RSpec.describe "Entries", type: :system do
       expect(page).to have_current_path(items_path)
 
       visit entries_path
-      click_on "希望中"
-      expect(page).to have_css("a.active-tab", text: "希望中")
+      click_on "購入希望"
+      expect(page).to have_css("a.active-tab", text: "購入希望")
       expect(page).to have_content("#{applied_entry.item.title}")
       expect(page).not_to have_content("#{won_entry.item.title}")
       expect(page).not_to have_content("#{lost_entry.item.title}")
@@ -61,8 +61,8 @@ RSpec.describe "Entries", type: :system do
       expect(page).to have_current_path(items_path)
 
       visit entries_path
-      click_on "当選"
-      expect(page).to have_css("a.active-tab", text: "当選")
+      click_on "購入確定"
+      expect(page).to have_css("a.active-tab", text: "購入確定")
       expect(page).to have_content("#{won_entry.item.title}")
       expect(page).not_to have_content("#{applied_entry.item.title}")
       expect(page).not_to have_content("#{lost_entry.item.title}")
