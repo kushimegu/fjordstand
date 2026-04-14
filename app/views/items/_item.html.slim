@@ -1,15 +1,15 @@
 div id="#{dom_id item}"
   - if item.images.attached?
-    .aspect-square.flex.items-center.justify-center.bg-gray-100
+    .aspect-square.flex.items-center.justify-center
       = image_tag item.images.first.variant(resize_to_limit: [ 400, 400 ]).processed,
       alt: "#{item.title} 1枚目",
       class: "object-contain w-full h-full"
-  .text-xl.line-clamp-1
+  .text-xl.font-semibold.line-clamp-1.my-2
     = item.title
-  .text-lg.text-right
+  .text-lg
     = number_to_currency(item.price)
-    span.text-base
+    span.text-base class=shipping_fee_class(item.shipping_fee_payer)
       = I18n.t("views.item.shipping_fee_label.#{item.shipping_fee_payer}")
   - if item.entry_deadline_at.present?
-    = l item.entry_deadline_at.to_date
-    span まで
+    .mt-2.border.border-gray-300.rounded-full.text-center.text-sm.py-1.bg-gray-100
+      = l item.entry_deadline_at.to_date

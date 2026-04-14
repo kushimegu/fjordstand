@@ -2,34 +2,37 @@
 
 .p-4.flex.flex-col.items-center.justify-center.h-full
   .flex.flex-col.items-center.justify-center
-    = image_tag "fjordstand.png", alt: "FjordStandタイトル", class: "h-20 lg:h-25"
-    h1.text-lg.lg:text-xl.mt-4.mb-6.lg:mb-12.text-cyan-800.text-center.font-bold.leading-none
-      | FjordBootCampメンバーのクローズドなフリマアプリ
+    = image_tag "fjordstand.png", alt: "FjordStandタイトル", class: "h-15"
+    h2.lg:text-xl.mt-4.text-center.font-bold
+      | 家にある不用品、せっかくだからFBCのみんなに役立ててもらいたい
+    h1.text-2xl.lg:text-4xl.mt-4.mb-6.lg:mb-6.text-cyan-800.text-center.font-bold.leading-14
+      | FjordBootCampメンバーの
+      br
+      | クローズドなフリマアプリ
   .grid.lg:grid-cols-3.gap-6.lg:gap-8.max-w-6xl.mx-auto
     .flex.flex-col.items-center.border.rounded-lg.max-w-lg.w-full.mx-auto.border-gray-300
       .flex.justify-center.items-center
         = image_tag "listing-image.png", alt: "出品のイメージ", class: "h-20 p-4"
-      .bg-gray-100.rounded-b-lg.w-full.p-3.flex.flex-col.justify-center.items-center.flex-1
-        span.text-center 購入希望の申請締切を設定して出品できます
+      .bg-gray-100.rounded-b-lg.w-full.p-5.flex.flex-col.justify-center.items-center.flex-1
+        span.text-center 応募締切を設定して出品
     .flex.flex-col.items-center.border.rounded-lg.max-w-lg.w-full.mx-auto.border-gray-300
       .flex.justify-center.items-center
         = image_tag "lottery-image.png", alt: "抽選のイメージ", class: "h-20 p-2"
-      .bg-gray-100.rounded-b-lg.w-full.p-3.flex.flex-col.justify-center.items-center.flex-1
-        span.text-center 締切後に抽選で購入者が決定します
+      .bg-gray-100.rounded-b-lg.w-full.p-5.flex.flex-col.justify-center.items-center.flex-1
+        span.text-center 応募者から自動で抽選
     .flex.flex-col.items-center.border.rounded-lg.max-w-lg.w-full.mx-auto.border-gray-300
       .flex.justify-center.items-center
         = image_tag "discord-notification-image.png", alt: "Discord通知のイメージ", class: "h-20 p-2"
-      .bg-gray-100.rounded-b-lg.w-full.p-3.flex.flex-col.justify-center.items-center.flex-1
-        span.text-center 購入希望者は当落通知をDiscordで受け取ることができます
+      .bg-gray-100.rounded-b-lg.w-full.p-5.flex.flex-col.justify-center.items-center.flex-1
+        span.text-center 当落通知をDiscordで受信
   .flex.flex-col.items-center
-    p.mt-4.lg:mt-8.lg:text-lg.text-center FjordBootCampのDiscordサーバーに参加しているアカウントでのみログインできます
-    .flex.text-center.mt-6.lg:mt-10
+    .flex.text-center.mt-6.lg:mt-8
       = link_to "利用規約", terms_path, class: "underline decoration-1 hover:text-cyan-600"
       span と
       = link_to "プライバシーポリシー", privacy_path, class: "underline decoration-1 hover:text-cyan-600"
       span に同意して
     = button_to "/auth/discord", data: { turbo: false },
-      class: "inline-flex items-center gap-2 mt-1 mb-4 px-6 py-3 rounded-lg bg-cyan-600 text-white font-semibold shadow hover:opacity-80 cursor-pointer" do
+      class: "inline-flex items-center gap-2 mt-2 px-6 py-3 rounded-lg bg-cyan-600 text-white font-semibold shadow hover:opacity-80 cursor-pointer" do
       svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 126.644 96" class="w-5 h-5 fill-current"
         path d="M81.15,0c-1.2376,2.1973-2.3489,4.4704-3.3591,6.794-9.5975-1.4396-19.3718-1.4396-28.9945,0-.985-2.3236-2.1216-4.5967-3.3591-6.794-9.0166,
         1.5407-17.8059,4.2431-26.1405,8.0568C2.779,32.5304-1.6914,56.3725.5312,79.8863c9.6732,7.1476,20.5083,12.603,32.0505,16.0884,2.6014-3.4854,4.8998-7.1981,
@@ -40,3 +43,7 @@
         12.6535ZM84.3576,65.4144c-6.2637,0-11.3907-5.6575-11.3907-12.6535s4.9755-12.6788,11.3907-12.6788,11.4917,5.708,11.3906,12.6788c-.101,6.9708-5.026,
         12.6535-11.3906,12.6535Z"
       span Discordでログイン
+    p.text-sm.mt-2.text-red-400.text-center
+      | サービス利用にはFjordBootCampのDiscordサーバー
+      br
+      | 参加アカウントでログインする必要があります
