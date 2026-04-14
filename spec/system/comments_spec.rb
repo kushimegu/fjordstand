@@ -55,7 +55,7 @@ RSpec.describe "Items", type: :system do
       expect(page).to have_current_path(items_path)
 
       visit item_path(item)
-      within(find(".comment", text: "そうです")) do
+      within "article.comment", text: "そうです" do
         accept_confirm do
           click_on "削除する"
         end

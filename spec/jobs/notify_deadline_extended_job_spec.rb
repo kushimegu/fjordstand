@@ -20,7 +20,7 @@ RSpec.describe NotifyDeadlineExtendedJob, type: :job do
 
     it "sends webhook notification" do
       described_class.perform_now(item.id)
-      expect(webhook).to have_received(:notify_item_deadline_extended).with(contain_exactly([ applicant ]), item)
+      expect(webhook).to have_received(:notify_item_deadline_extended).with([ applicant ], item)
     end
   end
 end

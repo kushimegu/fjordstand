@@ -33,7 +33,7 @@ RSpec.describe DiscordWebhook, discord_stub: false do
       webhook = described_class.new
       webhook.notify_item_closed([], item)
 
-      expect(builder).to have_received(:content=).with("\n📢出品が取り下げられました")
+      expect(builder).to have_received(:content=).with("📢出品が取り下げられました")
     end
   end
 
@@ -44,7 +44,7 @@ RSpec.describe DiscordWebhook, discord_stub: false do
       webhook = described_class.new
       webhook.notify_item_deadline_extended([], item)
 
-      expect(builder).to have_received(:content=).with("\n⏰購入希望申込期限が延長されました")
+      expect(builder).to have_received(:content=).with("⏰購入希望申込期限が延長されました")
     end
   end
 

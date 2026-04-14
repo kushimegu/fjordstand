@@ -30,9 +30,9 @@ RSpec.describe "Items", type: :system do
       expect(page).to have_current_path(items_path)
 
       visit listings_path
-      click_on "抽選済み"
+      click_on "購入者確定"
 
-      expect(page).to have_css("a.active-tab", text: "抽選済み")
+      expect(page).to have_css("a.active-tab", text: "購入者確定")
       expect(page).not_to have_content("#{published_item.title}")
       expect(page).not_to have_content("#{closed_item.title}")
       expect(page).to have_content("#{sold_item.title}")
@@ -144,6 +144,8 @@ RSpec.describe "Items", type: :system do
     context "when item is sold" do
       it "is not editable" do
         item = create(:item, :sold, user: user)
+        buyer = create(:user)
+        create(:entry, :won, item: item, user: buyer)
         expect(page).to have_current_path(items_path)
 
         visit item_path(item)

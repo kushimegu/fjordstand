@@ -60,6 +60,7 @@ RSpec.describe "Messages", type: :system do
     before { login(admin) }
 
     it "destroys message and redirects to items index" do
+      create(:entry, :won, item: item, user: buyer)
       create(:message, user: buyer, item: item, body: "支払いはPayPayで良いですか？")
       create(:message, user: seller, item: item, body: "大丈夫です")
       expect(page).to have_current_path(items_path)
