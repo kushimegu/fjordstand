@@ -1,30 +1,31 @@
 - content_for(:title, "下書き一覧")
 - content_for :description, "作成中の下書き一覧です。公開前の商品を確認し、編集や出品の準備ができます。"
 
-h1.font-bold.text-2xl.my-2.text-center 下書き一覧
+h1.font-bold.text-2xl.mb-6.text-gray-900 下書き一覧
 - if @items.empty?
-  p.mt-20.text-center.text-xl 下書きはありません
+  p.mt-20.text-center.text-xl.text-gray-400 下書きはありません
 .w-full.max-w-2xl.mx-auto
   = paginate @items
   - @items.each do |item|
-    = link_to edit_item_path(item), class: "block my-2" do
-      .container.bg-white.border.border-gray-300.rounded.p-4.hover:bg-gray-50.flex.gap-x-4
+    = link_to edit_item_path(item), class: "block my-3" do
+      .bg-white.rounded-xl.border.border-gray-200.shadow-sm.p-4.hover:shadow-md.transition-shadow.duration-200.flex.gap-x-4
         - if item.images.attached?
-          .aspect-square.h-25.flex.items-center.justify-center.bg-gray-100
-            = image_tag item.images.first.variant(resize_to_limit: [ 400, 400 ]).processed,
+          .aspect-square.h-20.flex.items-center.justify-center.bg-gray-50.rounded-lg.overflow-hidden.flex-shrink-0
+            = image_tag item.images.first.variant(resize_to_limit: [ 200, 200 ]).processed,
             alt: "#{item.title} 1枚目",
             class: "object-contain w-full h-full"
-        .flex.flex-col.justify-between.h-25
+        .flex.flex-col.justify-between.flex-1.min-w-0
           div
-            .text-2xl.line-clamp-1
+            .font-semibold.text-gray-900.line-clamp-1
               = item.title
-            .text-lg
+            .text-sm.text-gray-600.mt-1
               = number_to_currency(item.price)
               - if item.price.present?
-                span.text-base
+                span.text-xs.text-gray-400.ml-1
                   - if item.shipping_fee_payer.present?
                     = I18n.t("views.item.shipping_fee_label.#{item.shipping_fee_payer}")
-          div
+          .text-xs.text-gray-400.mt-2
             = l item.updated_at
             span 更新
-  = paginate @items
+  .mt-4
+    = paginate @items

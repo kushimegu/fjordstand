@@ -1,15 +1,23 @@
-- content_for :title, "商品一覧"
+- content_for :title, "みんなの商品"
 - content_for :description, "FjordStandの商品一覧です。購入希望を申請できる出品中の商品をまとめて確認できます。"
 
-h1.font-bold.text-2xl.my-2.text-center 現在販売中の商品
+h1.page-title.font-bold.text-2xl.mb-4.text-gray-900.text-center みんなの商品
+= render "shared/browse_tabs", active: :items
+
 - if @items.length < 1
-  .mt-40.text-center.gap-y-3
-    h.text-2xl 現在購入希望を出せる商品がありません
-    p.pt-2 出品するボタンから商品を出品してみましょう
+  .empty-state.mt-40.text-center.gap-y-3
+    p.text-xl.text-gray-500 現在購入希望を出せる商品がありません
+    p.pt-2.text-gray-400 出品するボタンから商品を出品してみましょう
 - else
-  #items.grid.grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-4
+  #items.items-grid.grid.grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-4
     - @items.each do |item|
-      = link_to item, class: "block" do
-        .container.bg-white.border.border-gray-300.rounded.p-4.hover:bg-gray-50
-          == render item
-  = paginate @items
+      - entry = @my_entries[item.id]
+      - watched = @my_watches.include?(item.id)
+      - badges = []
+      - badges << { text: "購入希望中", css: "bg-cyan-500" } if entry&.applied?
+      - badges << { text: "購入確定",  css: "bg-red-500"  } if entry&.won?
+      - badges << { text: "落選",      css: "bg-gray-400" } if entry&.lost?
+      - badges << { text: "Watch中",   css: "bg-amber-500" } if watched
+      = render "shared/item_card", item: item, url: item, badges: badges
+  .pagination.mt-6
+    = paginate @items

@@ -36,7 +36,7 @@ html
     = stylesheet_link_tag "tailwind", "data-turbo-track": "reload"
     = javascript_importmap_tags
 
-  body.min-h-screen.flex.flex-col.text-gray-600
+  body.min-h-screen.flex.flex-col.text-gray-700.bg-gray-50.antialiased
     - unless request.path == root_path
       = render "shared/header"
     = render "shared/flash"
@@ -46,6 +46,6 @@ html
           = yield
     - else
       main.flex-1
-        .container.mx-auto.px-4.mb-6
+        .max-w-7xl.mx-auto.px-4.sm:px-6.lg:px-8.py-8
           = yield
     = render "shared/footer"

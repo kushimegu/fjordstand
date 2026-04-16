@@ -1,31 +1,15 @@
-h1.font-bold.text-2xl.my-2.text-center 購入希望商品一覧
-.flex.border-b.border-gray-300.mb-2[data-controller="action-button"]
-  = link_to "全て", entries_path, class: "md:text-lg px-4 py-2 hover:bg-gray-100",
-  data: { action_button_target: "button", target: "all", action: "click->action-button#toggle", turbo_frame: "entries" }
-  = link_to "購入希望", entries_path(status: :applied), class: "md:text-lg px-4 py-2 hover:bg-gray-100",
-  data: { action_button_target: "button", target: "applied", action: "click->action-button#toggle", turbo_frame: "entries" }
-  = link_to "購入確定", entries_path(status: :won), class: "md:text-lg px-4 py-2 hover:bg-gray-100",
-  data: { action_button_target: "button", target: "won", action: "click->action-button#toggle", turbo_frame: "entries" }
-  = link_to "落選", entries_path(status: :lost), class: "md:text-lg px-4 py-2 hover:bg-gray-100",
-  data: { action_button_target: "button", target: "lost", action: "click->action-button#toggle", turbo_frame: "entries" }
+- active_tab = params[:status] == "won" ? :won : params[:status] == "lost" ? :lost : :applied
+
+h1.page-title.font-bold.text-2xl.mb-4.text-gray-900.text-center みんなの商品
+= render "shared/browse_tabs", active: active_tab
+
 = turbo_frame_tag "entries", data: { turbo_action: :advance } do
   - if @entries.empty?
-    p.mt-20.text-center.text-xl 該当する商品はありません
+    p.empty-state.mt-20.text-center.text-xl.text-gray-400 該当する商品はありません
   - else
     = paginate @entries
-    .grid.grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-4
+    .items-grid.grid.grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-4.mt-4
       - @entries.each do |entry|
-        = link_to entry.item, data: { turbo: false }, class: "block" do
-          .container.bg-white.border.border-gray-300.rounded.p-4.hover:bg-gray-50.relative
-            - case entry.status
-              - when "applied"
-                .absolute
-                  span.inline-block.px-3.py-1.text-sm.font-semibold.text-cyan-600.bg-cyan-100.rounded-full 購入希望
-              - when "won"
-                .absolute
-                  span.inline-block.px-3.py-1.text-sm.font-semibold.text-red-400.bg-red-100.rounded-full 購入確定
-              - when "lost"
-                .absolute
-                  span.inline-block.px-3.py-1.text-sm.font-semibold.text-gray-700.bg-gray-200.rounded-full 落選
-            = render "items/item", item: entry.item
-    = paginate @entries
+        = render "shared/item_card", item: entry.item, url: entry.item, badges: [entry_status_badge(entry)]
+    .pagination.mt-6
+      = paginate @entries

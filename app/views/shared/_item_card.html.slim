@@ -1,0 +1,9 @@
+- badges ||= []
+= link_to url, data: { turbo: false }, class: "item-card-link block group h-full" do
+  .item-card.bg-white.rounded-xl.shadow-sm.p-4.hover:shadow-md.transition-shadow.duration-200.border.border-gray-100.relative.h-full
+    - if badges.any?
+      .item-badges.absolute.top-3.left-3.flex.flex-col.gap-1
+        - badges.each do |badge|
+          span.item-badge.inline-block.px-3.py-1.text-xs.font-bold.text-white.rounded-full.shadow-sm.text-center class=badge[:css]
+            = badge[:text]
+    = render "items/item", item: item

@@ -1,34 +1,27 @@
-- content_for :title, "出品した商品一覧"
-- content_for :description, "出品した商品の一覧です。公開状況で絞り込んで確認できます。"
+- content_for :title, "自分の商品"
+- content_for :description, "自分の商品の一覧です。公開状況で絞り込んで確認できます。"
 
-h1.font-bold.text-2xl.my-2.text-center 出品した商品一覧
-.flex.border-b.border-gray-300.mb-2[data-controller="action-button"]
-  = link_to "全て", listings_path, class: "md:text-lg px-4 py-2 hover:bg-gray-100",
+h1.page-title.font-bold.text-2xl.mb-4.text-gray-900.text-center 自分の商品
+.listings-filter.flex.gap-1.mb-8.bg-gray-100.rounded-full.p-1.w-fit.mx-auto[data-controller="action-button"]
+  = link_to "全て", listings_path, class: "text-sm text-gray-500 rounded-full px-4 py-1.5 transition-colors",
   data: { action_button_target: "button", target: "all", action: "click->action-button#toggle", turbo_frame: "listings" }
-  = link_to "出品中", listings_path(status: :published), class: "md:text-lg px-4 py-2 hover:bg-gray-100",
+  = link_to "出品中", listings_path(status: :published), class: "text-sm text-gray-500 rounded-full px-4 py-1.5 transition-colors",
   data: { action_button_target: "button", target: "published", action: "click->action-button#toggle", turbo_frame: "listings" }
-  = link_to "購入者確定", listings_path(status: :sold), class: "md:text-lg px-4 py-2 hover:bg-gray-100",
+  = link_to "購入者確定", listings_path(status: :sold), class: "text-sm text-gray-500 rounded-full px-4 py-1.5 transition-colors",
   data: { action_button_target: "button", target: "sold", action: "click->action-button#toggle", turbo_frame: "listings" }
-  = link_to "公開終了", listings_path(status: :closed), class: "md:text-lg px-4 py-2 hover:bg-gray-100",
+  = link_to "公開終了", listings_path(status: :closed), class: "text-sm text-gray-500 rounded-full px-4 py-1.5 transition-colors",
   data: { action_button_target: "button", target: "closed", action: "click->action-button#toggle", turbo_frame: "listings" }
+  = link_to "下書き", listings_path(status: :draft), class: "text-sm text-gray-500 rounded-full px-4 py-1.5 transition-colors",
+  data: { action_button_target: "button", target: "draft", action: "click->action-button#toggle", turbo_frame: "listings" }
 = turbo_frame_tag "listings", data: { turbo_action: :advance } do
   - if @items.empty?
-    p.mt-20.text-center.text-xl 該当する商品はありません
+    p.empty-state.mt-20.text-center.text-xl.text-gray-400 該当する商品はありません
   - else
     = paginate @items
-    .grid.grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-4
+    .items-grid.grid.grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-4.mt-4
       - @items.each do |item|
-        = link_to item, data: { turbo: false }, class: "block" do
-          .container.bg-white.border.border-gray-300.rounded.p-4.hover:bg-gray-50.relative
-            - case item.status
-              - when "published"
-                .absolute
-                  span.inline-block.px-3.py-1.text-sm.font-semibold.text-cyan-700.bg-cyan-200.rounded-full 出品中
-              - when "sold"
-                .absolute
-                  span.inline-block.px-3.py-1.text-sm.font-semibold.text-white.bg-red-400.rounded-full 購入者決定
-              - when "closed"
-                .absolute
-                  span.inline-block.px-3.py-1.text-sm.font-semibold.text-gray-700.bg-gray-200.rounded-full 公開終了
-            == render item
-    = paginate @items
+        - badge = item_status_badge(item)
+        - url = item.draft? ? edit_item_path(item) : item
+        = render "shared/item_card", item: item, url: url, badges: [badge]
+    .pagination.mt-6
+      = paginate @items

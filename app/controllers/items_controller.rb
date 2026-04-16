@@ -8,7 +8,6 @@ class ItemsController < ApplicationController
 
   def listings
     @items = current_user.items
-                          .where.not(status: :draft)
                           .by_target(params[:status])
                           .order(entry_deadline_at: :desc)
                           .page(params[:page])
@@ -22,6 +21,8 @@ class ItemsController < ApplicationController
                   .order(entry_deadline_at: :asc)
                   .page(params[:page])
                   .per(20)
+    @my_entries  = current_user.entries.where(item: @items).index_by(&:item_id)
+    @my_watches  = current_user.watches.where(item: @items).pluck(:item_id).to_set
   end
 
   # GET /items/1
