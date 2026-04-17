@@ -1,35 +1,36 @@
 - content_for :description, "FjordStandは、ユーザー同士で商品を出品し、購入希望を申請できるマーケットプレイスです。"
 
-.p-4.flex.flex-col.items-center.justify-center.h-full
+.flex.flex-col.items-center.justify-center.h-full
   .flex.flex-col.items-center.justify-center
     = image_tag "fjordstand.png", alt: "FjordStandタイトル", class: "h-15"
     h2.lg:text-xl.mt-4.text-center.font-bold
       | 家にある不用品、せっかくだからFBCのみんなに役立ててもらいたい
-    h1.text-2xl.lg:text-4xl.mt-4.mb-6.lg:mb-6.text-cyan-800.text-center.font-bold.leading-14
+    h1.text-2xl.lg:text-4xl.mt-4.mb-6.lg:mb-6.text-cyan-800.text-center.font-bold.lg:leading-14
       | FjordBootCampメンバーの
       br
       | クローズドなフリマアプリ
-  .grid.lg:grid-cols-3.gap-6.lg:gap-8.max-w-6xl.mx-auto
-    .flex.flex-col.items-center.border.rounded-lg.max-w-lg.w-full.mx-auto.border-gray-300
+  .grid.sm:grid-cols-3.gap-6.lg:gap-8.max-w-6xl.mx-auto
+    .flex.flex-col.items-center.border.rounded-lg.lg:max-w-lg.w-full.mx-auto.border-gray-300
       .flex.justify-center.items-center
         = image_tag "listing-image.png", alt: "出品のイメージ", class: "h-20 p-4"
       .bg-gray-100.rounded-b-lg.w-full.p-5.flex.flex-col.justify-center.items-center.flex-1
-        span.text-center 応募締切を設定して出品
-    .flex.flex-col.items-center.border.rounded-lg.max-w-lg.w-full.mx-auto.border-gray-300
+        span.text-center.px-6 応募締切を設定して出品
+    .flex.flex-col.items-center.border.rounded-lg.lg:max-w-lg.w-full.mx-auto.border-gray-300
       .flex.justify-center.items-center
         = image_tag "lottery-image.png", alt: "抽選のイメージ", class: "h-20 p-2"
       .bg-gray-100.rounded-b-lg.w-full.p-5.flex.flex-col.justify-center.items-center.flex-1
-        span.text-center 応募者から自動で抽選
-    .flex.flex-col.items-center.border.rounded-lg.max-w-lg.w-full.mx-auto.border-gray-300
+        span.text-center.px-6 応募者から自動で抽選
+    .flex.flex-col.items-center.border.rounded-lg.lg:max-w-lg.w-full.mx-auto.border-gray-300
       .flex.justify-center.items-center
         = image_tag "discord-notification-image.png", alt: "Discord通知のイメージ", class: "h-20 p-2"
       .bg-gray-100.rounded-b-lg.w-full.p-5.flex.flex-col.justify-center.items-center.flex-1
-        span.text-center 当落通知をDiscordで受信
+        span.text-center.px-6 当落通知をDiscordで受信
   .flex.flex-col.items-center
-    .flex.text-center.mt-6.lg:mt-8
-      = link_to "利用規約", terms_path, class: "underline decoration-1 hover:text-cyan-600"
-      span と
-      = link_to "プライバシーポリシー", privacy_path, class: "underline decoration-1 hover:text-cyan-600"
+    .flex.items-center.justify-center.mt-6.lg:mt-8.flex-wrap
+      div
+        = link_to "利用規約", terms_path, class: "underline decoration-1 hover:text-cyan-600"
+        span と
+        = link_to "プライバシーポリシー", privacy_path, class: "underline decoration-1 hover:text-cyan-600"
       span に同意して
     = button_to "/auth/discord", data: { turbo: false },
       class: "inline-flex items-center gap-2 mt-2 px-6 py-3 rounded-lg bg-cyan-600 text-white font-semibold shadow hover:opacity-80 cursor-pointer" do

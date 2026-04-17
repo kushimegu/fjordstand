@@ -41,7 +41,7 @@ class Notification < ApplicationRecord
 
   def entry_notification_message
     if notifiable.won?
-      "「#{notifiable.item.title}」の抽選に当選しました！連絡ページから出品者へご連絡ください。"
+      "「#{notifiable.item.title}」の購入が確定しました！連絡ページから出品者へご連絡ください。"
     else
       "「#{notifiable.item.title}」の抽選に落選しました。"
     end
@@ -49,7 +49,7 @@ class Notification < ApplicationRecord
 
   def item_notification_message
     if notifiable.sold?
-      "「#{notifiable.title}」の抽選が完了し、当選者が決まりました。連絡ページから当選者へご連絡ください。"
+      "「#{notifiable.title}」の購入者が決まりました。連絡ページから購入者へご連絡ください。"
     else
       "「#{notifiable.title}」は当選者なしで公開終了しました。"
     end
