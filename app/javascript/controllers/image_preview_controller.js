@@ -2,43 +2,94 @@ import { Controller } from '@hotwired/stimulus';
 
 // Connects to data-controller="image-preview"
 export default class extends Controller {
-  static targets = ['input', 'preview'];
+  static targets = ['input', 'preview', 'savedPreview', 'extraContainer', 'multipleContainer'];
+
+  connect() {
+    this.updateExtraSlots();
+  }
 
   removeImage(e) {
     const button = e.currentTarget;
     const hiddenId = button.dataset.target;
     const hiddenField = document.getElementById(hiddenId);
-    if (hiddenField) hiddenField.remove();
-    const preview = button.closest("[data-image-preview-target='saved-preview']");
-    if (preview) preview.remove();
+    if (hiddenField) {
+      hiddenField.remove();
+    }
+
+    const preview = button.closest("[data-image-preview-target='savedPreview']");
+    if (preview) {
+      preview.remove();
+      this.updateExtraSlots();
+    }
   }
 
-  previewImage() {
-    const files = Array.from(this.inputTarget.files);
-    this.previewTarget.innerHTML = '';
+  previewSingleImage(e) {
+    const file = e.target.files[0];
+    const container = e.target.closest('label').querySelector('[data-image-preview-target="container"]');
+    const img = container.querySelector('img');
+    const span = container.querySelector('span');
 
-    const previews = [];
-
-    files.forEach((file, index) => {
+    if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        previews[index] = e.target.result;
-
-        if (previews.filter(Boolean).length === files.length) {
-          previews.forEach((preview) => {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'aspect-square h-25 flex items-center justify-center bg-gray-100';
-
-            const img = document.createElement('img');
-            img.src = preview;
-            img.className = 'object-contain w-full h-full';
-
-            wrapper.appendChild(img);
-            this.previewTarget.appendChild(wrapper);
-          });
-        }
+      reader.onload = (event) => {
+        img.src = event.target.result;
+        img.classList.remove('hidden');
+        span.classList.add('hidden');
+        container.classList.remove('border-dashed', 'border-2');
+        container.classList.add('border');
+        container.dataset.imagePreviewTarget = 'savedPreview';
       };
       reader.readAsDataURL(file);
+    }
+  }
+
+  previewMultipleImages(e) {
+    const files = Array.from(e.target.files).slice(0, 5);
+    this.element.querySelectorAll('.js-multiple-preview').forEach((element) => element.remove());
+
+    const readAndPreview = files.map((file) => {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (event) => resolve(event.target.result);
+        reader.readAsDataURL(file);
+      });
+    });
+
+    Promise.all(readAndPreview).then((results) => {
+      results.forEach((src) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'h-24 rounded overflow-hidden flex items-center justify-center';
+        wrapper.dataset.imagePreviewTarget = 'savedPreview';
+        wrapper.classList.add('js-multiple-preview');
+
+        const div = document.createElement('div');
+        div.className = 'relative aspect-square h-24 rounded border border-gray-200 bg-gray-100';
+        div.innerHTML = `
+          <img src="${src}" class="w-full h-full object-contain">
+          <button type="button" data-action="click->image-preview#removeImage" class="cursor-pointer absolute top-0 right-0 text-gray-600">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+          </button>
+        `;
+        wrapper.appendChild(div);
+        this.previewTarget.insertBefore(wrapper, this.extraContainerTargets[0]);
+
+        this.updateExtraSlots();
+      });
+    });
+  }
+
+  updateExtraSlots() {
+    const currentImageCount = this.element.querySelectorAll('[data-image-preview-target="savedPreview"]').length;
+
+    const remainingSlots = 5 - currentImageCount;
+    this.extraContainerTargets.forEach((slot, index) => {
+      if (index < remainingSlots) {
+        slot.classList.remove('hidden');
+      } else {
+        slot.classList.add('hidden');
+      }
     });
   }
 }

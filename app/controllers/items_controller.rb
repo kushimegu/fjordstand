@@ -2,15 +2,10 @@ class ItemsController < ApplicationController
   before_action :set_item, only: %i[show edit update destroy]
   before_action :ensure_user, only: %i[edit update]
 
-  def drafts
-    @items = current_user.items.draft.order(updated_at: :desc).page(params[:page])
-  end
-
   def listings
     @items = current_user.items
-                          .where.not(status: :draft)
                           .by_target(params[:status])
-                          .order(entry_deadline_at: :desc)
+                          .order(entry_deadline_at: :desc, updated_at: :desc)
                           .page(params[:page])
                           .per(16)
   end
@@ -19,7 +14,7 @@ class ItemsController < ApplicationController
   def index
     @items = Item.published
                   .where("entry_deadline_at >= ?", Time.current.beginning_of_day)
-                  .order(entry_deadline_at: :asc)
+                  .order(entry_deadline_at: :asc, created_at: :asc)
                   .page(params[:page])
                   .per(20)
   end
@@ -49,13 +44,13 @@ class ItemsController < ApplicationController
       if @item.valid?(:publish)
         @item.status = :published
         @item.save!
-        redirect_to @item, notice: "商品を登録しました"
+        redirect_to @item, notice: "商品を出品しました"
       else
         render :new, status: :unprocessable_content
       end
     else
       if @item.save
-        redirect_to drafts_path, notice: "下書き保存しました"
+        redirect_to listings_path, notice: "下書き保存しました"
       else
         render :new, status: :unprocessable_content
       end
@@ -103,7 +98,7 @@ class ItemsController < ApplicationController
       end
     else
       if @item.save
-        redirect_to drafts_path, notice: "下書きを更新しました", status: :see_other
+        redirect_to listings_path, notice: "下書きを更新しました", status: :see_other
       else
         render :edit, status: :unprocessable_content
       end
@@ -120,7 +115,7 @@ class ItemsController < ApplicationController
     @item.destroy!
 
     if @item.draft?
-      redirect_to drafts_path, notice: "下書きを削除しました", status: :see_other
+      redirect_to listings_path, notice: "下書きを削除しました", status: :see_other
     else
       redirect_to items_path, notice: "商品を削除しました", status: :see_other
     end

@@ -8,6 +8,10 @@ class MessagesController < ApplicationController
   def index
     @messages = @item.messages.includes(:user).order(:created_at)
     @message = @item.messages.build
+    current_user.notifications
+                .unread
+                .where(notifiable_type: "Message", notifiable_id: @item.messages.select(:id))
+                .update_all(read: true)
   end
 
   # POST /messages

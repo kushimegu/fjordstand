@@ -3,16 +3,15 @@
 
 h1.font-bold.text-2xl.my-2.text-center 通知一覧
 .w-full.max-w-2xl.mx-auto
-  .flex.justify-between.items-center.border-b.border-gray-300.mb-2[data-controller="action-button"]
+  .flex.justify-between.items-center.border-b.border-gray-300.mb-2[data-controller="tab-switching"]
     .flex
       = link_to "未読", notifications_path(status: "unread"), class: "md:text-lg px-4 py-2 hover:bg-gray-100",
-      data: { action_button_target: "button", target: "unread", action: "click->action-button#toggle", turbo_frame: "notifications" }
+      data: { tab_switching_target: "button", target: "unread", action: "click->tab-switching#toggle", turbo_frame: "notifications" }
       = link_to "全て", notifications_path, class: "md:text-lg px-4 py-2 hover:bg-gray-100",
-      data: { action_button_target: "button", target: "all", action: "click->action-button#toggle", turbo_frame: "notifications" }
-    - has_unread = current_user.notifications.unread.exists?
+      data: { tab_switching_target: "button", target: "all", action: "click->tab-switching#toggle", turbo_frame: "notifications" }
     = link_to read_all_notifications_path, data: { turbo_method: :patch },
       class: "cursor-pointer px-3 py-2 rounded font-semibold border \
-      #{has_unread ? 'text-cyan-600 border-cyan-600 hover:opacity-80' : 'text-gray-400 border-gray-400 pointer-events-none'}" do
+      #{current_user.has_unread_notifications? ? 'text-cyan-600 border-cyan-600 hover:opacity-80' : 'text-gray-400 border-gray-400 pointer-events-none'}" do
       | 全て既読にする
   = turbo_frame_tag "notifications", data: { turbo_action: :advance } do
     - if @notifications.empty?

@@ -3,7 +3,7 @@ class WatchesController < ApplicationController
   def index
     @watches = current_user.watches
                             .includes(:item)
-                            .order("items.entry_deadline_at DESC")
+                            .order("items.entry_deadline_at DESC, watches.created_at DESC")
                             .page(params[:page])
                             .per(16)
   end

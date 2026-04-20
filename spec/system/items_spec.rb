@@ -113,7 +113,7 @@ RSpec.describe "Items", type: :system do
 
         click_on '出品する'
         fill_in '商品名', with: '技術書'
-        click_on '下書きに保存する'
+        click_on '下書きとして保存する'
 
         expect(page).to have_current_path(drafts_path)
         expect(page).to have_content('技術書')

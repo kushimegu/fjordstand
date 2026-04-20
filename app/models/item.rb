@@ -67,9 +67,16 @@ class Item < ApplicationRecord
     true
   end
 
-
   def commentable?
     !draft?
+  end
+
+  def unread_messages_for?(user)
+    user.notifications.any? do |notification|
+      !notification.read? &&
+      notification.notifiable_type == "Message" &&
+      notification.notifiable.item_id == id
+    end
   end
 
   private

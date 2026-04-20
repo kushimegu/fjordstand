@@ -35,4 +35,12 @@ class User < ApplicationRecord
   def watch_comment_of(item)
     watches.find_by(item_id: item.id)
   end
+
+  def has_unread_notifications?
+    notifications.any? { |notification| !notification.read }
+  end
+
+  def has_unread_messages?
+    notifications.any? { |notification| !notification.read && notification.notifiable_type == "Message" }
+  end
 end

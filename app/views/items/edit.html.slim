@@ -7,13 +7,11 @@
   == render "form", item: @item
 
   - if @item.draft? && @item.persisted?
-    .m-4
-      = button_to "削除する", @item, method: :delete, class: "cursor-pointer text-gray-700 underline hover:text-red-400"
-    .m-4
-      = link_to "下書き一覧へ", drafts_path
-  - if @item.published?
-    .m-4
-      => link_to "商品ページへ", @item
-  - if @item.closed?
-    .m-4
-      = link_to "出品した商品一覧へ", listings_path
+    .mt-4
+      = button_to "削除する", @item, method: :delete, data: { turbo_confirm: "本当に削除しますか？" }, class: "cursor-pointer text-gray-700 underline hover:text-red-400"
+    .mt-4
+      => link_to "キャンセル", listings_path
+
+  - if @item.published? || @item.closed?
+    .mt-4
+      => link_to "キャンセル", @item

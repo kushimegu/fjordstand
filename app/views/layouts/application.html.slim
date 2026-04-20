@@ -42,10 +42,10 @@ html
     = render "shared/flash"
     - if request.path == root_path
       main.flex-1.flex.items-center.justify-center
-        .container.mx-auto
+        .container.mx-auto.px-3.sm:px-4.mt-4.mb-6
           = yield
     - else
       main.flex-1
-        .container.mx-auto.px-4.mb-6
+        .container.mx-auto.px-3.sm:px-4.mb-6
           = yield
     = render "shared/footer"
