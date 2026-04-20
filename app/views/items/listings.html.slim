@@ -2,17 +2,24 @@
 - content_for :description, "登録した商品の一覧です。公開状況で絞り込んで確認できます。"
 
 h1.font-bold.text-2xl.my-2.text-center 登録した商品
-.flex.border-b.border-gray-300.mb-2.[data-controller="tab-switching"]
-  = link_to "全て", listings_path, class: "md:text-lg px-1 sm:px-4 py-2 hover:bg-gray-100",
-  data: { tab_switching_target: "button", target: "all", action: "click->tab-switching#toggle", turbo_frame: "listings" }
-  = link_to "下書き", listings_path(status: :draft), class: "md:text-lg px-1 sm:px-4 py-2 hover:bg-gray-100",
-  data: { tab_switching_target: "button", target: "draft", action: "click->tab-switching#toggle", turbo_frame: "listings" }
-  = link_to "出品中", listings_path(status: :published), class: "md:text-lg px-1 sm:px-4 py-2 hover:bg-gray-100",
-  data: { tab_switching_target: "button", target: "published", action: "click->tab-switching#toggle", turbo_frame: "listings" }
-  = link_to "購入者決定", listings_path(status: :sold), class: "md:text-lg px-1 sm:px-4 py-2 hover:bg-gray-100",
-  data: { tab_switching_target: "button", target: "sold", action: "click->tab-switching#toggle", turbo_frame: "listings" }
-  = link_to "公開終了", listings_path(status: :closed), class: "md:text-lg px-1 sm:px-4 py-2 hover:bg-gray-100",
-  data: { tab_switching_target: "button", target: "closed", action: "click->tab-switching#toggle", turbo_frame: "listings" }
+.flex.border-b.border-gray-300.mb-2[data-controller="tab-switching"]
+  = link_to listings_path, class: "md:text-lg px-2 sm:px-5 py-2 hover:bg-gray-100 whitespace-nowrap",
+  data: { tab_switching_target: "button", target: "all", action: "click->tab-switching#toggle", turbo_frame: "listings" } do
+    | 全て
+  = link_to listings_path(status: :draft), class: "md:text-lg px-2 sm:px-5 py-2 hover:bg-gray-100 whitespace-nowrap",
+  data: { tab_switching_target: "button", target: "draft", action: "click->tab-switching#toggle", turbo_frame: "listings" } do
+    | 下書き
+  = link_to listings_path(status: :published), class: "md:text-lg px-2 sm:px-5 py-2 hover:bg-gray-100 whitespace-nowrap",
+  data: { tab_switching_target: "button", target: "published", action: "click->tab-switching#toggle", turbo_frame: "listings" } do
+    | 出品中
+  = link_to listings_path(status: :sold), class: "md:text-lg px-2 sm:px-5 py-2 hover:bg-gray-100 break-keep",
+  data: { tab_switching_target: "button", target: "sold", action: "click->tab-switching#toggle", turbo_frame: "listings" } do
+    span.inline-block 購入者
+    span.inline-block 決定
+  = link_to listings_path(status: :closed), class: "md:text-lg pl-2 pr-1 sm:px-5 py-2 hover:bg-gray-100 break-keep",
+  data: { tab_switching_target: "button", target: "closed", action: "click->tab-switching#toggle", turbo_frame: "listings" } do
+    span.inline-block 公開
+    span.inline-block 終了
 = turbo_frame_tag "listings", data: { turbo_action: :advance } do
   - if @items.empty?
     p.mt-20.text-center.text-xl 該当する商品はありません

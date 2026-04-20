@@ -8,7 +8,7 @@
 
   - if @item.draft? && @item.persisted?
     .mt-4
-      = button_to "削除する", @item, method: :delete, class: "cursor-pointer text-gray-700 underline hover:text-red-400"
+      = button_to "削除する", @item, method: :delete, data: { turbo_confirm: "本当に削除しますか？" }, class: "cursor-pointer text-gray-700 underline hover:text-red-400"
     .mt-4
       => link_to "キャンセル", listings_path
 
