@@ -23,6 +23,15 @@ RSpec.describe "/messages", type: :request do
         get transaction_messages_path(item)
         expect(response).to be_successful
       end
+
+      it "makes all messages read" do
+        create(:entry, :won, item: item, user: buyer)
+        create_list(:message, 2, user: seller, item: item)
+        login(buyer)
+        expect(buyer.notifications.pluck(:read)).to all(be false)
+        get transaction_messages_path(item)
+        expect(buyer.notifications.reload.pluck(:read)).to all(be true)
+      end
     end
   end
 
