@@ -3,7 +3,7 @@ class EntriesController < ApplicationController
     @entries = current_user.entries
                             .includes(:item)
                             .by_target(params[:status])
-                            .order("items.entry_deadline_at DESC")
+                            .order("items.entry_deadline_at DESC, entries.created_at DESC")
                             .page(params[:page])
                             .per(16)
   end

@@ -5,7 +5,7 @@ class ItemsController < ApplicationController
   def listings
     @items = current_user.items
                           .by_target(params[:status])
-                          .order(entry_deadline_at: :desc)
+                          .order(entry_deadline_at: :desc, updated_at: :desc)
                           .page(params[:page])
                           .per(16)
   end
@@ -14,7 +14,7 @@ class ItemsController < ApplicationController
   def index
     @items = Item.published
                   .where("entry_deadline_at >= ?", Time.current.beginning_of_day)
-                  .order(entry_deadline_at: :asc)
+                  .order(entry_deadline_at: :asc, created_at: :asc)
                   .page(params[:page])
                   .per(20)
   end
