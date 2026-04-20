@@ -105,7 +105,7 @@ RSpec.describe "Notifications", type: :system do
       click_on "未読"
       expect(page).to have_css("a.border-b-2", text: "未読")
       expect(page).to have_content("「#{closed_item.title}」は当選者なしで公開終了しました。")
-      expect(page).not_to have_content("「#{sold_item.title}」の抽選が完了し、当選者が決まりました。")
+      expect(page).not_to have_content("「#{sold_item.title}」の購入者が決まりました。")
     end
 
     it "shows all notifications when all tab is clicked" do
@@ -117,7 +117,7 @@ RSpec.describe "Notifications", type: :system do
       click_on "全て", exact: true
       expect(page).to have_css("a.border-b-2", text: "全て")
       expect(page).to have_content("「#{closed_item.title}」は当選者なしで公開終了しました。")
-      expect(page).to have_content("「#{sold_item.title}」の抽選が完了し、当選者が決まりました。")
+      expect(page).to have_content("「#{sold_item.title}」の購入者が決まりました。")
     end
   end
 end
