@@ -24,8 +24,7 @@ container.flex.flex-col.h-full id="#{dom_id item}"
     - else
       span.text-base （送料負担未定）
 
-
-  - if request.path.include?('transactions')
+  - if request.path.include?("transactions")
     .mt-2
       .flex.items-center.gap-2.flex-wrap
         - if current_user == item.user
@@ -45,4 +44,3 @@ container.flex.flex-col.h-full id="#{dom_id item}"
           = l item.entry_deadline_at.to_date, format: :short
       - else
         p 締切日未定
-

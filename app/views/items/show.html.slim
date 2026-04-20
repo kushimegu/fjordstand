@@ -28,17 +28,17 @@ article.item-detail.mt-2.flex.flex-col.lg:grid.lg:grid-cols-2.lg:gap-6.px-2
             .absolute.inset-y-0.right-0.flex.items-center.pr-3
               button#next type="button" data-action="image-gallery#next" aria-label="次の画像へ"
                 svg(
-                  xmlns="http://www.w3.org/2000/svg" 
-                  fill="none" 
-                  viewBox="0 0 24 24" 
-                  stroke-width="1.5" 
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
                   stroke="currentColor"
                   class="size-8 bg-white/50 hover:bg-white rounded-full p-1 cursor-pointer"
                 )
                   title 次の画像へ
                   path(
-                    stroke-linecap="round" 
-                    stroke-linejoin="round" 
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
                     d="m8.25 4.5 7.5 7.5-7.5 7.5"
                   )
         .grid.grid-cols-3.sm:grid-cols-5.gap-2.justify-items-center
@@ -204,7 +204,8 @@ article.item-detail.mt-2.flex.flex-col.lg:grid.lg:grid-cols-2.lg:gap-6.px-2
             .flex.items-start.gap-2 class=(current_user == @item.user ? "flex-row-reverse" : "flex-row")
               = image_tag (current_user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-10 h-10 rounded-full"
               .flex-1
-                = form.textarea :body, class: "w-full rounded p-2 min-h-28 border border-gray-300 focus:outline-none focus:border-cyan-600 field-sizing-content",
+                = form.textarea :body,
+                  class: "w-full rounded p-2 min-h-28 border border-gray-300 focus:outline-none focus:border-cyan-600 field-sizing-content",
                   placeholder: "コメントを入力...", required: true
                 = render "shared/error_messages", model: @comment, attribute: :body
                 .flex.justify-center

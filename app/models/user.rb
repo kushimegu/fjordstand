@@ -37,10 +37,10 @@ class User < ApplicationRecord
   end
 
   def has_unread_notifications?
-    notifications.any?{ |notification| !notification.read }
+    notifications.any? { |notification| !notification.read }
   end
 
   def has_unread_messages?
-    notifications.any? { |notification| !notification.read && notification.notifiable_type == 'Message' }
+    notifications.any? { |notification| !notification.read && notification.notifiable_type == "Message" }
   end
 end

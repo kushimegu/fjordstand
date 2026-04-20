@@ -5,7 +5,7 @@ export default class extends Controller {
 
   connect() {
     const path = window.location.pathname;
-    let target = null
+    let target = null;
     if (path === '/items') {
       target = 'items';
     } else if (path === '/watches') {

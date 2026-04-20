@@ -45,7 +45,7 @@ export default class extends Controller {
 
   previewMultipleImages(e) {
     const files = Array.from(e.target.files).slice(0, 5);
-    this.element.querySelectorAll('.js-multiple-preview').forEach(element => element.remove());
+    this.element.querySelectorAll('.js-multiple-preview').forEach((element) => element.remove());
 
     const readAndPreview = files.map((file) => {
       return new Promise((resolve) => {
