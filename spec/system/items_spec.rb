@@ -30,9 +30,9 @@ RSpec.describe "Items", type: :system do
       expect(page).to have_current_path(items_path)
 
       visit listings_path
-      click_on "購入者確定"
+      click_on "購入者決定"
 
-      expect(page).to have_css("a.active-tab", text: "購入者確定")
+      expect(page).to have_css("a.active-tab", text: "購入者決定")
       expect(page).not_to have_content("#{published_item.title}")
       expect(page).not_to have_content("#{closed_item.title}")
       expect(page).to have_content("#{sold_item.title}")
@@ -115,7 +115,7 @@ RSpec.describe "Items", type: :system do
         fill_in '商品名', with: '技術書'
         click_on '下書きとして保存する'
 
-        expect(page).to have_current_path(drafts_path)
+        expect(page).to have_current_path(listings_path)
         expect(page).to have_content('技術書')
       end
     end
@@ -126,7 +126,7 @@ RSpec.describe "Items", type: :system do
 
         click_on '出品する'
         fill_in '商品名', with: '技術書'
-        attach_file '商品画像', "#{Rails.root}/spec/fixtures/files/book1.png"
+        attach_file "item[images][]", "#{Rails.root}/spec/fixtures/files/book1.png", make_visible: true, match: :first
         fill_in '価格', with: 1000
         choose '出品者'
         fill_in 'お支払い方法', with: 'PayPay'
@@ -172,12 +172,12 @@ RSpec.describe "Items", type: :system do
         create(:item, user: user, title: '技術書')
         expect(page).to have_current_path(items_path)
 
-        visit drafts_path
+        visit listings_path
         click_on '技術書'
         fill_in '商品名', with: '小説'
         click_on '上書き保存する'
 
-        expect(page).to have_current_path(drafts_path)
+        expect(page).to have_current_path(listings_path)
         expect(page).to have_content('小説')
       end
     end
@@ -187,7 +187,7 @@ RSpec.describe "Items", type: :system do
         item = create(:item, :with_item_image, user: user, title: '技術書')
         expect(page).to have_current_path(items_path)
 
-        visit drafts_path
+        visit listings_path
         click_on '技術書'
         fill_in '商品名', with: '小説'
         click_button '出品する'
@@ -217,15 +217,17 @@ RSpec.describe "Items", type: :system do
     context "when deleting draft" do
       before { login(user) }
 
-      it "deletes item and redirects to drafts index" do
+      it "deletes item and redirects to listings index" do
         create(:item, user: user, title: '技術書')
         expect(page).to have_current_path(items_path)
 
-        visit drafts_path
+        visit listings_path
         click_on '技術書'
-        click_on '削除する'
+        accept_confirm do
+          click_on '削除する'
+        end
 
-        expect(page).to have_current_path(drafts_path)
+        expect(page).to have_current_path(listings_path)
         expect(page).not_to have_content('技術書')
         expect(page).to have_content('下書きを削除しました')
       end

@@ -79,7 +79,8 @@ RSpec.describe "Notifications", type: :system do
         expect(page).to have_current_path(items_path)
 
         visit items_path
-        expect(page).to have_css("span.absolute", text: "99+")
+
+        expect(page).to have_selector("#notification-count", text: "99+")
       end
     end
 
@@ -89,7 +90,7 @@ RSpec.describe "Notifications", type: :system do
 
         visit notifications_path
 
-        expect(page).not_to have_css("span.absolute")
+        expect(page).not_to have_css("#notification-count")
         expect(page).to have_content("通知はありません")
       end
     end
@@ -105,7 +106,7 @@ RSpec.describe "Notifications", type: :system do
       click_on "未読"
       expect(page).to have_css("a.border-b-2", text: "未読")
       expect(page).to have_content("「#{closed_item.title}」は当選者なしで公開終了しました。")
-      expect(page).not_to have_content("「#{sold_item.title}」の抽選が完了し、当選者が決まりました。")
+      expect(page).not_to have_content("「#{sold_item.title}」の購入者が決まりました。")
     end
 
     it "shows all notifications when all tab is clicked" do
@@ -117,7 +118,20 @@ RSpec.describe "Notifications", type: :system do
       click_on "全て", exact: true
       expect(page).to have_css("a.border-b-2", text: "全て")
       expect(page).to have_content("「#{closed_item.title}」は当選者なしで公開終了しました。")
-      expect(page).to have_content("「#{sold_item.title}」の抽選が完了し、当選者が決まりました。")
+      expect(page).to have_content("「#{sold_item.title}」の購入者が決まりました。")
+    end
+  end
+
+  describe "message notification count" do
+    context "when over 99 notifications exists" do
+      it "shows 99+ count on notification icon" do
+        create_list(:notification, 100, :for_message, user: user)
+        expect(page).to have_current_path(items_path)
+
+        visit items_path
+
+        expect(page).to have_selector("#message-count", text: "99+")
+      end
     end
   end
 end

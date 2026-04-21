@@ -57,7 +57,7 @@ RSpec.describe Notification, type: :model do
       it "returns won notification message" do
         notification = create(:notification, :for_entry, notifiable: entry, user: buyer)
 
-        expect(notification.message).to include("当選しました")
+        expect(notification.message).to include("購入が確定しました")
       end
     end
 
@@ -75,7 +75,7 @@ RSpec.describe Notification, type: :model do
       it "returns sold notification message" do
         notification = create(:notification, :for_item, notifiable: sold_item, user: seller)
 
-        expect(notification.message).to include("当選者が決まりました")
+        expect(notification.message).to include("購入者が決まりました")
       end
     end
 

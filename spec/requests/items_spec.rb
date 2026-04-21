@@ -4,39 +4,11 @@ RSpec.describe "/items", type: :request do
   let(:user) { create(:user) }
   let(:admin) { create(:user, :admin, uid: "123") }
 
-  describe "GET /drafts" do
-    before { login(user) }
-
-    context "when draft exists" do
-      it "returns draft items with http success" do
-        draft_item = create(:item, user: user)
-        published_item = create(:item, :published, user: user)
-
-        get drafts_path
-
-        expect(response).to have_http_status(:success)
-        expect(response.body).to include(draft_item.title)
-        expect(response.body).not_to include(published_item.title)
-      end
-    end
-
-    context "when no draft exists" do
-      it "returns message with http success" do
-        published_item = create(:item, :published, user: user)
-        get drafts_path
-
-        expect(response).to have_http_status(:success)
-        expect(response.body).to include("下書きはありません")
-        expect(response.body).not_to include(published_item.title)
-      end
-    end
-  end
-
   describe "GET /listings" do
     before { login(user) }
 
     context "when listings exists" do
-      it "returns items without draft with http success" do
+      it "returns items with draft with http success" do
         draft_item = create(:item, user: user)
         published_item = create(:item, :published, user: user)
         sold_item = create(:item, :sold, user: user)
@@ -47,18 +19,16 @@ RSpec.describe "/items", type: :request do
         expect(response.body).to include(published_item.title)
         expect(response.body).to include(sold_item.title)
         expect(response.body).to include(closed_item.title)
-        expect(response.body).not_to include(draft_item.title)
+        expect(response.body).to include(draft_item.title)
       end
     end
 
     context "when no listings exists" do
       it "return message with http success" do
-        draft_item = create(:item, user: user)
         get listings_path
 
         expect(response).to have_http_status(:success)
         expect(response.body).to include("該当する商品はありません")
-        expect(response.body).not_to include(draft_item.title)
       end
     end
 
@@ -225,9 +195,9 @@ RSpec.describe "/items", type: :request do
         }.to change(Item, :count).by(1)
       end
 
-      it "redirects to the drafts" do
+      it "redirects to the listings" do
         post items_url, params: { item: valid_attributes }
-        expect(response).to redirect_to(drafts_path)
+        expect(response).to redirect_to(listings_path)
       end
     end
   end
@@ -298,11 +268,11 @@ RSpec.describe "/items", type: :request do
         expect(item.title).to eq("初版")
       end
 
-      it "redirects to the drafts" do
+      it "redirects to the listings" do
         item = create(:item, user: user, title: "技術書")
         patch item_url(item), params: { item: new_attributes }
         item.reload
-        expect(response).to redirect_to(drafts_path)
+        expect(response).to redirect_to(listings_path)
       end
     end
   end
@@ -318,10 +288,10 @@ RSpec.describe "/items", type: :request do
         }.to change(Item, :count).by(-1)
       end
 
-      it "redirects to the drafts list" do
+      it "redirects to the listings" do
         item = create(:item, user: user)
         delete item_url(item)
-        expect(response).to redirect_to(drafts_url)
+        expect(response).to redirect_to(listings_url)
       end
     end
 
