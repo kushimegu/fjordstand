@@ -72,10 +72,10 @@ class Item < ApplicationRecord
   end
 
   def unread_messages_for?(user)
-    user.notifications.any? do |notification|
+    notifications.any? do |notification|
       !notification.read? &&
-      notification.notifiable_type == "Message" &&
-      notification.notifiable.item_id == id
+      notification.user_id == user.id &&
+      notification.notifiable_type == "Message"
     end
   end
 

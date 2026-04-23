@@ -3,25 +3,30 @@ class ItemsController < ApplicationController
   before_action :ensure_user, only: %i[edit update]
 
   def listings
-    @items = current_user.items
-                          .by_target(params[:status])
-                          .order(entry_deadline_at: :desc, updated_at: :desc)
-                          .page(params[:page])
-                          .per(16)
+    items_scope = current_user.items
+                              .includes(:winner, images_attachments: :blob)
+                              .by_target(params[:status])
+                              .order(entry_deadline_at: :desc, updated_at: :desc)
+    @my_entries  = current_user.entries.where(item: items_scope).index_by(&:item_id)
+    @my_watches  = current_user.watches.where(item: items_scope).pluck(:item_id).to_set
+    @items = items_scope.page(params[:page]).per(16)
   end
 
   # GET /items
   def index
-    @items = Item.published
-                  .where("entry_deadline_at >= ?", Time.current.beginning_of_day)
-                  .order(entry_deadline_at: :asc, created_at: :asc)
-                  .page(params[:page])
-                  .per(20)
+    items_scope = Item.published
+                      .includes(:user, :winner, images_attachments: :blob)
+                      .where("entry_deadline_at >= ?", Time.current.beginning_of_day)
+                      .order(entry_deadline_at: :asc, created_at: :asc)
+    @my_entries  = current_user.entries.where(item: items_scope).index_by(&:item_id) if current_user
+    @my_watches  = current_user.watches.where(item: items_scope).pluck(:item_id).to_set if current_user
+    @items = items_scope.page(params[:page]).per(20)
   end
 
   # GET /items/1
   def show
     @comment = Comment.new
+    @comments = @item.comments.includes(:user).order(created_at: :asc)
   end
 
   # GET /items/new

@@ -1,11 +1,11 @@
 class EntriesController < ApplicationController
   def index
     @entries = current_user.entries
-                            .includes(:item)
+                            .includes(item: [:user, :winner, images_attachments: :blob])
                             .by_target(params[:status])
                             .order("items.entry_deadline_at DESC, entries.created_at DESC")
                             .page(params[:page])
-                            .per(16)
+                            .per(12)
   end
 
   # POST /entries
