@@ -10,8 +10,8 @@ h1.page-title.font-bold.text-2xl.mb-6.text-gray-900.text-center 連絡ページ�
   .transaction-list.w-full.max-w-2xl.mx-auto.flex.flex-col.gap-3
     - @items.each do |item|
       = link_to transaction_messages_path(item), class: "transaction-item-link block group" do
-        .transaction-card.bg-white.border.border-gray-200.rounded-xl.shadow-sm.p-4.hover:shadow-md.transition-shadow.duration-200 \
-        flex.gap-4.items-center.relative
+        div class=["transaction-card bg-white border border-gray-200 rounded-xl shadow-sm p-4 hover:shadow-md transition-shadow",
+        "duration-200 flex gap-4 items-center relative"]
           .transaction-thumbnail.aspect-square.w-20.h-20.flex-shrink-0.rounded-lg.overflow-hidden.bg-gray-100
             - if item.images.attached?
               = image_tag item.images.first.variant(resize_to_limit: [ 200, 200 ]).processed,
