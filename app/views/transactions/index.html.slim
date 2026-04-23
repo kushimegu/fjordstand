@@ -1,13 +1,40 @@
 - content_for :title, "連絡ページ一覧"
 - content_for :description, "取引ごとの連絡ページへのリンクを一覧で確認できます。出品者と当選者のやり取りにアクセスするためのページです。"
 
-h1.font-bold.text-2xl.my-2.text-center 連絡ページ
+h1.page-title.font-bold.text-2xl.mb-6.text-gray-900.text-center 連絡ページ一覧
 - if @items.empty?
-  p.mt-20.text-center.text-xl 連絡ページがありません
-.grid.grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-2.sm:gap-4
-  - @items.each do |item|
-    = link_to transaction_messages_path(item), class: "block my-2" do
-      .container.bg-white.border.border-gray-300.rounded.p-2.sm:p-4.hover:bg-gray-50.relative
-        - if item.unread_messages_for?(current_user)
-          span.absolute.px-3.py-1.text-sm.font-semibold.text-white.bg-red-400.rounded-full 未読
-        == render item
+  .empty-state.mt-30.mb-30.text-center
+    p.text-xl.text-gray-500 連絡ページはありません
+- else
+  = paginate @items
+  .transaction-list.w-full.max-w-2xl.mx-auto.flex.flex-col.gap-3
+    - @items.each do |item|
+      = link_to transaction_messages_path(item), class: "transaction-item-link block group" do
+        .transaction-card.bg-white.border.border-gray-200.rounded-xl.shadow-sm.p-4.hover:shadow-md.transition-shadow.duration-200.flex.gap-4.items-center.relative
+          .transaction-thumbnail.aspect-square.w-20.h-20.flex-shrink-0.rounded-lg.overflow-hidden.bg-gray-100
+            - if item.images.attached?
+              = image_tag item.images.first.variant(resize_to_limit: [200, 200]).processed,
+                alt: "#{item.title} 1枚目", class: "object-contain w-full h-full"
+            - else
+              = image_tag "listing-image.png", alt: "商品画像なし", class: "object-contain w-full h-full opacity-30"
+          .transaction-info.flex.flex-col.gap-1.flex-1.min-w-0
+            p.transaction-title.font-semibold.text-gray-900.text-base.line-clamp-1 = item.title
+            .transaction-price.flex.items-baseline.gap-1.5
+              span.font-bold.text-gray-900 = number_to_currency(item.price)
+              - if item.shipping_fee_payer.present?
+                span.text-sm.text-gray-500 = I18n.t("views.item.shipping_fee_label.#{item.shipping_fee_payer}")
+            .transaction-counterpart.flex.flex-wrap.items-center.gap-2.mt-1
+              - if item.user == current_user
+                span.text-sm.text-gray-500 購入者
+                = image_tag (item.winner.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-6 h-6 rounded-full"
+                span.text-sm.font-medium.text-gray-700 = item.winner.name
+              - else
+                span.text-sm.text-gray-500 出品者
+                = image_tag (item.user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-6 h-6 rounded-full"
+                span.text-sm.font-medium.text-gray-700 = item.user.name
+              svg.text-gray-400.flex-shrink-0 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5"
+                path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"
+          - if item.unread_messages_for?(current_user)
+            span.absolute.top-3.left-3.px-3.py-1.text-xs.font-semibold.text-white.bg-red-500.rounded-full 未読
+  .pagination.mt-6
+    = paginate @items
