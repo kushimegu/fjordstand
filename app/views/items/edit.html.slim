@@ -1,17 +1,15 @@
 - content_for :title, "#{@item.title}の編集"
 - content_for :description, "商品情報を編集するページです。タイトルや説明、画像などの更新できます。"
 
-.text-center
-  h1.font-bold.text-2xl.my-2 商品の編集
+h1.page-title.font-bold.text-2xl.my-2.mb-6.text-gray-900.text-center 商品の編集
 
-  == render "form", item: @item
+= render "form", item: @item
 
+.mt-6.flex.flex-col.items-center.gap-3
   - if @item.draft? && @item.persisted?
-    .mt-4
-      = button_to "削除する", @item, method: :delete, data: { turbo_confirm: "本当に削除しますか？" }, class: "cursor-pointer text-gray-700 underline hover:text-red-400"
-    .mt-4
-      => link_to "キャンセル", listings_path
+    = button_to "削除する", @item, method: :delete, data: { turbo_confirm: "本当に削除しますか？" },
+    class: "cursor-pointer text-sm text-gray-500 underline hover:text-red-400"
+    = link_to "キャンセル", listings_path, class: "text-sm text-gray-500 hover:text-gray-700 underline"
 
   - if @item.published? || @item.closed?
-    .mt-4
-      => link_to "キャンセル", @item
+    = link_to "キャンセル", @item, class: "text-sm text-gray-500 hover:text-gray-700 underline"

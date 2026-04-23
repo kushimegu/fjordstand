@@ -1,47 +1,31 @@
-- content_for :title, "登録した商品一覧"
-- content_for :description, "登録した商品の一覧です。公開状況で絞り込んで確認できます。"
+- content_for :title, "自分の出品"
+- content_for :description, "自分の出品物の一覧です。公開状況で絞り込んで確認できます。"
 
-h1.font-bold.text-2xl.my-2.text-center 登録した商品
-.flex.border-b.border-gray-300.mb-2[data-controller="tab-switching"]
-  = link_to listings_path, class: "md:text-lg px-2 sm:px-5 py-2 hover:bg-gray-100 whitespace-nowrap",
-  data: { tab_switching_target: "button", target: "all", action: "click->tab-switching#toggle", turbo_frame: "listings" } do
-    | 全て
-  = link_to listings_path(status: :draft), class: "md:text-lg px-2 sm:px-5 py-2 hover:bg-gray-100 whitespace-nowrap",
-  data: { tab_switching_target: "button", target: "draft", action: "click->tab-switching#toggle", turbo_frame: "listings" } do
-    | 下書き
-  = link_to listings_path(status: :published), class: "md:text-lg px-2 sm:px-5 py-2 hover:bg-gray-100 whitespace-nowrap",
-  data: { tab_switching_target: "button", target: "published", action: "click->tab-switching#toggle", turbo_frame: "listings" } do
-    | 出品中
-  = link_to listings_path(status: :sold), class: "md:text-lg px-2 sm:px-5 py-2 hover:bg-gray-100 break-keep",
+h1.page-title.font-bold.text-2xl.mb-4.text-gray-900.text-center 自分の出品
+.listings-filter.flex.mb-8.bg-gray-100.rounded-full.p-1.w-fit.mx-auto[data-controller="tab-switching"]
+  = link_to "全て", listings_path, class: "text-sm text-gray-500 rounded-full px-2 sm:px-4 py-1.5 transition-colors whitespace-nowrap",
+  data: { tab_switching_target: "button", target: "all", action: "click->tab-switching#toggle", turbo_frame: "listings" }
+  = link_to "下書き", listings_path(status: :draft), class: "text-sm text-gray-500 rounded-full px-2 sm:px-4 py-1.5 transition-colors whitespace-nowrap",
+  data: { tab_switching_target: "button", target: "draft", action: "click->tab-switching#toggle", turbo_frame: "listings" }
+  = link_to "出品中", listings_path(status: :published), class: "text-sm text-gray-500 rounded-full px-2 sm:px-4 py-1.5 transition-colors whitespace-nowrap",
+  data: { tab_switching_target: "button", target: "published", action: "click->tab-switching#toggle", turbo_frame: "listings" }
+  = link_to listings_path(status: :sold), class: "text-sm text-gray-500 rounded-full px-2 sm:px-4 py-1.5 transition-colors flex flex-wrap justify-center",
   data: { tab_switching_target: "button", target: "sold", action: "click->tab-switching#toggle", turbo_frame: "listings" } do
-    span.inline-block 購入者
-    span.inline-block 決定
-  = link_to listings_path(status: :closed), class: "md:text-lg pl-2 pr-1 sm:px-5 py-2 hover:bg-gray-100 break-keep",
+    span 購入者
+    span 決定
+  = link_to listings_path(status: :closed), class: "text-sm text-gray-500 rounded-full px-2 sm:px-4 py-1.5 transition-colors flex flex-wrap justify-center",
   data: { tab_switching_target: "button", target: "closed", action: "click->tab-switching#toggle", turbo_frame: "listings" } do
-    span.inline-block 公開
-    span.inline-block 終了
+    span 公開
+    span 終了
 = turbo_frame_tag "listings", data: { turbo_action: :advance } do
   - if @items.empty?
-    p.mt-20.text-center.text-xl 該当する商品はありません
+    p.empty-state.mt-20.mb-30.text-center.text-xl.text-gray-400 該当する商品はありません
   - else
     = paginate @items
-    .grid.grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-2.sm:gap-4
+    .items-grid.grid.grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-2.sm:gap-4.mt-4
       - @items.each do |item|
-        .container.bg-white.border.border-gray-300.rounded.p-2.sm:p-4.hover:bg-gray-50.relative
-          - path = (item.status == "draft" ? edit_item_path(item) : item_path(item))
-          = link_to path, data: { turbo: false }, class: "block" do
-            - case item.status
-              - when "draft"
-                .absolute
-                  span.inline-block.px-3.py-1.text-sm.font-semibold.text-gray-700.bg-gray-200.rounded-full 下書き
-              - when "published"
-                .absolute
-                  span.inline-block.px-3.py-1.text-sm.font-semibold.text-cyan-700.bg-cyan-200.rounded-full 出品中
-              - when "sold"
-                .absolute
-                  span.inline-block.px-3.py-1.text-sm.font-semibold.text-white.bg-red-400.rounded-full 購入者決定
-              - when "closed"
-                .absolute
-                  span.inline-block.px-3.py-1.text-sm.font-semibold.text-white.bg-gray-500.rounded-full 公開終了
-            == render item
-    = paginate @items
+        - badge = item_status_badge(item)
+        - url = item.draft? ? edit_item_path(item) : item
+        = render "shared/item_card", item: item, url: url, badges: [ badge ]
+    .pagination.mt-6
+      = paginate @items

@@ -1,49 +1,52 @@
-= form_with(model: item, class: "w-full max-w-xl mx-auto") do |form|
+= form_with(model: item, class: "w-full max-w-xl mx-auto space-y-5") do |form|
   - if item.errors.any?
     div style="color: red"
-      h2 = "#{item.errors.count} 件のエラーがあり登録できませんでした"
+      .bg-red-50.border.border-red-200.rounded-xl.p-4
+        h2.text-sm.font-semibold.text-red-700 = "#{item.errors.count} 件のエラーがあり登録できませんでした"
 
   div
-    = form.label :title, style: "display: block", class: "font-bold text-lg block text-left"
+    = form.label :title, class: "text-sm font-semibold text-gray-700 block mb-1"
     = form.text_field :title, maxlength: 255,
-      class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500 \
-      read-only:bg-gray-100 read-only:focus:border-gray-300", readonly: item.published?
+      class: "w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent \
+      read-only:bg-gray-100 read-only:focus:ring-0 read-only:focus:border-gray-300", readonly: item.published?
     = render "shared/error_messages", model: item, attribute: :title
     - if item.published?
-      = form.label "商品名の追記", style: "display: block", class: "text-left pt-2"
-      = form.text_field :title_append, class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500"
+      = form.label "商品名の追記", class: "text-sm  text-gray-600 block mt-2 mb-1"
+      = form.text_field :title_append,
+      class: "w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
 
-  .mt-4.text-left data-controller="image-preview"
-    .flex.items-center.gap-x-2
-      h2.font-bold.text-lg.block.text-left 商品画像
-      span.text-sm 最大5枚
+  div data-controller="image-preview"
+    .flex.items-center.gap-x-2.mb-1
+      h2.font-semibold.text-sm.text-gray-700.block 商品画像
+      span.text-xs.text-gray-500 最大5枚
     - images = @item.images.sort_by(&:id)
-    .grid.grid-cols-3.sm:grid-cols-5.gap-1.sm:gap-2 data-image-preview-target="preview"
-      label.cursor-pointer.col-span-full.py-1.w-full.border.border-gray-400.bg-gray-100.rounded.hover:bg-gray-200.flex.items-center.justify-center[
+    .grid.grid-cols-5.gap-2.mb-2 data-image-preview-target="preview"
+      label.cursor-pointer.col-span-full.py-1.w-full.border.border-gray-400.bg-gray-100.rounded-lg.hover:bg-gray-200.flex.items-center.justify-center[
         data-image-preview-target="multipleContainer"
       ]
-        span まとめて追加する
+        span.text-xs まとめて追加する
         = form.file_field :images,
           multiple: true,
           direct_upload: true,
           class: "hidden",
           data: { "image-preview-target": "input", action: "change->image-preview#previewMultipleImages" }
       - images.each do |image|
-        .h-24.rounded.overflow-hidden.flex.items-center.justify-center data-image-preview-target="savedPreview"
-          .relative.aspect-square.h-24.rounded.border.border-gray-200.bg-gray-100
+        label.rounded-lg.overflow-hidden.flex.items-center.justify-center data-image-preview-target="savedPreview"
+          .relative.aspect-square.rounded-lg.border.border-gray-200.bg-gray-100
             = image_tag image.variant(resize_to_limit: [ 200, 200 ]).processed, class: "object-contain w-full h-full"
             = form.hidden_field :images, multiple: true, value: image.signed_id, id: "hidden_image_#{image.signed_id}"
             - if !item.published? || image.id.blank?
-              button[type="button" data-target="hidden_image_#{image.signed_id}" data-action="click->image-preview#removeImage"
-              class="cursor-pointer absolute top-0 right-0 text-gray-600"]
-                svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-7"
+              button.bg-white/70.rounded-full.hover:bg-white [type="button" data-target="hidden_image_#{image.signed_id}"
+              data-action="click->image-preview#removeImage"
+              class="cursor-pointer absolute top-0 right-0 text-gray-600 hover:text-red-400"]
+                svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"
                   path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
       - 5.times do |i|
-        label.cursor-pointer.hidden.flex.items-center.justify-center data-image-preview-target="extraContainer"
-          .aspect-square.h-24.border-2.border-dashed.border-gray-200.bg-gray-50.rounded.hover:border-gray-400.flex.items-center.justify-center.overflow-hidden[
+        label.cursor-pointer.flex.items-center.justify-center.hidden data-image-preview-target="extraContainer"
+          .aspect-square.w-full.border-2.border-dashed.border-gray-200.rounded-lg.hover:border-gray-400.flex.items-center.justify-center.overflow-hidden[
             data-image-preview-target="container"
           ]
-            span.text-gray-400 追加
+            span.text-xs.text-gray-400.whitespace-nowrap 追加
             img.hidden.w-full.h-full.object-contain src=""
           = form.file_field :images,
             multiple: false,
@@ -51,87 +54,90 @@
             name: "item[images][]",
             class: "hidden",
             data: { "image-preview-target": "input", action: "change->image-preview#previewSingleImage" }
-
     = render "shared/error_messages", model: item, attribute: :images
 
-  .mt-4
-    .flex.items-center.gap-x-2
-      = form.label :description, style: "display: block", class: "font-bold text-lg block text-left"
-      span.text-sm 任意
+  div
+    .flex.items-center.gap-x-2.mb-1
+      = form.label :description, style: "display: block", class: "font-semibold text-sm block text-gray-700"
+      span.text-xs.text-gray-500 任意
     = form.textarea :description,
       placeholder: (item.published? ? nil : "商品の特徴や状態などをご入力ください\n\n入力例）カバーに傷みがありますが、中は書き込みや破れなどはなく綺麗な状態です"),
-      class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500 min-h-42 field-sizing-content \
-      placeholder-gray-300 read-only:bg-gray-100 read-only:focus:border-gray-300 read-only:min-h-[46px] read-only:field-sizing-content",
+      class: "w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent \
+      min-h-32 field-sizing-content placeholder-gray-400 read-only:bg-gray-100 read-only:focus:ring-0 read-only:min-h-[46px] read-only:field-sizing-content",
       readonly: item.published?
     = render "shared/error_messages", model: item, attribute: :description
     - if item.published?
-      = form.label "商品説明の追記", style: "display: block", class: "text-left"
-      = form.textarea :description_append,
-        class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500  min-h-42 field-sizing-content"
+      = form.label "商品説明の追記", class: "text-sm text-gray-600 block mt-2 mb-1"
+      = form.textarea :description_append, class: "w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm \
+      focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent min-h-32 field-sizing-content"
 
-  .mt-2
-    .flex.items-center.gap-x-2
-      = form.label :price, style: "display: block", class: "font-bold text-lg block text-left"
-      span.text-gray-400.text-sm ※出品後は変更できません
+  div
+    .flex.items-center.gap-x-2.mb-1
+      = form.label :price, class: "text-sm font-semibold text-gray-700 block"
+      span.text-gray-500.text-xs ※出品後は変更できません
     = form.number_field :price,
-      class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500 \
-      read-only:bg-gray-100 read-only:focus:border-gray-300", readonly: item.published?
+      onwheel: "this.blur()",
+      class: "w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent \
+      read-only:bg-gray-100 read-only:focus:ring-0 read-only:focus:border-gray-300", readonly: item.published?
     = render "shared/error_messages", model: item, attribute: :price
 
-  .mt-4
-    .flex.items-center.gap-x-2
-      span.font-bold.text-lg.block.text-left 配送料の負担
-      span.text-gray-400.text-sm ※出品後は変更できません
-    .flex.flex-col.gap-1.mt-1
+  div
+    .flex.items-center.gap-x-2.mb-1
+      span.font-semibold.text-sm.block.text-gray-700 配送料の負担
+      span.text-gray-500.text-xs ※出品後は変更できません
+    .flex.gap-4.mt-1
       label.flex.items-center.gap-2.cursor-pointer for="shipping_buyer"
-        = form.radio_button :shipping_fee_payer, :buyer, id: "shipping_buyer", class: "peer", disabled: @item.published?
-        span class="#{"opacity-50 cursor-not-allowed" if @item.published?}"
+        = form.radio_button :shipping_fee_payer, :buyer, id: "shipping_buyer", class: "accent-cyan-600", disabled: @item.published?
+        span.text-sm class="#{"opacity-50 cursor-not-allowed" if @item.published?}"
           | 購入者
       label.flex.items-center.gap-2.cursor-pointer for="shipping_seller"
-        = form.radio_button :shipping_fee_payer, :seller, id: "shipping_seller", class: "peer", disabled: @item.published?
-        span class="#{"opacity-50 cursor-not-allowed" if @item.published?}"
+        = form.radio_button :shipping_fee_payer, :seller, id: "shipping_seller", class: "accent-cyan-600", disabled: @item.published?
+        span.text-sm class="#{"opacity-50 cursor-not-allowed" if @item.published?}"
           | 出品者
-      = render "shared/error_messages", model: item, attribute: :shipping_fee_payer
+    = render "shared/error_messages", model: item, attribute: :shipping_fee_payer
 
-  .mt-4
-    = form.label :payment_method, style: "display: block", class: "font-bold text-lg block text-left"
+  div
+    = form.label :payment_method, class: "font-semibold text-sm block text-gray-700 mb-1"
     = form.text_field :payment_method,
       placeholder: "入力例）PayPayまたは口座振り込み",
-      class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500 \
-      placeholder-gray-300 read-only:bg-gray-100 read-only:focus:border-gray-300", readonly: item.published?
+      class: "w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 \
+      focus:border-transparent placeholder-gray-400 read-only:bg-gray-100 read-only:focus:ring-0", readonly: item.published?
     - if item.published?
-          = form.label "お支払い方法の追記", style: "display: block", class: "text-left pt-2"
-          = form.text_field :payment_method_append,
-            class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500"
+      = form.label "お支払い方法の追記", class: "text-sm text-gray-600 block mt-2 mb-1"
+      = form.text_field :payment_method_append,
+        class: "w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 \
+        focus:border-transparent"
     = render "shared/error_messages", model: item, attribute: :payment_method
 
-  .mt-4
-    .flex.items-center.gap-x-2
-      = form.label :entry_deadline_at, style: "display: block", class: "font-bold text-lg block text-left"
+  div
+    .flex.items-center.gap-x-2.mb-1
+      = form.label :entry_deadline_at, class: "font-semibold text-sm block text-gray-700"
       - if item.published?
-        span.text-sm.text-left ※延長のみ可能です
+        span.text-xs.text-gray-500 ※延長のみ可能です
     - saved_deadline = item.status_was == "published" ? item.entry_deadline_at.to_date : nil
     = form.date_field :entry_deadline_at,
-      class: "w-full px-2 py-2 text-lg border border-gray-300 rounded text-base focus:outline-none focus:border-gray-500",
+      class: "w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent",
       min: [ Date.current, saved_deadline ].compact.max
     = render "shared/error_messages", model: item, attribute: :entry_deadline_at
 
-  .mt-6
+  .pt-2
     - if item.draft?
-      p.text-red-400.text-sm.text-left
+      p.text-red-400.text-sm.text-sm.mb-3
         | 出品後はご入力いただいた内容の削除はできず、商品情報（商品名・商品説明・お支払い方法）の追加と締切の延長のみ行うことができます。出品前に内容をお確かめください。
     = form.submit I18n.t("helpers.submit.item.publish.#{item.status}"), name: "publish",
-    class: "cursor-pointer w-1/2 mx-auto block px-3 py-2 rounded bg-cyan-600 text-white font-semibold hover:opacity-80"
+    class: "cursor-pointer w-full block px-4 py-2.5 rounded-lg bg-cyan-600 text-white text-sm font-semibold hover:bg-cyan-700 transition-colors text-center"
 
   - if item.draft?
-    .mt-4
+    div
       - label = item.persisted? ? "update" : "new"
       = form.submit I18n.t("helpers.submit.item.draft.#{label}"), name: "draft",
-      class: "cursor-pointer w-1/2 mx-auto block px-3 py-2 rounded border border-cyan-500 text-cyan-600 font-semibold hover:bg-cyan-50"
+      class: "cursor-pointer w-full block px-4 py-2.5 rounded-lg border border-cyan-500 text-cyan-600 text-sm font-semibold hover:bg-cyan-50 \
+      transition-colors text-center"
 
   - if item.published?
-    .mt-4
-      p.text-red-400.text-sm.text-left
+    div
+      p.text-red-400.text-sm
         | 商品を取り下げると購入希望が全て取り消され、購入希望者に通知が送られます。再度公開する際は全ての項目を編集でき、新たに購入希望を受け付けることができます。
       = form.submit "出品を取り下げる", name: "close",
-      class: "cursor-pointer w-1/2 mx-auto block px-3 py-2 rounded border border-gray-500 text-gray-500 font-semibold hover:bg-gray-50"
+      class: "cursor-pointer w-full block px-4 py-2.5 rounded-lg border border-gray-300 text-gray-500 text-sm font-semibold hover:bg-gray-50 \
+      transition-colors text-center"

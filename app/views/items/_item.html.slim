@@ -1,46 +1,45 @@
-container.flex.flex-col.h-full id="#{dom_id item}"
-  .aspect-square.h-32.sm:h-50.flex.items-center.justify-center
+.item-content.flex.flex-col.h-full id="#{dom_id item}"
+  .item-thumbnail.aspect-square.flex.items-center.justify-center.bg-gray-50.rounded-lg.overflow-hidden.mb-3
     - if item.images.attached?
       = image_tag item.images.first.variant(resize_to_limit: [ 400, 400 ]).processed,
       alt: "#{item.title} 1枚目",
       class: "object-contain w-full h-full"
     - else
-      = image_tag "no-item-image.png", class: "object-contain w-full h-full"
+      = image_tag "no-item-image.png", alt: "商品画像なし", class: "object-contain w-full h-full"
 
-  .text-xl.font-semibold.line-clamp-1.my-2
-    - if item.title.present?
-      = item.title
-    - else
-      p 商品名未定
-
-  .text-lg.flex.flex-col.sm:flex-row.sm:items-center
-    - if item.price.present?
-      = number_to_currency(item.price)
-    - else
-      p 価格未定
-    - if item.shipping_fee_payer.present?
-      span.text-base class=shipping_fee_class(item.shipping_fee_payer)
-        = I18n.t("views.item.shipping_fee_label.#{item.shipping_fee_payer}")
-    - else
-      span.text-base （送料負担未定）
-
-  - if request.path.include?("transactions")
-    .mt-2
-      .flex.items-center.gap-2.flex-wrap
-        - if current_user == item.user
-          span 購入者
-          = image_tag (item.winner.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-6 h-6 rounded-full"
-          span = "#{item.winner.name} さん"
-        - else
-          span 出品者
-          = image_tag (item.user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-6 h-6 rounded-full"
-          span = "#{item.user.name} さん"
-  - else
-    .mt-2.border.border-gray-300.rounded-full.text-center.text-sm.px-2.py-1.bg-gray-100
-      - if item.entry_deadline_at.present?
-        span.hidden.sm:inline
-          = l item.entry_deadline_at.to_date, format: :default
-        span.inline.sm:hidden
-          = l item.entry_deadline_at.to_date, format: :short
+  .item-body.flex.flex-col.flex-1
+    .item-title.font-semibold.line-clamp-1.text-base.leading-snug
+      - if item.title.present?
+        span.text-gray-900 = item.title
       - else
-        p 締切日未定
+        span.text-gray-400 タイトル未入力
+
+    .flex.flex-col.sm:flex-row.sm:items-center
+      - if item.price.present?
+        .item-price.mt-1.font-bold.text-gray-900.text-base.flex.flex-wrap.items-center
+          = number_to_currency(item.price)
+          - if item.shipping_fee_payer.present?
+            span.item-shipping.text-sm.font-normal.text-gray-500.ml-1 class=shipping_fee_class(item.shipping_fee_payer)
+              = I18n.t("views.item.shipping_fee_label.#{item.shipping_fee_payer}")
+      - else
+        .item-price.mt-1.text-sm.text-gray-400 価格未入力
+
+    - if request.path.include?("transactions")
+      .mt-2
+        .flex.items-center.gap-2.flex-wrap
+          - if current_user == item.user
+            span 購入者
+            = image_tag (item.winner.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-6 h-6 rounded-full"
+            span = "#{item.winner.name} さん"
+          - else
+            span 出品者
+            = image_tag (item.user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-6 h-6 rounded-full"
+            span = "#{item.user.name} さん"
+    - else
+      .mt-auto
+        .item-deadline.mt-2.rounded-full.text-sm.py-1.bg-gray-100.text-gray-500.flex.items-center.justify-center
+          - if item.entry_deadline_at.present?
+            span.hidden.sm:inline = l item.entry_deadline_at.to_date, format: :default
+            span.text-xs.inline.sm:hidden = l item.entry_deadline_at.to_date, format: :short
+          - else
+            p.text-sm 締切日未入力

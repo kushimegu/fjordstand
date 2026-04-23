@@ -1,5 +1,8 @@
 import { Controller } from '@hotwired/stimulus';
 
+const ACTIVE = ['active-tab', 'bg-white', 'text-gray-900', 'font-semibold', 'shadow-sm'];
+const INACTIVE = ['text-gray-500'];
+
 export default class extends Controller {
   static targets = ['button'];
 
@@ -7,14 +10,24 @@ export default class extends Controller {
     const params = new URLSearchParams(window.location.search);
     const target = params.get('status') || 'all';
     const targetButton = this.element.querySelector(`[data-target="${target}"]`);
-    targetButton.classList.add('active-tab', 'text-cyan-600', 'border-b-2', 'border-cyan-600');
+    if (targetButton) {
+      this.buttonTargets.forEach((btn) => this.setInactive(btn));
+      this.setActive(targetButton);
+    }
   }
 
   toggle(event) {
-    this.buttonTargets.forEach((btn) => {
-      btn.classList.remove('active-tab', 'text-cyan-600', 'border-b-2', 'border-cyan-600');
-    });
+    this.buttonTargets.forEach((btn) => this.setInactive(btn));
+    this.setActive(event.currentTarget);
+  }
 
-    event.currentTarget.classList.add('active-tab', 'text-cyan-600', 'border-b-2', 'border-cyan-600');
+  setActive(btn) {
+    btn.classList.remove(...INACTIVE);
+    btn.classList.add(...ACTIVE);
+  }
+
+  setInactive(btn) {
+    btn.classList.remove(...ACTIVE);
+    btn.classList.add(...INACTIVE);
   }
 }

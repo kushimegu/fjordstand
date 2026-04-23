@@ -1,14 +1,14 @@
-- content_for :title, "Watch中の商品一覧"
+- content_for :title, "Watch中の商品"
 - content_for :description, "ウォッチ中の商品を一覧で確認できるページです。気になる出品をまとめてチェックできます。"
 
-h1.font-bold.text-2xl.my-2.text-center Watch中の商品
+h1.page-title.font-bold.text-2xl.mb-4.text-gray-900.text-center みんなの商品
+= render "shared/browse_tabs", active: :watches
 - if @watches.empty?
-  p.mt-20.text-center.text-xl 該当する商品はありません
+  p.empty-state.mt-20.mb-30.text-center.text-xl.text-gray-400 Watch中の商品はありません
 - else
   = paginate @watches
-  .grid.grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-2.sm:gap-4
-    - @watches.each do |entry|
-      = link_to entry.item, data: { turbo: false }, class: "block" do
-        .container.bg-white.border.border-gray-300.rounded.p-2.sm:p-4.hover:bg-gray-50
-          = render "items/item", item: entry.item
-  = paginate @watches
+  .items-grid.grid.grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-4.mt-4
+    - @watches.each do |watch|
+      = render "shared/item_card", item: watch.item, url: watch.item, badges: [ { text: "Watch中", css: "bg-amber-500" } ]
+  .pagination.mt-6
+    = paginate @watches

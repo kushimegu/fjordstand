@@ -2,9 +2,9 @@ module FlashHelper
   def css_class_for_flash(flash_type)
     case flash_type.to_sym
     when :alert
-      "bg-red-100 text-red-600"
+      "bg-red-50 text-red-700 border-red-200"
     else
-      "bg-cyan-100 text-cyan-600"
+      "bg-cyan-50 text-cyan-700 border-cyan-200"
     end
   end
 end
