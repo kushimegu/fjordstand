@@ -1,7 +1,7 @@
 - content_for :title, @item.title
 - content_for :description, "FjordStandの商品詳細ページです。出品者が登録した商品の情報や画像を確認し、購入希望を申請できます。"
 
-article.item-show.mt-2.flex.flex-col.lg:grid.lg:grid-cols-2.lg:gap-10.lg:items-start
+article.item-show.mt-2.flex.flex-col.md:grid.md:grid-cols-2.md:gap-10.md:items-start
 
   / ギャラリー
   section.gallery
@@ -72,9 +72,10 @@ article.item-show.mt-2.flex.flex-col.lg:grid.lg:grid-cols-2.lg:gap-10.lg:items-s
         span.text-xl.text-gray-700 価格未設定
 
       - if current_user.watch_comment_of(@item)
-        = link_to item_watches_path(@item), \
-                  data: { "turbo-method": :delete }, \
-                  class: "watch-btn watch-btn--active flex items-center gap-1.5 bg-amber-50 border border-amber-400 px-3 py-1.5 cursor-pointer rounded-lg hover:bg-amber-100 text-sm text-amber-700 font-medium transition-colors flex-shrink-0", \
+        = link_to item_watches_path(@item),
+                  data: { "turbo-method": :delete },
+                  class: "watch-btn watch-btn--active flex items-center gap-1.5 bg-amber-50 border border-amber-400 px-3 py-1.5 cursor-pointer rounded-lg \
+                  hover:bg-amber-100 text-sm text-amber-700 font-medium transition-colors flex-shrink-0",
                   aria_label: "通知をオフにする" do
           svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4"
             path[stroke-linecap="round" stroke-linejoin="round"
@@ -83,9 +84,10 @@ article.item-show.mt-2.flex.flex-col.lg:grid.lg:grid-cols-2.lg:gap-10.lg:items-s
                   0M3.124 7.5A8.969 8.969 0 0 1 5.292 3m13.416 0a8.969 8.969 0 0 1 2.168 4.5"]
           | Watch中
       - else
-        = link_to item_watches_path(@item), \
-                  data: { "turbo-method": :post }, \
-                  class: "watch-btn flex items-center gap-1.5 border border-gray-300 px-3 py-1.5 cursor-pointer rounded-lg hover:bg-gray-50 text-sm text-gray-700 transition-colors flex-shrink-0", \
+        = link_to item_watches_path(@item),
+                  data: { "turbo-method": :post },
+                  class: "watch-btn flex items-center gap-1.5 border border-gray-300 px-3 py-1.5 cursor-pointer rounded-lg hover:bg-gray-50 text-sm \
+                  text-gray-700 transition-colors flex-shrink-0",
                   aria_label: "通知をオンにする" do
           svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4"
             path stroke-linecap="round" stroke-linejoin="round" d="M9.143 17.082a24.248 24.248 0 0 0 3.844.148m-3.844-.148a23.856 23.856 0 0
@@ -106,7 +108,8 @@ article.item-show.mt-2.flex.flex-col.lg:grid.lg:grid-cols-2.lg:gap-10.lg:items-s
     / 締切日
     .item-deadline.flex.items-center.gap-3
       svg.text-gray-700.flex-shrink-0 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5"
-        path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"
+        path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21
+        7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"
       .flex.flex-col
         span.text-sm.text-gray-700 購入希望締切
         - if @item.entry_deadline_at.present?
@@ -124,7 +127,9 @@ article.item-show.mt-2.flex.flex-col.lg:grid.lg:grid-cols-2.lg:gap-10.lg:items-s
     / 応募数
     .item-applicants.flex.items-center.gap-3
       svg.text-gray-700.flex-shrink-0 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5"
-        path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
+        path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0
+        0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375
+        6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
       .flex.flex-col
         span.text-sm.text-gray-700 応募人数
         span class=(@item.applicants.count.zero? ? "text-base font-medium text-red-400" : "text-base font-medium text-gray-800")
@@ -141,8 +146,8 @@ article.item-show.mt-2.flex.flex-col.lg:grid.lg:grid-cols-2.lg:gap-10.lg:items-s
           | 当選者の
           span.font-semibold = @item.winner.name
           | さんに代金の送り先を伝えるなどのやり取りを行ってください。
-        = link_to transaction_messages_path(@item),
-          class: "flex items-center justify-center gap-2 bg-cyan-600 text-white font-bold py-2.5 px-5 rounded-lg hover:bg-cyan-700 transition-colors text-base" do
+        = link_to transaction_messages_path(@item), class: "flex items-center justify-center gap-2 bg-cyan-600 text-white font-bold py-2.5 px-5 rounded-lg \
+          hover:bg-cyan-700 transition-colors text-base" do
           svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4"
             path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98
             2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095
@@ -150,7 +155,7 @@ article.item-show.mt-2.flex.flex-col.lg:grid.lg:grid-cols-2.lg:gap-10.lg:items-s
             1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76
             3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"
           | 当選者と連絡をとる
-    
+
     / 購入者向けアクション
     - if @item.user != current_user
       .item-actions.flex.flex-col.gap-3
@@ -177,8 +182,8 @@ article.item-show.mt-2.flex.flex-col.lg:grid.lg:grid-cols-2.lg:gap-10.lg:items-s
                 | 出品者の
                 span.font-semibold = @item.user.name
                 | さんに商品の配送先を伝えるなどのやり取りを行ってください。
-              = link_to transaction_messages_path(@item),
-                  class: "flex items-center justify-center gap-2 bg-cyan-600 text-white font-bold py-2.5 px-5 rounded-lg hover:bg-cyan-700 transition-colors text-base" do
+              = link_to transaction_messages_path(@item), class: "flex items-center justify-center gap-2 bg-cyan-600 text-white font-bold py-2.5 px-5 \
+                rounded-lg hover:bg-cyan-700 transition-colors text-base" do
                 svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4"
                   path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98
                   2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0
@@ -210,7 +215,8 @@ article.item-show.mt-2.flex.flex-col.lg:grid.lg:grid-cols-2.lg:gap-10.lg:items-s
     - if (@item.user == current_user && @item.editable?) || current_user.admin?
       .item-edit-actions.flex.items-center.justify-end.gap-3.border-t.border-gray-300.pt-4
         - if @item.user == current_user && @item.editable?
-          = link_to "編集する", edit_item_path(@item), class: "border border-gray-300 text-base px-4 py-2 rounded-lg hover:bg-gray-50 text-gray-700 transition-colors"
+          = link_to "編集する", edit_item_path(@item),
+          class: "border border-gray-300 text-base px-4 py-2 rounded-lg hover:bg-gray-50 text-gray-700 transition-colors"
         - if current_user.admin?
           = button_to "削除する", @item, method: :delete, data: { turbo_confirm: "本当に削除しますか？" },
             class: "cursor-pointer text-base text-gray-700 underline hover:text-red-400"
@@ -230,7 +236,7 @@ article.item-show.mt-2.flex.flex-col.lg:grid.lg:grid-cols-2.lg:gap-10.lg:items-s
                   header.flex.flex-wrap.justify-between.items-center.mb-2
                     span.font-medium.text-gray-900.text-base = comment.user.name
                     span.text-sm.text-gray-700 = l comment.created_at
-                  div.text-base.text-gray-700.leading-relaxed
+                  .text-base.text-gray-700.leading-relaxed
                     = simple_format(comment.body)
               - if current_user.admin?
                 .flex.mt-1 class=(comment.user == @item.user ? "justify-end pl-12" : "pl-12")
@@ -242,8 +248,10 @@ article.item-show.mt-2.flex.flex-col.lg:grid.lg:grid-cols-2.lg:gap-10.lg:items-s
             .flex.items-start.gap-3 class=(current_user == @item.user ? "flex-row-reverse" : "flex-row")
               = image_tag (current_user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-9 h-9 rounded-full flex-shrink-0"
               .flex-1
-                = form.textarea :body, class: "w-full rounded-xl p-3 min-h-24 border border-gray-300 focus:outline-none focus:border-cyan-400 field-sizing-content text-base",
+                = form.textarea :body,
+                  class: "w-full rounded-xl p-3 min-h-24 border border-gray-300 focus:outline-none focus:border-cyan-400 field-sizing-content text-base",
                   placeholder: "コメントを入力...", required: true
                 = render "shared/error_messages", model: @comment, attribute: :body
                 .flex.justify-end.mt-2
-                  = form.submit "送信する", class: "cursor-pointer border border-cyan-600 text-cyan-600 font-semibold px-5 py-2 rounded-lg hover:bg-cyan-50 text-base transition-colors"
+                  = form.submit "送信する",
+                  class: "cursor-pointer border border-cyan-600 text-cyan-600 font-semibold px-5 py-2 rounded-lg hover:bg-cyan-50 text-base transition-colors"

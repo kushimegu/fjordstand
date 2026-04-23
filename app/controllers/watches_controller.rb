@@ -2,7 +2,7 @@ class WatchesController < ApplicationController
   # GET /watches
   def index
     @watches = current_user.watches
-                            .includes(item: [:user, :winner, images_attachments: :blob])
+                            .includes(item: [ :user, :winner, images_attachments: :blob ])
                             .order("items.entry_deadline_at DESC, watches.created_at DESC")
                             .page(params[:page])
                             .per(16)

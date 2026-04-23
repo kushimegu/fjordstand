@@ -1,21 +1,26 @@
 header.site-header.sticky.top-0.bg-white.z-10.border-b.border-gray-200.shadow-sm
   - if logged_in?
-    - on_items = [items_path, watches_path].any? { |p| request.path.start_with?(p) }
-    - on_entries = request.path.start_with?(entries_path)
-    - on_listings = request.path.start_with?(listings_path) || request.path.start_with?(drafts_path)
-    - on_transactions = request.path.start_with?(transactions_path)
-    - active_cls  = "nav-link nav-link--active bg-white text-gray-900 font-semibold rounded-full px-2 sm:px-4 py-1.5 shadow-sm text-sm flex flex-row flex-wrap items-center justify-center content-center"
-    - inactive_cls = "nav-link text-gray-500 rounded-full px-2 sm:px-4 py-1.5 hover:text-gray-800 transition-colors text-sm flex flex-row flex-wrap items-center justify-center content-center"
-    - nav_class = ->(active) { active ? active_cls : inactive_cls }
-    - on_notifications = request.path.start_with?(notifications_path)
-    - notifications_url = current_user.notifications.unread.exists? ? notifications_path(status: "unread") : notifications_path
+    ruby:
+      on_items = [ items_path, watches_path ].any? { |p| request.path.start_with?(p) }
+      on_entries = request.path.start_with?(entries_path)
+      on_listings = request.path.start_with?(listings_path) || request.path.start_with?(drafts_path)
+      on_transactions = request.path.start_with?(transactions_path)
+      active_cls  = "nav-link nav-link--active bg-white text-gray-900 font-semibold rounded-full px-2 sm:px-4 py-1.5 shadow-sm text-sm flex flex-row \
+      flex-wrap items-center justify-center content-center"
+      inactive_cls = "nav-link text-gray-500 rounded-full px-2 sm:px-4 py-1.5 hover:text-gray-800 transition-colors text-sm flex flex-row flex-wrap \
+      items-center justify-center content-center"
+      nav_class = ->(active) { active ? active_cls : inactive_cls }
+      on_notifications = request.path.start_with?(notifications_path)
+      notifications_url = current_user.notifications.unread.exists? ? notifications_path(status: "unread") : notifications_path
     .header-inner.flex.flex-wrap.items-center.justify-between.px-4.py-3.gap-2.sm:gap-4.relative
       = link_to items_path, class: "site-logo" do
         = image_tag "fjordstand-logo.png", alt: "FjordStandロゴ", class: "w-10 h-10"
       .header-actions.flex.items-center.gap-3
-        = link_to "出品する", new_item_path, class: "btn-primary px-4 py-2 rounded-lg bg-cyan-600 text-white text-sm font-semibold hover:bg-cyan-700 transition-colors"
+        = link_to "出品する", new_item_path,
+        class: "btn-primary px-4 py-2 rounded-lg bg-cyan-600 text-white text-sm font-semibold hover:bg-cyan-700 transition-colors"
         = link_to notifications_url do
-          .relative.flex.items-center.justify-center.gap-1.5.flex-wrap.flex.items-center.cursor-pointer.px-3.py-2.rounded-lg.hover:bg-gray-100.transition-colors class=[on_notifications && "bg-gray-100"]
+          div class=["relative flex items-center justify-center gap-1.5 flex-wrap flex items-center cursor-pointer px-3 py-2 rounded-lg",
+          "hover:bg-gray-100 transition-colors", (on_notifications && "bg-gray-100")]
             svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4"
               path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6
               9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
@@ -24,11 +29,16 @@ header.site-header.sticky.top-0.bg-white.z-10.border-b.border-gray-200.shadow-sm
               - display_count = current_user.notifications.unread.count > 99 ? "99+" : current_user.notifications.unread.count
               span.notification-badge.absolute.top-0.-right-1.min-w-5.px-1.bg-red-500.text-white.text-xs.font-bold.rounded-full.flex.items-center.justify-center
                 = display_count
-        .user-menu[data-controller="hamburger" data-hamburger-target="button" data-action="click->hamburger#toggle" aria-expanded="false" aria-controls="header__nav"]
+        .user-menu[data-controller="hamburger",
+        data-hamburger-target="button" data-action="click->hamburger#toggle" aria-expanded="false" aria-controls="header__nav"]
           .user-menu__trigger.flex.items-center.cursor-pointer.px-2.py-1.rounded-lg.hover:bg-gray-100.transition-colors
             = image_tag (current_user.avatar_url.presence || "default-avatar.png"), alt: "", class: "user-avatar w-7 h-7 rounded-full ring-2 ring-gray-200"
-          #header__nav.user-menu__dropdown.absolute.right-0.top-full.w-40.bg-white.border.border-gray-200.rounded-lg.shadow-lg.hidden data-hamburger-target="nav"
-            = link_to "ログアウト", logout_path, data: { turbo_method: :delete }, class: "block px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+          #header__nav.user-menu__dropdown(
+            class="absolute right-0 top-full w-40 bg-white border border-gray-200 rounded-lg shadow-lg hidden"
+            data-hamburger-target="nav"
+          )
+            = link_to "ログアウト", logout_path, data: { turbo_method: :delete },
+            class: "block px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors"
       nav.nav-wrapper.flex.items-center.w-full.order-last.lg:w-auto.lg:absolute.lg:left-1/2.lg:-translate-x-1/2
         .site-nav.bg-gray-100.mx-auto.rounded-full.p-1.flex.items-center.relative
           = link_to items_path, class: nav_class.call(on_items)

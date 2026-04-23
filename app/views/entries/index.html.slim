@@ -15,6 +15,6 @@ h1.page-title.font-bold.text-2xl.mb-4.text-center 希望商品
     = paginate @entries
     .items-grid.grid.grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-4.mt-4
       - @entries.each do |entry|
-        = render "shared/item_card", item: entry.item, url: entry.item, badges: [entry_status_badge(entry)]
+        = render "shared/item_card", item: entry.item, url: entry.item, badges: [ entry_status_badge(entry) ]
     .pagination.mt-6
       = paginate @entries

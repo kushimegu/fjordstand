@@ -27,17 +27,21 @@ export default class extends Controller {
       const span = label.querySelector('span');
       const input = label.querySelector('input[type="file"]');
 
-      if (img) { img.src = ''; img.classList.add('hidden'); }
+      if (img) {
+        img.src = '';
+        img.classList.add('hidden');
+      }
       if (span) span.classList.remove('hidden');
 
       if (input) {
-        input.value = ''; 
+        input.value = '';
       }
 
       label.dataset.imagePreviewTarget = 'extraContainer';
       const container = label.querySelector('[data-image-preview-target="container"]');
       if (container) {
-        container.className = "aspect-square w-full border-2 border-dashed border-gray-200 bg-gray-50 rounded hover:border-gray-400 flex items-center justify-center overflow-hidden";
+        container.className =
+          'aspect-square w-full border-2 border-dashed border-gray-200 bg-gray-50 rounded hover:border-gray-400 flex items-center justify-center overflow-hidden';
       }
 
       button.remove();
@@ -85,7 +89,7 @@ export default class extends Controller {
 
   previewSingleImage(e) {
     const file = e.target.files[0];
-    const label = e.target.closest('label')
+    const label = e.target.closest('label');
     const container = label.querySelector('[data-image-preview-target="container"]');
     const img = container.querySelector('img');
     const span = container.querySelector('span');
@@ -102,17 +106,17 @@ export default class extends Controller {
         container.classList.add('border');
 
         if (!container.querySelector('button')) {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.dataset.action = 'click->image-preview#removeImage';
-        btn.className = 'cursor-pointer absolute top-0 right-0 text-gray-600 hover:text-red-400 bg-white/70 rounded-full hover:bg-white';
-        btn.innerHTML = `
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.dataset.action = 'click->image-preview#removeImage';
+          btn.className = 'cursor-pointer absolute top-0 right-0 text-gray-600 hover:text-red-400 bg-white/70 rounded-full hover:bg-white';
+          btn.innerHTML = `
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
           <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
         </svg>
         `;
-        container.classList.add('relative');
-        container.appendChild(btn);
+          container.classList.add('relative');
+          container.appendChild(btn);
         }
 
         this.updateExtraSlots();

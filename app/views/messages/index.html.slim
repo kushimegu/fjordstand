@@ -18,7 +18,7 @@
       .p-4.flex.gap-4.items-center.hover:bg-white.transition-colors
         .aspect-square.w-20.h-20.flex-shrink-0.rounded-lg.overflow-hidden.bg-gray-100
           - if @item.images.attached?
-            = image_tag @item.images.first.variant(resize_to_limit: [200, 200]).processed,
+            = image_tag @item.images.first.variant(resize_to_limit: [ 200, 200 ]).processed,
               alt: "#{@item.title} 1枚目", class: "object-contain w-full h-full"
           - else
             = image_tag "listing-image.png", alt: "商品画像なし", class: "object-contain w-full h-full opacity-30"
@@ -37,7 +37,7 @@
               span.text-sm.text-gray-500 購入者
               = image_tag (@item.winner.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-5 h-5 rounded-full"
               span.text-sm.font-medium.text-gray-700 = @item.winner.name
-        svg.text-gray-400.flex-shrink-0 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5"
+        svg.text-gray-400 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5"
           path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"
 
   / メッセージ一覧
@@ -51,7 +51,7 @@
             header.flex.flex-wrap.justify-between.items-center.mb-2
               span.font-medium.text-gray-900 = message.user.name
               span.text-sm.text-gray-500 = l message.created_at
-            div.text-gray-700.leading-relaxed
+            .text-gray-700.leading-relaxed
               = simple_format(message.body)
         - if current_user.admin?
           .flex.mt-1 class=(is_seller ? "justify-start pl-12" : "justify-end pr-12")
@@ -71,4 +71,5 @@
             required: true
           = render "shared/error_messages", model: @message, attribute: :body
           .flex.justify-end.mt-2
-            = form.submit "送信する", class: "cursor-pointer border border-cyan-600 text-cyan-600 font-semibold px-5 py-2 rounded-lg hover:bg-cyan-50 text-base transition-colors"
+            = form.submit "送信する",
+            class: "cursor-pointer border border-cyan-600 text-cyan-600 font-semibold px-5 py-2 rounded-lg hover:bg-cyan-50 text-base transition-colors"

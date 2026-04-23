@@ -1,7 +1,9 @@
 - flash.each do |flash_type, message|
-  div data-controller="flash" class="flex items-center justify-between px-5 py-3 mx-4 mt-3 rounded-xl shadow-md border #{css_class_for_flash(flash_type)} font-medium text-sm"
+  div data-controller="flash" class="flex items-center justify-between px-5 py-3 mx-4 mt-3 rounded-xl shadow-md \
+  border #{css_class_for_flash(flash_type)} font-medium text-sm"
     = message
     button type="button" data-action="flash#dismiss"
-      svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="cursor-pointer size-5 pl-1 opacity-70 hover:opacity-100"
+      svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="cursor-pointer \
+      size-5 pl-1 opacity-70 hover:opacity-100"
         title "閉じる"
         path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"

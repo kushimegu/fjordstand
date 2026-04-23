@@ -1,6 +1,6 @@
 import { Controller } from '@hotwired/stimulus';
 
-const ACTIVE   = ['active-tab', 'bg-white', 'text-gray-900', 'font-semibold', 'shadow-sm'];
+const ACTIVE = ['active-tab', 'bg-white', 'text-gray-900', 'font-semibold', 'shadow-sm'];
 const INACTIVE = ['text-gray-500'];
 
 export default class extends Controller {
@@ -11,13 +11,13 @@ export default class extends Controller {
     const target = params.get('status') || 'all';
     const targetButton = this.element.querySelector(`[data-target="${target}"]`);
     if (targetButton) {
-      this.buttonTargets.forEach(btn => this.setInactive(btn));
+      this.buttonTargets.forEach((btn) => this.setInactive(btn));
       this.setActive(targetButton);
     }
   }
 
   toggle(event) {
-    this.buttonTargets.forEach(btn => this.setInactive(btn));
+    this.buttonTargets.forEach((btn) => this.setInactive(btn));
     this.setActive(event.currentTarget);
   }
 
