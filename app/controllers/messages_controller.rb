@@ -10,7 +10,7 @@ class MessagesController < ApplicationController
     @message = @item.messages.build
     current_user.notifications
                 .unread
-                .where(notifiable_type: "Message", notifiable_id: @item.messages.select(:id))
+                .where(notifiable_type: "Message", notifiable_id: @item.message_ids)
                 .update_all(read: true)
   end
 

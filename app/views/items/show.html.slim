@@ -239,13 +239,13 @@ article.item-show.mt-2.flex.flex-col.md:grid.md:grid-cols-2.md:gap-10.md:items-s
                   .text-base.text-gray-700.leading-relaxed
                     = simple_format(comment.body)
               - if current_user.admin?
-                .flex.mt-1 class=(comment.user == @item.user ? "justify-end pl-12" : "pl-12")
+                .flex.mt-1 class=(comment.user == @item.user ? "justify-end" : "justify-end pr-12")
                   = button_to "削除する", item_comment_path(@item, comment), method: :delete, data: { turbo_confirm: "本当に削除しますか？" },
                     class: "cursor-pointer text-xs text-gray-700 underline hover:text-red-400"
     - if @item.commentable?
         .comment-form.mt-6
           = form_with(model: [ @item, @comment ]) do |form|
-            .flex.items-start.gap-3 class=(current_user == @item.user ? "flex-row-reverse" : "flex-row")
+            .flex.items-start.gap-3 class=(current_user == @item.user ? "" : "flex-row-reverse")
               = image_tag (current_user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-9 h-9 rounded-full flex-shrink-0"
               .flex-1
                 = form.textarea :body,
@@ -255,3 +255,7 @@ article.item-show.mt-2.flex.flex-col.md:grid.md:grid-cols-2.md:gap-10.md:items-s
                 .flex.justify-end.mt-2
                   = form.submit "送信する",
                   class: "cursor-pointer border border-cyan-600 text-cyan-600 font-semibold px-5 py-2 rounded-lg hover:bg-cyan-50 text-base transition-colors"
+
+- back_label = params[:label] || "商品一覧"
+= link_to 'javascript:history.back()', class: "mt-4 flex items-center justify-center text-sm text-gray-500 hover:text-gray-700 underline"
+  span = "#{back_label}に戻る"

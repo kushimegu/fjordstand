@@ -72,11 +72,10 @@ class Item < ApplicationRecord
   end
 
   def unread_messages_for?(user)
-    notifications.any? do |notification|
-      !notification.read? &&
-      notification.user_id == user.id &&
-      notification.notifiable_type == "Message"
-    end
+    user.notifications.unread
+        .where(notifiable_type: "Message")
+        .joins("INNER JOIN messages ON notifications.notifiable_id = messages.id")
+        .exists?(messages: { item_id: id })
   end
 
   private

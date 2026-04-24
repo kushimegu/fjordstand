@@ -1,13 +1,13 @@
-- active = params[:status]&.to_sym || :all
-- active_cls = "bg-white text-gray-900 font-semibold rounded-full px-4 py-1.5 shadow-sm text-sm"
-- inactive_cls = "text-gray-500 rounded-full px-2 sm:px-4 py-1.5 hover:text-gray-700 transition-colors text-sm"
-
 h1.page-title.font-bold.text-2xl.mb-4.text-center 希望商品
-.flex.mb-8.bg-gray-100.rounded-full.p-1.w-fit.overflow-x-auto.mx-auto
-  = link_to "全て", entries_path, class: (active == :all ? active_cls : inactive_cls)
-  = link_to "購入希望", entries_path(status: :applied), class: (active == :applied ? active_cls : inactive_cls)
-  = link_to "購入確定", entries_path(status: :won), class: (active == :won ? active_cls : inactive_cls)
-  = link_to "落選", entries_path(status: :lost), class: (active == :lost ? active_cls : inactive_cls)
+.flex.mb-8.bg-gray-100.rounded-full.p-1.w-fit.overflow-x-auto.mx-auto[data-controller="tab-switching"]
+  = link_to "全て", entries_path, class: "text-sm text-gray-500 rounded-full px-2 sm:px-4 py-1.5 transition-colors hover:text-gray-700",
+  data: { tab_switching_target: "button", target: "all", action: "click->tab-switching#toggle", turbo_frame: "entries" }
+  = link_to "購入希望", entries_path(status: :applied), class: "text-sm text-gray-500 rounded-full px-2 sm:px-4 py-1.5 transition-colors hover:text-gray-700",
+  data: { tab_switching_target: "button", target: "all", action: "click->tab-switching#toggle", turbo_frame: "entries" }
+  = link_to "購入確定", entries_path(status: :won), class: "text-sm text-gray-500 rounded-full px-2 sm:px-4 py-1.5 transition-colors hover:text-gray-700",
+  data: { tab_switching_target: "button", target: "all", action: "click->tab-switching#toggle", turbo_frame: "entries" }
+  = link_to "落選", entries_path(status: :lost), class: "text-sm text-gray-500 rounded-full px-2 sm:px-4 py-1.5 transition-colors hover:text-gray-700",
+  data: { tab_switching_target: "button", target: "all", action: "click->tab-switching#toggle", turbo_frame: "entries" }
 = turbo_frame_tag "entries", data: { turbo_action: :advance } do
   - if @entries.empty?
     p.empty-state.mt-20.mb-30.text-center.text-xl.text-gray-400 該当する商品はありません
@@ -15,6 +15,6 @@ h1.page-title.font-bold.text-2xl.mb-4.text-center 希望商品
     = paginate @entries
     .items-grid.grid.grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-4.mt-4
       - @entries.each do |entry|
-        = render "shared/item_card", item: entry.item, url: entry.item, badges: [ entry_status_badge(entry) ]
+        = render "shared/item_card", item: entry.item, url: item_path(entry.item, label: "希望商品"), badges: [ entry_status_badge(entry) ]
     .pagination.mt-6
       = paginate @entries

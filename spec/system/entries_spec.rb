@@ -20,7 +20,7 @@ RSpec.describe "Entries", type: :system do
       click_on "購入希望を申請する"
       expect(page).to have_content("購入希望を申請しました")
       expect(page).to have_content("購入希望を出しています")
-      expect(page).to have_content("1人が応募しています")
+      expect(page).to have_content("応募人数\n1人")
       expect(page).to have_button("購入希望を取り消す")
     end
   end

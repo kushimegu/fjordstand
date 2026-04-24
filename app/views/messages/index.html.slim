@@ -14,7 +14,7 @@
       | この連絡ページの内容は、
       span.font-semibold 出品者・購入者・サービス管理者
       | 以外の第三者が閲覧することはできません。住所や連絡先なども、安心してご記入いただけます。
-    = link_to @item, class: "block group" do
+    = link_to item_path(@item, label: "連絡ページ"), class: "block group" do
       .p-4.flex.gap-4.items-center.hover:bg-white.transition-colors
         .aspect-square.w-20.h-20.flex-shrink-0.rounded-lg.overflow-hidden.bg-gray-100
           - if @item.images.attached?
@@ -44,7 +44,8 @@
   .message-list.flex.flex-col.gap-4
     - @messages.each do |message|
       article.message
-        .flex.gap-3 class=(message.user == current_user ? "flex-row-reverse" : "")
+        - is_seller = message.user == @item.user
+        .flex.gap-3 class=(is_seller ? "" : "flex-row-reverse")
           = image_tag (message.user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-9 h-9 rounded-full flex-shrink-0"
           .flex-1.bg-white.rounded-xl.p-4.border.border-gray-200.shadow-sm
             header.flex.flex-wrap.justify-between.items-center.mb-2
@@ -53,14 +54,14 @@
             .text-gray-700.leading-relaxed
               = simple_format(message.body)
         - if current_user.admin?
-          .flex.mt-1 class=(is_seller ? "justify-start pl-12" : "justify-end pr-12")
+          .flex.mt-1 class=(is_seller ? "justify-end" : "justify-end pr-12")
             = button_to "削除する", transaction_message_path(@item, message), method: :delete, data: { turbo_confirm: "本当に削除しますか？" },
               class: "cursor-pointer text-xs text-gray-400 underline hover:text-red-400"
 
   / メッセージ入力
   .message-form.mt-8
     = form_with(url: transaction_messages_path(@item), model: @message) do |form|
-      .flex.items-start.gap-3.flex-row-reverse
+      .flex.items-start.gap-3 class=(current_user == @item.user ? "" : "flex-row-reverse")
         = image_tag (current_user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-9 h-9 rounded-full flex-shrink-0"
         .flex-1
           - placeholder = current_user == @item.user ? "代金の支払い先など必要な情報を入力してください" : "住所、氏名、電話番号など、配送に必要な情報を入力してください"
@@ -72,3 +73,5 @@
           .flex.justify-end.mt-2
             = form.submit "送信する",
             class: "cursor-pointer border border-cyan-600 text-cyan-600 font-semibold px-5 py-2 rounded-lg hover:bg-cyan-50 text-base transition-colors"
+
+= link_to "連絡ページ一覧に戻る", transactions_path, class: "mt-4 flex items-center justify-center text-sm text-gray-500 hover:text-gray-700 underline"

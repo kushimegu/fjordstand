@@ -27,6 +27,10 @@ class ItemsController < ApplicationController
   def show
     @comment = Comment.new
     @comments = @item.comments.includes(:user).order(created_at: :asc)
+    current_user.notifications
+                .unread
+                .where(notifiable_type: "Comment", notifiable_id: @item.comment_ids)
+                .update_all(read: true)
   end
 
   # GET /items/new

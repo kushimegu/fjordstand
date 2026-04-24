@@ -16,6 +16,7 @@ class CommentsController < ApplicationController
     if @comment.save
       redirect_to @item, notice: "コメントを送信しました"
     else
+      @comments = @item.comments.includes(:user).order(created_at: :asc)
       render "items/show", status: :unprocessable_content
     end
   end

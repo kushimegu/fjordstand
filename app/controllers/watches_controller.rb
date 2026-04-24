@@ -17,6 +17,7 @@ class WatchesController < ApplicationController
       redirect_to @item, notice: "コメント欄をWatchしました"
     else
       @comment = Comment.new
+      @comments = @item.comments.includes(:user).order(created_at: :asc)
       render "items/show", status: :unprocessable_content
     end
   end
