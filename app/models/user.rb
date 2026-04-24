@@ -43,4 +43,12 @@ class User < ApplicationRecord
   def has_unread_messages?
     notifications.any? { |notification| !notification.read && notification.notifiable_type == "Message" }
   end
+
+  def unread_message_items_count
+    notifications.unread
+                  .where(notifiable_type: "Message")
+                  .joins("INNER JOIN messages ON notifications.notifiable_id = messages.id")
+                  .distinct
+                  .count("messages.item_id")
+  end
 end

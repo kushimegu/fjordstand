@@ -54,7 +54,7 @@ header.site-header.sticky.top-0.bg-white.z-10.border-b.border-gray-200.shadow-sm
             span 連絡
             span ページ
           - if current_user.has_unread_messages?
-            - count = current_user.notifications.where(notifiable_type: "Message").unread.count
+            - count = current_user.unread_message_items_count
             - display_count = count > 99 ? "99+" : count
             span#message-count.absolute.top-0.right-0.min-w-5.px-1.bg-red-500.text-white.text-xs.font-bold.rounded-full.flex.items-center.justify-center
               = display_count
