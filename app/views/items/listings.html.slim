@@ -25,7 +25,7 @@ h1.page-title.font-bold.text-2xl.mb-4.text-gray-900.text-center 自分の出品
     .items-grid.grid.grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-2.sm:gap-4.mt-4
       - @items.each do |item|
         - badge = item_status_badge(item)
-        - url = item.draft? ? edit_item_path(item) : item_path(item, from: listings_path, label: "自分の出品")
+        - url = item.draft? ? edit_item_path(item) : item_path(item, label: "自分の出品")
         = render "shared/item_card", item: item, url: url, badges: [ badge ]
     .pagination.mt-6
       = paginate @items
