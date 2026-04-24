@@ -44,7 +44,8 @@
   .message-list.flex.flex-col.gap-4
     - @messages.each do |message|
       article.message
-        .flex.gap-3 class=(message.user == current_user ? "flex-row-reverse" : "")
+        - is_seller = message.user == @item.user
+        .flex.gap-3 class=(is_seller ? "" : "flex-row-reverse")
           = image_tag (message.user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-9 h-9 rounded-full flex-shrink-0"
           .flex-1.bg-white.rounded-xl.p-4.border.border-gray-200.shadow-sm
             header.flex.flex-wrap.justify-between.items-center.mb-2
@@ -53,14 +54,14 @@
             .text-gray-700.leading-relaxed
               = simple_format(message.body)
         - if current_user.admin?
-          .flex.mt-1 class=(is_seller ? "justify-start pl-12" : "justify-end pr-12")
+          .flex.mt-1 class=(is_seller ? "justify-end" : "justify-end pr-12")
             = button_to "削除する", transaction_message_path(@item, message), method: :delete, data: { turbo_confirm: "本当に削除しますか？" },
               class: "cursor-pointer text-xs text-gray-400 underline hover:text-red-400"
 
   / メッセージ入力
   .message-form.mt-8
     = form_with(url: transaction_messages_path(@item), model: @message) do |form|
-      .flex.items-start.gap-3.flex-row-reverse
+      .flex.items-start.gap-3 class=(current_user == @item.user ? "" : "flex-row-reverse")
         = image_tag (current_user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-9 h-9 rounded-full flex-shrink-0"
         .flex-1
           - placeholder = current_user == @item.user ? "代金の支払い先など必要な情報を入力してください" : "住所、氏名、電話番号など、配送に必要な情報を入力してください"
