@@ -32,7 +32,7 @@ RSpec.describe "Items", type: :system do
       visit listings_path
       click_on "購入者決定"
 
-      expect(page).to have_css("a.active-tab", text: "購入者決定")
+      expect(page).to have_css("a.active-tab", text: "購入者\n決定")
       expect(page).not_to have_content("#{published_item.title}")
       expect(page).not_to have_content("#{closed_item.title}")
       expect(page).to have_content("#{sold_item.title}")
@@ -47,7 +47,7 @@ RSpec.describe "Items", type: :system do
       visit listings_path
       click_on "公開終了"
 
-      expect(page).to have_css("a.active-tab", text: "公開終了")
+      expect(page).to have_css("a.active-tab", text: "公開\n終了")
       expect(page).not_to have_content("#{published_item.title}")
       expect(page).to have_content("#{closed_item.title}")
       expect(page).not_to have_content("#{sold_item.title}")

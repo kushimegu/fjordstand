@@ -80,7 +80,7 @@ RSpec.describe "Notifications", type: :system do
 
         visit items_path
 
-        expect(page).to have_selector("#notification-count", text: "99+")
+        expect(page).to have_selector(".notification-badge", text: "99+")
       end
     end
 
@@ -90,7 +90,7 @@ RSpec.describe "Notifications", type: :system do
 
         visit notifications_path
 
-        expect(page).not_to have_css("#notification-count")
+        expect(page).not_to have_css(".notification-badge")
         expect(page).to have_content("通知はありません")
       end
     end
@@ -104,7 +104,7 @@ RSpec.describe "Notifications", type: :system do
 
       visit notifications_path
       click_on "未読"
-      expect(page).to have_css("a.border-b-2", text: "未読")
+      expect(page).to have_css("a.active-tab", text: "未読")
       expect(page).to have_content("「#{closed_item.title}」は当選者なしで公開終了しました。")
       expect(page).not_to have_content("「#{sold_item.title}」の購入者が決まりました。")
     end
@@ -116,7 +116,7 @@ RSpec.describe "Notifications", type: :system do
 
       visit notifications_path(status: "unread")
       click_on "全て", exact: true
-      expect(page).to have_css("a.border-b-2", text: "全て")
+      expect(page).to have_css("a.active-tab", text: "全て")
       expect(page).to have_content("「#{closed_item.title}」は当選者なしで公開終了しました。")
       expect(page).to have_content("「#{sold_item.title}」の購入者が決まりました。")
     end

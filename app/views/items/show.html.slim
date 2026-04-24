@@ -256,7 +256,7 @@ article.item-show.mt-2.flex.flex-col.md:grid.md:grid-cols-2.md:gap-10.md:items-s
                   = form.submit "送信する",
                   class: "cursor-pointer border border-cyan-600 text-cyan-600 font-semibold px-5 py-2 rounded-lg hover:bg-cyan-50 text-base transition-colors"
 
-- back_path = url_from(params[:from]) || items_path
+- back_path = params[:from]&.start_with?('/') ? params[:from] : items_path
 - back_label = params[:label] || "商品一覧"
 = link_to back_path, class: "mt-4 flex items-center justify-center text-sm text-gray-500 hover:text-gray-700 underline"
   span = "#{back_label}に戻る"
