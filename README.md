@@ -73,6 +73,7 @@ DISCORD_CLIENT_SECRET=
 DISCORD_REDIRECT_URI=
 DISCORD_BOT_TOKEN=
 DISCORD_SERVER_ID=
+WEBHOOK_URL=
 ```
 
 ### Discord アプリの設定
@@ -85,6 +86,7 @@ DISCORD_SERVER_ID=
 4. `DISCORD_REDIRECT_URI` に `http://localhost:3000/auth/discord/callback` を設定
 5. Bot を作成してトークンを `DISCORD_BOT_TOKEN` に設定
 6. 開発に使用する Discord サーバーの ID を `DISCORD_SERVER_ID` に設定
+7. Discord チャンネル設定の Webhook 画面から URL を取得し、`DISCORD_WEBHOOK_URL` に設定
 
 ## 開発サーバーの起動
 
