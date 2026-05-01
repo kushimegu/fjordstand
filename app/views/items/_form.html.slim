@@ -21,14 +21,11 @@
       span.text-xs.text-gray-500 最大5枚
     - images = @item.images.sort_by(&:id)
     .grid.grid-cols-5.gap-2.mb-2 data-image-preview-target="preview"
-      label.cursor-pointer.col-span-full.py-1.w-full.border.border-gray-400.bg-gray-100.rounded-lg.hover:bg-gray-200.flex.items-center.justify-center[
+      label.cursor-pointer.col-span-full.py-1.w-full.border.border-gray-400.bg-gray-100.rounded-lg.hover:bg-gray-200.flex.items-center.justify-center [
         data-image-preview-target="multipleContainer"
       ]
-        span.text-xs まとめて追加する
-        = form.file_field :images,
-          multiple: true,
-          direct_upload: true,
-          class: "hidden",
+        span.text-xs data-image-preview-target="labelText" まとめて追加する
+        = form.file_field :images, multiple: true, direct_upload: true, accept: "image/png, image/jpeg", class: "hidden",
           data: { "image-preview-target": "input", action: "change->image-preview#previewMultipleImages" }
       - images.each do |image|
         label.rounded-lg.overflow-hidden.flex.items-center.justify-center data-image-preview-target="savedPreview"
@@ -36,9 +33,10 @@
             = image_tag image.variant(resize_to_limit: [ 200, 200 ]).processed, class: "object-contain w-full h-full"
             = form.hidden_field :images, multiple: true, value: image.signed_id, id: "hidden_image_#{image.signed_id}"
             - if !item.published? || image.id.blank?
-              button.bg-white/70.rounded-full.hover:bg-white [type="button" data-target="hidden_image_#{image.signed_id}"
-              data-action="click->image-preview#removeImage"
-              class="cursor-pointer absolute top-0 right-0 text-gray-600 hover:text-red-400"]
+              button.delete-button.bg-white/70.rounded-full.hover:bg-white.cursor-pointer.absolute.top-0.right-0.text-gray-600.hover:text-red-400 [
+                type="button"
+                data-target="hidden_image_#{image.signed_id}"
+                data-action="click->image-preview#removeImage"]
                 svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"
                   path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
       - 5.times do |i|
@@ -49,8 +47,8 @@
             span.text-xs.text-gray-400.whitespace-nowrap 追加
             img.hidden.w-full.h-full.object-contain src=""
           = form.file_field :images,
-            multiple: false,
             direct_upload: true,
+            accept: "image/png, image/jpeg",
             name: "item[images][]",
             class: "hidden",
             data: { "image-preview-target": "input", action: "change->image-preview#previewSingleImage" }

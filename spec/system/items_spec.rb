@@ -8,7 +8,26 @@ RSpec.describe "Items", type: :system do
   describe "listings tab switching" do
     before { login(user) }
 
+    it "shows draft items when draft tab is clicked" do
+      draft_item = create(:item, user: user)
+      published_item = create(:item, :published, user: user)
+      closed_item = create(:item, :closed, user: user)
+      sold_item = create(:item, :sold, user: user)
+
+      expect(page).to have_current_path(items_path)
+
+      visit listings_path
+      click_on "下書き"
+
+      expect(page).to have_css("a.active-tab", text: "下書き")
+      expect(page).to have_content("#{draft_item.title}")
+      expect(page).not_to have_content("#{published_item.title}")
+      expect(page).not_to have_content("#{closed_item.title}")
+      expect(page).not_to have_content("#{sold_item.title}")
+    end
+
     it "shows published items when published tab is clicked" do
+      draft_item = create(:item, user: user)
       published_item = create(:item, :published, user: user)
       closed_item = create(:item, :closed, user: user)
       sold_item = create(:item, :sold, user: user)
@@ -18,12 +37,14 @@ RSpec.describe "Items", type: :system do
       click_on "出品中"
 
       expect(page).to have_css("a.active-tab", text: "出品中")
+      expect(page).not_to have_content("#{draft_item.title}")
       expect(page).to have_content("#{published_item.title}")
       expect(page).not_to have_content("#{closed_item.title}")
       expect(page).not_to have_content("#{sold_item.title}")
     end
 
     it "shows sold items when sold tab is clicked" do
+      draft_item = create(:item, user: user)
       published_item = create(:item, :published, user: user)
       closed_item = create(:item, :closed, user: user)
       sold_item = create(:item, :sold, user: user)
@@ -33,12 +54,14 @@ RSpec.describe "Items", type: :system do
       click_on "購入者決定"
 
       expect(page).to have_css("a.active-tab", text: "購入者\n決定")
+      expect(page).not_to have_content("#{draft_item.title}")
       expect(page).not_to have_content("#{published_item.title}")
       expect(page).not_to have_content("#{closed_item.title}")
       expect(page).to have_content("#{sold_item.title}")
     end
 
     it "shows closed items when closed tab is clicked" do
+      draft_item = create(:item, user: user)
       published_item = create(:item, :published, user: user)
       closed_item = create(:item, :closed, user: user)
       sold_item = create(:item, :sold, user: user)
@@ -48,12 +71,14 @@ RSpec.describe "Items", type: :system do
       click_on "公開終了"
 
       expect(page).to have_css("a.active-tab", text: "公開\n終了")
+      expect(page).not_to have_content("#{draft_item.title}")
       expect(page).not_to have_content("#{published_item.title}")
       expect(page).to have_content("#{closed_item.title}")
       expect(page).not_to have_content("#{sold_item.title}")
     end
 
     it "shows all items when all tab is clicked" do
+      draft_item = create(:item, user: user)
       published_item = create(:item, :published, user: user)
       closed_item = create(:item, :closed, user: user)
       sold_item = create(:item, :sold, user: user)
@@ -63,6 +88,7 @@ RSpec.describe "Items", type: :system do
       click_on "全て"
 
       expect(page).to have_css("a.active-tab", text: "全て")
+      expect(page).to have_content("#{draft_item.title}")
       expect(page).to have_content("#{published_item.title}")
       expect(page).to have_content("#{closed_item.title}")
       expect(page).to have_content("#{sold_item.title}")
@@ -101,6 +127,241 @@ RSpec.describe "Items", type: :system do
       expect(page).to have_selector("#prev")
       click_button("prev")
       expect(page).to have_selector("#big-image[src*='book3.png']")
+    end
+  end
+
+  describe "item images preview" do
+    before { login(user) }
+
+    context "when multiple images are attached collectively" do
+      it "shows all image previews and remaining slots" do
+        expect(page).to have_current_path(items_path)
+        click_on '出品する'
+
+        images = (1..3).map { |i| Rails.root.join("spec/fixtures/files/book#{i}.png") }
+
+        attach_file('まとめて追加する', images, make_visible: true)
+
+        expect(page).to have_selector('[data-image-preview-target="savedPreview"] img', count: 3)
+        expect(page).to have_selector('[data-image-preview-target="extraContainer"]:not(.hidden)', count: 2)
+
+        click_on '下書きとして保存する'
+        expect(page).to have_content('下書き保存しました')
+
+        item = Item.last
+        expect(item.images[0].filename.to_s).to eq 'book1.png'
+        expect(item.images[1].filename.to_s).to eq 'book2.png'
+        expect(item.images[2].filename.to_s).to eq 'book3.png'
+      end
+    end
+
+    context "when images are chosen separately" do
+      it "shows all image previews and remaining slots" do
+        expect(page).to have_current_path(items_path)
+        click_on '出品する'
+
+        image1 = Rails.root.join("spec/fixtures/files/book1.png")
+        image2 = Rails.root.join("spec/fixtures/files/book2.png")
+
+        all('[data-image-preview-target="input"]:not([multiple]', visible: false)[0].attach_file(image1)
+        all('[data-image-preview-target="input"]:not([multiple]', visible: false)[1].attach_file(image2)
+
+        expect(page).to have_selector('[data-image-preview-target="extraContainer"]:not(.hidden)', count: 3)
+
+        click_on '下書きとして保存する'
+        expect(page).to have_content('下書き保存しました')
+
+        item = Item.last
+        expect(item.images[0].filename.to_s).to eq 'book1.png'
+        expect(item.images[1].filename.to_s).to eq 'book2.png'
+      end
+    end
+
+    context "when images are chosen collectively then separately" do
+      it "shows all image previews and remaining slots" do
+        expect(page).to have_current_path(items_path)
+        click_on '出品する'
+
+        images = (1..3).map { |i| Rails.root.join("spec/fixtures/files/book#{i}.png") }
+        image =  Rails.root.join("spec/fixtures/files/book4.png")
+
+        attach_file('まとめて追加する', images, make_visible: true)
+        first('[data-image-preview-target="input"]:not([multiple])', visible: false).attach_file(image)
+
+        expect(page).to have_selector('[data-image-preview-target="savedPreview"] img', count: 4)
+        expect(page).to have_selector('[data-image-preview-target="extraContainer"]:not(.hidden)', count: 1)
+
+        click_on '下書きとして保存する'
+        expect(page).to have_content('下書き保存しました')
+
+        expect(Item.last.images[0].filename.to_s).to eq 'book1.png'
+        expect(Item.last.images[3].filename.to_s).to eq 'book4.png'
+      end
+    end
+
+    context "when adding image separately and deleting preview" do
+      it "clears input value" do
+        expect(page).to have_current_path(items_path)
+        click_on '出品する'
+
+        image = Rails.root.join("spec/fixtures/files/book1.png")
+        first('[data-image-preview-target="input"]:not([multiple])', visible: false).attach_file(image)
+
+        expect(page).to have_selector('[data-image-preview-target="savedPreview"] img')
+
+        find('[data-action="click->image-preview#removeImage"]', match: :first, visible: :all).click
+        expect(page).to have_no_selector('[data-image-preview-target="savedPreview"] img')
+
+        click_on '下書きとして保存する'
+        expect(page).to have_content('下書き保存しました')
+
+        expect(Item.last.images).to be_empty
+      end
+    end
+
+    context "when deleting image from draft item" do
+      it "deletes selected image" do
+        item = create(:item, :with_three_images, user: user)
+        expect(page).to have_current_path(items_path)
+        visit edit_item_path(item)
+
+        expect(page).to have_selector('[data-image-preview-target="savedPreview"] img', count: 3)
+        all('[data-action="click->image-preview#removeImage"]')[1].click
+        expect(page).to have_selector('[data-image-preview-target="savedPreview"] img', count: 2)
+
+        click_on '下書きを更新する'
+        expect(page).to have_content('下書きを更新しました')
+
+        item.reload
+        expect(item.images[0].filename.to_s).to eq 'book1.png'
+        expect(item.images[1].filename.to_s).to eq 'book3.png'
+      end
+    end
+
+    context "when adding image to draft item with item images" do
+      it "adds image in selected order" do
+        item = create(:item, :with_three_images, user: user)
+
+        expect(page).to have_current_path(items_path)
+        visit edit_item_path(item)
+
+        image1 = Rails.root.join("spec/fixtures/files/book4.png")
+        image2 = Rails.root.join("spec/fixtures/files/book5.png")
+
+        attach_file('まとめて追加する', image1, make_visible: true)
+        first('[data-image-preview-target="input"]:not([multiple])', visible: false).attach_file(image2)
+
+        click_on '下書きを更新する'
+        expect(page).to have_content('下書きを更新しました')
+
+        item.reload
+        expect(item.images[3].filename.to_s).to eq('book4.png')
+        expect(item.images[4].filename.to_s).to eq('book5.png')
+      end
+    end
+
+    context "when re-selecting images collectively" do
+      it "changes preview to new images" do
+        expect(page).to have_current_path(items_path)
+        click_on '出品する'
+
+        attach_file "まとめて追加する", (1..3).map { |i| Rails.root.join("spec/fixtures/files/book#{i}.png") }, make_visible: true
+        expect(page).to have_selector('[data-image-preview-target="savedPreview"] img', count: 3)
+
+        input = find('[data-image-preview-target="input"][multiple]', visible: false)
+        page.execute_script('const i = arguments[0]; i.value = ""; i.dispatchEvent(new Event("change", { bubbles: true }));', find('[data-image-preview-target="input"][multiple]', visible: false))
+        expect(page).not_to have_selector('[data-image-preview-target="savedPreview] img')
+        expect(page).to have_selector('[data-image-preview-target="extraContainer"]:not(.hidden)', count: 5)
+
+        attach_file "まとめて追加する", [ Rails.root.join("spec/fixtures/files/book4.png") ], make_visible: true
+        expect(page).to have_selector('[data-image-preview-target="savedPreview"] img', count: 1)
+      end
+    end
+
+    context "when cancelling editing" do
+      it "deletes preview information" do
+        item = create(:item, :with_three_images, user: user)
+
+        expect(page).to have_current_path(items_path)
+        visit edit_item_path(item)
+        image1 = Rails.root.join("spec/fixtures/files/book4.png")
+        image2 = Rails.root.join("spec/fixtures/files/book5.png")
+        first('[data-image-preview-target="input"]:not([multiple])', minimum: 1, visible: false).attach_file(image1)
+        all('[data-image-preview-target="input"]:not([multiple])', minimum: 2, visible: false)[1].attach_file(image2)
+
+        all('[data-action="click->image-preview#removeImage"]')[1].click
+        click_on 'キャンセル'
+
+        item.reload
+        expect(item.images.length).to be 3
+      end
+    end
+
+    context "when 6 images are chosen" do
+      it "stops preview and clears input" do
+        expect(page).to have_current_path(items_path)
+        click_on '出品する'
+
+        images = (1..6).map { |i| Rails.root.join("spec/fixtures/files/book#{i}.png") }
+
+        page.execute_script("window.alert = function(msg) { window.alert_msg = msg; }")
+        attach_file('まとめて追加する', images, make_visible: true)
+        expect(page.evaluate_script("window.alert_msg")).to eq "画像は5枚までしか登録できません"
+
+        expect(page).to have_no_selector('[data-image-preview-target="savedPreviews"] img')
+        expect(page).to have_selector('[data-image-preview-target="extraContainer"]:not(.hidden)', count: 5)
+      end
+    end
+
+    context "when 6th image is chosen" do
+      it "stops preview and clears input" do
+        item = create(:item, :with_item_image, user: user)
+
+        expect(page).to have_current_path(items_path)
+        visit edit_item_path(item)
+
+        image = Rails.root.join("spec/fixtures/files/book2.png")
+        images = (1..4).map { |i| Rails.root.join("spec/fixtures/files/book#{i + 2}.png") }
+
+        inputs = all('[data-image-preview-target="input"]:not([multiple]', visible: false)
+        inputs[0].attach_file(image)
+        page.execute_script("window.alert = function(msg) { window.alert_msg = msg; }")
+        attach_file('まとめて追加する', images, make_visible: true)
+        expect(page.evaluate_script("window.alert_msg")).to eq "画像は5枚までしか登録できません"
+
+        expect(page).to have_selector('[data-image-preview-target="savedPreview"] img', count: 2)
+      end
+    end
+
+    context "when gif is chosen" do
+      it "stops preview and clears input" do
+        expect(page).to have_current_path(items_path)
+        click_on '出品する'
+
+        gif = Rails.root.join('spec/fixtures/files/book_gif.gif')
+        page.execute_script("window.alert = function(msg) { window.alert_msg = msg; }")
+        attach_file('まとめて追加する', gif, make_visible: true)
+
+        expect(page.evaluate_script("window.alert_msg")).to eq "PNGまたはJPEG形式のみアップロード可能です"
+        expect(page).to have_no_selector('[data-image-preview-target="savePreviews] img')
+        expect(page).to have_selector('[data-image-preview-target="extraContainer"]:not(.hidden)', count: 5)
+      end
+    end
+
+    context "when image bigger than 5 MB is chosen" do
+      it "stops preview and clears input" do
+        expect(page).to have_current_path(items_path)
+        click_on '出品する'
+
+        image = Rails.root.join('spec/fixtures/files/bigfile.jpg')
+
+        page.execute_script("window.alert = function(msg) { window.alert_msg = msg; }")
+        attach_file('まとめて追加する', image, make_visible: true)
+
+        expect(page.evaluate_script("window.alert_msg")).to eq "5MBまでのファイルのみアップロードできます"
+        expect(page).to have_no_selector('[data-image-preview-target="savePreviews] img')
+        expect(page).to have_selector('[data-image-preview-target="extraContainer"]:not(.hidden)', count: 5)
+      end
     end
   end
 
@@ -175,7 +436,7 @@ RSpec.describe "Items", type: :system do
         visit listings_path
         click_on '技術書'
         fill_in '商品名', with: '小説'
-        click_on '上書き保存する'
+        click_on '下書きを更新する'
 
         expect(page).to have_current_path(listings_path)
         expect(page).to have_content('小説')
