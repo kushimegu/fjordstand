@@ -2,7 +2,7 @@ import { Controller } from '@hotwired/stimulus';
 
 // Connects to data-controller="image-preview"
 export default class extends Controller {
-  static targets = ['input', 'preview', 'savedPreview', 'extraContainer', 'multipleContainer'];
+  static targets = ['input', 'preview', 'savedPreview', 'extraContainer', 'labelText', 'multipleContainer'];
 
   connect() {
     this.updateExtraSlots();
@@ -41,9 +41,8 @@ export default class extends Controller {
       const container = label.querySelector('[data-image-preview-target="container"]');
       if (container) {
         container.className =
-          'aspect-square w-full border-2 border-dashed border-gray-200 bg-gray-50 rounded hover:border-gray-400 flex items-center justify-center overflow-hidden';
+          'aspect-square w-full border-2 border-dashed border-gray-200 bg-gray-50 rounded-lg hover:border-gray-400 flex items-center justify-center overflow-hidden';
       }
-
       button.remove();
     }
 
@@ -51,8 +50,38 @@ export default class extends Controller {
   }
 
   previewMultipleImages(e) {
-    const files = Array.from(e.target.files).slice(0, 5);
+    if (!this.checkTotalFiles(e)) return;
+
+    const files = Array.from(e.target.files);
+
+    const ALLOWED_TYPES = ['image/png', 'image/jpeg'];
+    if (files.some((file) => !ALLOWED_TYPES.includes(file.type))) {
+      e.stopImmediatePropagation();
+      alert('PNGまたはJPEG形式のみアップロード可能です');
+      e.target.value = '';
+      return;
+    }
+
+    const MAX_SIZE = 5 * 1024 * 1024;
+    if (files.some((file) => file.size > MAX_SIZE)) {
+      e.stopImmediatePropagation;
+      alert('5MBまでのファイルのみアップロードできます');
+      e.target.value = '';
+      return;
+    }
+
     this.element.querySelectorAll('.js-multiple-preview').forEach((element) => element.remove());
+
+    if (files.length > 0) {
+      this.labelTextTarget.textContent = '選び直す';
+      this.multipleContainerTarget.classList.remove('hover:bg-gray-200');
+      this.multipleContainerTarget.classList.add('hover:text-red-400', 'bg-gray-200');
+    } else {
+      this.labelTextTarget.textContent = 'まとめて追加する';
+      this.multipleContainerTarget.classList.remove('hover:text-red-400', 'bg-gray-200');
+      this.multipleContainerTarget.classList.add('hover:bg-gray-200');
+      this.updateExtraSlots();
+    }
 
     const readAndPreview = files.map((file) => {
       return new Promise((resolve) => {
@@ -70,15 +99,12 @@ export default class extends Controller {
         wrapper.classList.add('js-multiple-preview');
 
         const div = document.createElement('div');
-        div.className = 'relative aspect-square rounded-lg border border-gray-200 bg-gray-100';
-        div.innerHTML = `
-          <img src="${src}" class="w-full h-full object-contain">
-          <button type="button" data-action="click->image-preview#removeImage" class="cursor-pointer absolute top-0 right-0 text-gray-600 hover:text-red-400 bg-white/70 rounded-full hover:bg-white">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-            </svg>
-          </button>
-        `;
+        div.className = 'relative aspect-square rounded-lg border border-gray-400 bg-gray-200';
+
+        const img = document.createElement('img');
+        img.src = src;
+        img.className = 'w-full h-full object-contain';
+        div.appendChild(img);
         wrapper.appendChild(div);
         this.previewTarget.insertBefore(wrapper, this.extraContainerTargets[0]);
 
@@ -88,7 +114,26 @@ export default class extends Controller {
   }
 
   previewSingleImage(e) {
+    if (!this.checkTotalFiles(e)) return;
+
     const file = e.target.files[0];
+
+    const ALLOWED_TYPES = ['image/png', 'image/jpeg'];
+    if (file && !ALLOWED_TYPES.includes(file.type)) {
+      e.stopImmediatePropagation();
+      alert('PNGまたはJPEG形式のみアップロード可能です');
+      e.target.value = '';
+      return;
+    }
+
+    const MAX_SIZE = 5 * 1024 * 1024;
+    if (file && file.size > MAX_SIZE) {
+      e.stopImmediatePropagation;
+      alert('5MBまでのファイルのみアップロードできます');
+      e.target.value = '';
+      return;
+    }
+
     const label = e.target.closest('label');
     const container = label.querySelector('[data-image-preview-target="container"]');
     const img = container.querySelector('img');
@@ -142,5 +187,20 @@ export default class extends Controller {
         slot.classList.add('hidden');
       }
     });
+  }
+
+  checkTotalFiles(e) {
+    const MAX_FILES = 5;
+
+    const existingCount = this.savedPreviewTargets.length;
+    const newFilesCount = e.target.files.length;
+
+    if (existingCount + newFilesCount > MAX_FILES) {
+      e.stopImmediatePropagation();
+      alert(`画像は${MAX_FILES}枚までしか登録できません`);
+      e.target.value = '';
+      return false;
+    }
+    return true
   }
 }
