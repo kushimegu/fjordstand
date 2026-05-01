@@ -1,5 +1,7 @@
 module DiscordWebhookStub
   def stub_discord_webhook
+    stub_request(:post, /discord\.com\/api\/webhooks/).to_return(status: 200)
+
     webhook = instance_double(DiscordWebhook)
 
     [
