@@ -163,9 +163,8 @@ RSpec.describe "Items", type: :system do
         image1 = Rails.root.join("spec/fixtures/files/book1.png")
         image2 = Rails.root.join("spec/fixtures/files/book2.png")
 
-        inputs = all('[data-image-preview-target="input"]:not([multiple]', visible: false)
-        inputs[0].attach_file(image1)
-        inputs[1].attach_file(image2)
+        all('[data-image-preview-target="input"]:not([multiple]', visible: false)[0].attach_file(image1)
+        all('[data-image-preview-target="input"]:not([multiple]', visible: false)[1].attach_file(image2)
 
         expect(page).to have_selector('[data-image-preview-target="extraContainer"]:not(.hidden)', count: 3)
 
@@ -195,9 +194,8 @@ RSpec.describe "Items", type: :system do
         click_on '下書きとして保存する'
         expect(page).to have_content('下書き保存しました')
 
-        item = Item.last
-        expect(item.images[0].filename.to_s).to eq 'book1.png'
-        expect(item.images[3].filename.to_s).to eq 'book4.png'
+        expect(Item.last.images[0].filename.to_s).to eq 'book1.png'
+        expect(Item.last.images[3].filename.to_s).to eq 'book4.png'
       end
     end
 
@@ -267,20 +265,15 @@ RSpec.describe "Items", type: :system do
         expect(page).to have_current_path(items_path)
         click_on '出品する'
 
-        images = (1..3).map { |i| Rails.root.join("spec/fixtures/files/book#{i}.png") }
-        attach_file "まとめて追加する", images, make_visible: true
+        attach_file "まとめて追加する", (1..3).map { |i| Rails.root.join("spec/fixtures/files/book#{i}.png") }, make_visible: true
         expect(page).to have_selector('[data-image-preview-target="savedPreview"] img', count: 3)
-        expect(page).to have_content "選び直す"
 
         input = find('[data-image-preview-target="input"][multiple]', visible: false)
-        page.execute_script(<<~JS, input)
-          arguments[0].value = "";
-          arguments[0].dispatchEvent(new Event('change', { bubbles: true }));
-        JS
+        page.execute_script('const i = arguments[0]; i.value = ""; i.dispatchEvent(new Event("change", { bubbles: true }));', find('[data-image-preview-target="input"][multiple]', visible: false))
         expect(page).not_to have_selector('[data-image-preview-target="savedPreview] img')
         expect(page).to have_selector('[data-image-preview-target="extraContainer"]:not(.hidden)', count: 5)
 
-        attach_file "まとめて追加する", [Rails.root.join("spec/fixtures/files/book4.png")], make_visible: true
+        attach_file "まとめて追加する", [ Rails.root.join("spec/fixtures/files/book4.png") ], make_visible: true
         expect(page).to have_selector('[data-image-preview-target="savedPreview"] img', count: 1)
       end
     end

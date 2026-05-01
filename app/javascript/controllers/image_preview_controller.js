@@ -201,6 +201,6 @@ export default class extends Controller {
       e.target.value = '';
       return false;
     }
-    return true
+    return true;
   }
 }
