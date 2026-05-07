@@ -69,7 +69,7 @@ RSpec.describe "Notifications", type: :request do
 
       expect(unread_notification_1.read).to be false
       expect(unread_notification_2.read).to be false
-      patch read_notification_path(unread_notification_1)
+      patch notification_read_path(unread_notification_1)
 
       expect(unread_notification_1.reload.read).to be true
       expect(unread_notification_2.reload.read).to be false

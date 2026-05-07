@@ -1,0 +1,2 @@
+module Notifications::ReadsHelper
+end

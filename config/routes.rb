@@ -1,7 +1,11 @@
 Rails.application.routes.draw do
   resources :notifications, only: [:index] do
-    patch :read, on: :member
-    patch :read_all, on: :collection
+    scope module: :notifications do
+      resource :read, only: %i[update]
+      collection do
+        patch :read_all, to: "reads#update_all"
+      end
+    end
   end
   resources :transactions, only: [:index] do
     resources :messages, only: %i[index create destroy]
