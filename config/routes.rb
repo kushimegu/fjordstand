@@ -8,7 +8,9 @@ Rails.application.routes.draw do
   end
   get "/drafts", to: "items#drafts"
   get "/entries", to: "entries#index"
-  get "/listings", to: "items#listings"
+  namespace :items do
+    resources :listings, only: %i[index]
+  end
   get "/watches", to: "watches#index"
   resources :items do
     resource :entries, only: %i[create destroy]

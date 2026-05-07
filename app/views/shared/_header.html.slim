@@ -1,16 +1,16 @@
 header.site-header.sticky.top-0.bg-white.z-10.border-b.border-gray-200.shadow-sm
   - if logged_in?
     ruby:
-      on_items = [ items_path, watches_path ].any? { |p| request.path.start_with?(p) }
-      on_entries = request.path.start_with?(entries_path)
-      on_listings = request.path.start_with?(listings_path) || request.path.start_with?(drafts_path)
-      on_transactions = request.path.start_with?(transactions_path)
+      on_items = [ items_path, watches_path ].any? { |p| current_page?(p) }
+      on_entries = current_page?(entries_path)
+      on_listings = current_page?(items_listings_path) || current_page?(drafts_path)
+      on_transactions = current_page?(transactions_path)
       active_cls  = "nav-link nav-link--active bg-white text-gray-900 font-semibold rounded-full px-2 sm:px-4 py-1.5 shadow-sm text-sm flex flex-row \
       flex-wrap items-center justify-center content-center"
       inactive_cls = "nav-link text-gray-500 rounded-full px-2 sm:px-4 py-1.5 hover:text-gray-800 transition-colors text-sm flex flex-row flex-wrap \
       items-center justify-center content-center"
       nav_class = ->(active) { active ? active_cls : inactive_cls }
-      on_notifications = request.path.start_with?(notifications_path)
+      on_notifications = current_page?(notifications_path)
       notifications_url = current_user.notifications.unread.exists? ? notifications_path(status: "unread") : notifications_path
     .header-inner.flex.flex-wrap.items-center.justify-between.px-4.py-3.gap-2.sm:gap-4.relative
       = link_to items_path, class: "site-logo" do
@@ -47,7 +47,7 @@ header.site-header.sticky.top-0.bg-white.z-10.border-b.border-gray-200.shadow-sm
           = link_to entries_path, class: nav_class.call(on_entries)
             span 希望
             span 商品
-          = link_to listings_path, class: nav_class.call(on_listings)
+          = link_to items_listings_path, class: nav_class.call(on_listings)
             span 自分の
             span 出品
           = link_to transactions_path, class: nav_class.call(on_transactions)

@@ -13,7 +13,7 @@ RSpec.describe "/items", type: :request do
         published_item = create(:item, :published, user: user)
         sold_item = create(:item, :sold, user: user)
         closed_item = create(:item, :closed, user: user)
-        get listings_path
+        get items_listings_path
 
         expect(response).to have_http_status(:success)
         expect(response.body).to include(published_item.title)
@@ -25,7 +25,7 @@ RSpec.describe "/items", type: :request do
 
     context "when no listings exists" do
       it "return message with http success" do
-        get listings_path
+        get items_listings_path
 
         expect(response).to have_http_status(:success)
         expect(response.body).to include("該当する商品はありません")
@@ -37,7 +37,7 @@ RSpec.describe "/items", type: :request do
         published_item = create(:item, :published, user: user)
         sold_item = create(:item, :sold, user: user)
         closed_item = create(:item, :closed, user: user)
-        get listings_path(status: "published")
+        get items_listings_path(status: "published")
 
         expect(response).to have_http_status(:success)
         expect(response.body).to include(published_item.title)
@@ -51,7 +51,7 @@ RSpec.describe "/items", type: :request do
         published_item = create(:item, :published, user: user)
         sold_item = create(:item, :sold, user: user)
         closed_item = create(:item, :closed, user: user)
-        get listings_path(status: "sold")
+        get items_listings_path(status: "sold")
 
         expect(response).to have_http_status(:success)
         expect(response.body).not_to include(published_item.title)
@@ -65,7 +65,7 @@ RSpec.describe "/items", type: :request do
         published_item = create(:item, :published, user: user)
         sold_item = create(:item, :sold, user: user)
         closed_item = create(:item, :closed, user: user)
-        get listings_path(status: "closed")
+        get items_listings_path(status: "closed")
 
         expect(response).to have_http_status(:success)
         expect(response.body).not_to include(published_item.title)
@@ -79,7 +79,7 @@ RSpec.describe "/items", type: :request do
         published_item = create(:item, :published, user: user)
         sold_item = create(:item, :sold, user: user)
         closed_item = create(:item, :closed, user: user)
-        get listings_path(status: "invalid")
+        get items_listings_path(status: "invalid")
 
         expect(response).to have_http_status(:success)
         expect(response.body).to include(published_item.title)
@@ -197,7 +197,7 @@ RSpec.describe "/items", type: :request do
 
       it "redirects to the listings" do
         post items_url, params: { item: valid_attributes }
-        expect(response).to redirect_to(listings_path)
+        expect(response).to redirect_to(items_listings_path)
       end
     end
   end
@@ -226,7 +226,7 @@ RSpec.describe "/items", type: :request do
         item = create(:item, :published, user: user)
         patch item_url(item), params: { close: true }
         item.reload
-        expect(response).to redirect_to(listings_path)
+        expect(response).to redirect_to(items_listings_path)
       end
     end
 
@@ -272,7 +272,7 @@ RSpec.describe "/items", type: :request do
         item = create(:item, user: user, title: "技術書")
         patch item_url(item), params: { item: new_attributes }
         item.reload
-        expect(response).to redirect_to(listings_path)
+        expect(response).to redirect_to(items_listings_path)
       end
     end
   end

@@ -2,16 +2,6 @@ class ItemsController < ApplicationController
   before_action :set_item, only: %i[show edit update destroy]
   before_action :ensure_user, only: %i[edit update]
 
-  def listings
-    items_scope = current_user.items
-                              .includes(:winner, images_attachments: :blob)
-                              .by_target(params[:status])
-                              .order(entry_deadline_at: :desc, updated_at: :desc)
-    @my_entries  = current_user.entries.where(item: items_scope).index_by(&:item_id)
-    @my_watches  = current_user.watches.where(item: items_scope).pluck(:item_id).to_set
-    @items = items_scope.page(params[:page]).per(16)
-  end
-
   # GET /items
   def index
     items_scope = Item.published
@@ -59,7 +49,7 @@ class ItemsController < ApplicationController
       end
     else
       if @item.save
-        redirect_to listings_path, notice: "下書き保存しました"
+        redirect_to items_listings_path, notice: "下書き保存しました"
       else
         render :new, status: :unprocessable_content
       end
@@ -75,7 +65,7 @@ class ItemsController < ApplicationController
 
     if params[:close]
       @item.close(reason: :user_action)
-      redirect_to listings_path, notice: "商品を取り下げました", status: :see_other
+      redirect_to items_listings_path, notice: "商品を取り下げました", status: :see_other
       return
     end
 
@@ -107,7 +97,7 @@ class ItemsController < ApplicationController
       end
     else
       if @item.save
-        redirect_to listings_path, notice: "下書きを更新しました", status: :see_other
+        redirect_to items_listings_path, notice: "下書きを更新しました", status: :see_other
       else
         render :edit, status: :unprocessable_content
       end
@@ -124,7 +114,7 @@ class ItemsController < ApplicationController
     @item.destroy!
 
     if @item.draft?
-      redirect_to listings_path, notice: "下書きを削除しました", status: :see_other
+      redirect_to items_listings_path, notice: "下書きを削除しました", status: :see_other
     else
       redirect_to items_path, notice: "商品を削除しました", status: :see_other
     end
