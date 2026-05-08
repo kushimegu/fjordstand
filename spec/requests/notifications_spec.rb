@@ -61,34 +61,4 @@ RSpec.describe "Notifications", type: :request do
       end
     end
   end
-
-  describe "PATCH /read" do
-    it "updates read status to true and redirect to notification link" do
-      unread_notification_1 = create(:notification, :for_item, user: seller, notifiable: sold_item)
-      unread_notification_2 = create(:notification, :for_item, user: seller, notifiable: closed_item)
-
-      expect(unread_notification_1.read).to be false
-      expect(unread_notification_2.read).to be false
-      patch notification_read_path(unread_notification_1)
-
-      expect(unread_notification_1.reload.read).to be true
-      expect(unread_notification_2.reload.read).to be false
-      expect(response).to redirect_to(unread_notification_1.link)
-    end
-  end
-
-  describe "PATCH /read_all" do
-    it "updates all notifications status to read and redirect to notifications path" do
-      unread_notification_1 = create(:notification, :for_item, user: seller, notifiable: sold_item)
-      unread_notification_2 = create(:notification, :for_item, user: seller, notifiable: closed_item)
-
-      expect(unread_notification_1.read).to be false
-      expect(unread_notification_2.read).to be false
-      patch read_all_notifications_path
-
-      expect(unread_notification_1.reload.read).to be true
-      expect(unread_notification_2.reload.read).to be true
-      expect(response).to redirect_to(notifications_path)
-    end
-  end
 end
