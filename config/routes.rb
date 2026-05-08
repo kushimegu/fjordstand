@@ -10,11 +10,11 @@ Rails.application.routes.draw do
   resources :transactions, only: [:index] do
     resources :messages, only: %i[index create destroy]
   end
-  get "/entries", to: "entries#index"
+  resources :entries, only: %i[index]
   scope module: :items do
     resources :listings, only: %i[index]
   end
-  get "/watches", to: "watches#index"
+  resources :watches, only: %i[index]
   resources :items do
     resource :entries, only: %i[create destroy]
     resources :comments, only: %i[create destroy]
@@ -24,10 +24,10 @@ Rails.application.routes.draw do
   get "/terms", to: "pages#terms"
   get "/privacy", to: "pages#privacy"
   resource :session, only: %i[create destroy]
-  get 'auth/:provider/callback', to: 'sessions#create'
-  get 'auth/failure', to: 'sessions#failure'
-  delete 'logout', to: 'sessions#destroy', as: 'logout'
-  get 'up' => 'rails/health#show', as: :rails_health_check
+  get "auth/:provider/callback", to: "sessions#create"
+  get "auth/failure", to: "sessions#failure"
+  delete "logout", to: "sessions#destroy", as: "logout"
+  get "up" => "rails/health#show", as: :rails_health_check
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
 end
