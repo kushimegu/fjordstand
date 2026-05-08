@@ -16,7 +16,7 @@ RSpec.describe "Items", type: :system do
 
       expect(page).to have_current_path(items_path)
 
-      visit items_listings_path
+      visit listings_path
       click_on "下書き"
 
       expect(page).to have_css("a.active-tab", text: "下書き")
@@ -33,7 +33,7 @@ RSpec.describe "Items", type: :system do
       sold_item = create(:item, :sold, user: user)
       expect(page).to have_current_path(items_path)
 
-      visit items_listings_path
+      visit listings_path
       click_on "出品中"
 
       expect(page).to have_css("a.active-tab", text: "出品中")
@@ -50,7 +50,7 @@ RSpec.describe "Items", type: :system do
       sold_item = create(:item, :sold, user: user)
       expect(page).to have_current_path(items_path)
 
-      visit items_listings_path
+      visit listings_path
       click_on "購入者決定"
 
       expect(page).to have_css("a.active-tab", text: "購入者\n決定")
@@ -67,7 +67,7 @@ RSpec.describe "Items", type: :system do
       sold_item = create(:item, :sold, user: user)
       expect(page).to have_current_path(items_path)
 
-      visit items_listings_path
+      visit listings_path
       click_on "公開終了"
 
       expect(page).to have_css("a.active-tab", text: "公開\n終了")
@@ -84,7 +84,7 @@ RSpec.describe "Items", type: :system do
       sold_item = create(:item, :sold, user: user)
       expect(page).to have_current_path(items_path)
 
-      visit items_listings_path
+      visit listings_path
       click_on "全て"
 
       expect(page).to have_css("a.active-tab", text: "全て")
@@ -376,7 +376,7 @@ RSpec.describe "Items", type: :system do
         fill_in '商品名', with: '技術書'
         click_on '下書きとして保存する'
 
-        expect(page).to have_current_path(items_listings_path)
+        expect(page).to have_current_path(listings_path)
         expect(page).to have_content('技術書')
       end
     end
@@ -423,7 +423,7 @@ RSpec.describe "Items", type: :system do
         click_on '編集する'
 
         click_on '出品を取り下げる'
-        expect(page).to have_current_path(items_listings_path)
+        expect(page).to have_current_path(listings_path)
         expect(page).to have_content('技術書')
       end
     end
@@ -433,12 +433,12 @@ RSpec.describe "Items", type: :system do
         create(:item, user: user, title: '技術書')
         expect(page).to have_current_path(items_path)
 
-        visit items_listings_path
+        visit listings_path
         click_on '技術書'
         fill_in '商品名', with: '小説'
         click_on '下書きを更新する'
 
-        expect(page).to have_current_path(items_listings_path)
+        expect(page).to have_current_path(listings_path)
         expect(page).to have_content('小説')
       end
     end
@@ -448,7 +448,7 @@ RSpec.describe "Items", type: :system do
         item = create(:item, :with_item_image, user: user, title: '技術書')
         expect(page).to have_current_path(items_path)
 
-        visit items_listings_path
+        visit listings_path
         click_on '技術書'
         fill_in '商品名', with: '小説'
         click_button '出品する'
@@ -482,13 +482,13 @@ RSpec.describe "Items", type: :system do
         create(:item, user: user, title: '技術書')
         expect(page).to have_current_path(items_path)
 
-        visit items_listings_path
+        visit listings_path
         click_on '技術書'
         accept_confirm do
           click_on '削除する'
         end
 
-        expect(page).to have_current_path(items_listings_path)
+        expect(page).to have_current_path(listings_path)
         expect(page).not_to have_content('技術書')
         expect(page).to have_content('下書きを削除しました')
       end

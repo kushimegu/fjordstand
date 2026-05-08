@@ -49,7 +49,7 @@ class ItemsController < ApplicationController
       end
     else
       if @item.save
-        redirect_to items_listings_path, notice: "下書き保存しました"
+        redirect_to listings_path, notice: "下書き保存しました"
       else
         render :new, status: :unprocessable_content
       end
@@ -65,7 +65,7 @@ class ItemsController < ApplicationController
 
     if params[:close]
       @item.close(reason: :user_action)
-      redirect_to items_listings_path, notice: "商品を取り下げました", status: :see_other
+      redirect_to listings_path, notice: "商品を取り下げました", status: :see_other
       return
     end
 
@@ -97,7 +97,7 @@ class ItemsController < ApplicationController
       end
     else
       if @item.save
-        redirect_to items_listings_path, notice: "下書きを更新しました", status: :see_other
+        redirect_to listings_path, notice: "下書きを更新しました", status: :see_other
       else
         render :edit, status: :unprocessable_content
       end
@@ -114,7 +114,7 @@ class ItemsController < ApplicationController
     @item.destroy!
 
     if @item.draft?
-      redirect_to items_listings_path, notice: "下書きを削除しました", status: :see_other
+      redirect_to listings_path, notice: "下書きを削除しました", status: :see_other
     else
       redirect_to items_path, notice: "商品を削除しました", status: :see_other
     end

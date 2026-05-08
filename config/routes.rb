@@ -10,9 +10,8 @@ Rails.application.routes.draw do
   resources :transactions, only: [:index] do
     resources :messages, only: %i[index create destroy]
   end
-  get "/drafts", to: "items#drafts"
   get "/entries", to: "entries#index"
-  namespace :items do
+  scope module: :items do
     resources :listings, only: %i[index]
   end
   get "/watches", to: "watches#index"
