@@ -13,7 +13,7 @@ RSpec.describe SessionsHelper, type: :helper do
 
       it "memorizes user" do
         helper.current_user
-        expect(User).not_to receive(:find_by)
+        expect(User).not_to have_received(:find_by)
         helper.current_user
       end
     end
