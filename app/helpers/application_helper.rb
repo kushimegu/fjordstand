@@ -12,11 +12,11 @@ module ApplicationHelper
     when "entries"
       label, path = "希望商品一覧へ", entries_path
     when "listings"
-      label, path = "自分の出品へ", listings_path
+      label, path = "自分の出品一覧へ", listings_path
     when "messages"
       label, path = "連絡ページへ", transaction_messages_path(item)
     else
-      label, path = "販売中商品へ", items_path
+      label, path = "販売中一覧へ", items_path
     end
 
     link_to path, class: "mt-4 flex items-center justify-center text-sm text-gray-500 hover:text-gray-700 underline" do
