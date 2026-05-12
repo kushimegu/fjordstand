@@ -9,6 +9,6 @@ h1.page-title.font-bold.text-2xl.mb-4.text-gray-900.text-center みんなの商�
   = paginate @watches
   .items-grid.grid.grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-4.mt-4
     - @watches.each do |watch|
-      = render "shared/item_card", item: watch.item, url: watch.item, badges: [ { text: "Watch中", css: "bg-amber-500" } ]
+      = render "shared/item_card", item: watch.item, url: item_path(watch.item, from: :watches), badges: [ { text: "Watch中", css: "bg-amber-500" } ]
   .pagination.mt-6
     = paginate @watches

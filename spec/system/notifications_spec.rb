@@ -47,7 +47,7 @@ RSpec.describe "Notifications", type: :system do
         visit notifications_path(status: "unread")
         expect(page).to have_css("span.absolute", text: "2")
 
-        find("a[href='#{read_notification_path(notification_for_closed_item)}']").click
+        find("a[href='#{notification_read_path(notification_for_closed_item)}']").click
 
         expect(page).to have_current_path(item_path(closed_item))
         expect(page).to have_css("span.absolute", text: "1")
