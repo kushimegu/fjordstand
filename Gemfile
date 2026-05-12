@@ -76,5 +76,4 @@ gem "ruby-vips"
 gem "rails-i18n"
 gem "active_storage_validations"
 gem "kaminari"
-
 gem "solid_queue", "~> 1.4"
