@@ -14,7 +14,7 @@ RSpec.describe Watch, type: :model do
 
         is_valid = second_registration.valid?
         expect(is_valid).to be false
-        expect(second_registration.errors.full_messages).to include("ユーザーはこのコメント欄をすでにWatchしています")
+        expect(second_registration.errors.full_messages).to include("ユーザーはこの商品をすでにWatchしています")
       end
     end
   end
