@@ -1,0 +1,16 @@
+doctype html
+html
+  head
+    meta charset="utf-8"
+    meta name="viewport" content="initial-scale=1, width=device-width"
+    meta name="robots" content="noindex, nofollow"
+    script src="https://cdn.tailwindcss.com"
+    title
+      = page_title(yield(:title))
+    = stylesheet_link_tag "application", media: "all"
+    = favicon_link_tag "favicon.ico"
+  body.min-h-screen.flex.flex-col.h-full.text-gray-700.bg-gray-50.antialiased
+    = render "public_pages/header"
+    main.flex-1.flex.items-center.justify-center
+      .container.mx-auto.px-4.mt-4.mb-6
+        = yield
