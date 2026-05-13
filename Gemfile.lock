@@ -159,6 +159,8 @@ GEM
       raabro (~> 1.4)
     globalid (1.3.0)
       activesupport (>= 6.1)
+    hanmoto (0.7.0)
+      rails (>= 6.1.0)
     hashdiff (1.2.1)
     hashie (5.1.0)
       logger
@@ -548,6 +550,7 @@ DEPENDENCIES
   dotenv-rails
   factory_bot_rails
   faker
+  hanmoto
   image_processing (~> 1.2)
   importmap-rails
   kamal
