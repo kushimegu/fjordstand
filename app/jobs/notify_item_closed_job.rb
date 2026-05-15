@@ -10,7 +10,6 @@ class NotifyItemClosedJob < ApplicationJob
 
     case reason
     when :user_action
-      DiscordWebhook.new.notify_item_closed(item.applicants, item)
       now = Time.current
       notifications = item.applicants.map do |applicant|
         {
@@ -22,11 +21,14 @@ class NotifyItemClosedJob < ApplicationJob
           updated_at: now
         }
       end
-      Notification.insert_all!(notifications) if notifications.any?
-      DestroyEntriesJob.perform_later(item_id)
+      ActiveRecord::Base.transaction do
+        Notification.insert_all!(notifications) if notifications.any?
+        DestroyEntriesJob.perform_later(item_id)
+      end
+      DiscordWebhook.new.notify_item_closed(item.applicants, item)
     when :no_applicants
-      DiscordWebhook.new.notify_lottery_skipped(item.user, item)
       Notification.create!(user: item.user, notifiable: item)
+      DiscordWebhook.new.notify_lottery_skipped(item.user, item)
     end
   end
 end
