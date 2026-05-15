@@ -108,7 +108,7 @@ RSpec.describe Entry, type: :model do
     end
 
     context "when applying for item whose deadline is today" do
-      let(:entry_deadline_at) { Date.today.end_of_day }
+      let(:entry_deadline_at) { Date.current.end_of_day }
       let(:entry) { build(:entry, item: item, user: applier) }
 
       it "can apply for unexpired item" do

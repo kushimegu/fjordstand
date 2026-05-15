@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Lottery do
   describe "run" do
     let(:seller) { create(:user) }
-    let!(:item) { create(:item, :published, user: seller, entry_deadline_at: Date.today.end_of_day) }
+    let!(:item) { create(:item, :published, user: seller, entry_deadline_at: Date.current.end_of_day) }
     let(:buyer) { create(:user) }
 
     context "when one entry exists" do
