@@ -37,6 +37,18 @@ gem "thruster", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 1.2"
 
+gem "dotenv-rails"
+gem "omniauth-discord"
+gem "omniauth-rails_csrf_protection"
+gem "discordrb"
+gem "slim-rails"
+gem "ruby-vips"
+gem "rails-i18n"
+gem "active_storage_validations"
+gem "kaminari"
+gem "solid_queue", "~> 1.4"
+gem "hanmoto"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
@@ -66,15 +78,3 @@ group :test do
   gem "selenium-webdriver"
   gem "webmock"
 end
-
-gem "dotenv-rails"
-gem "omniauth-discord"
-gem "omniauth-rails_csrf_protection"
-gem "discordrb"
-gem "slim-rails"
-gem "ruby-vips"
-gem "rails-i18n"
-gem "active_storage_validations"
-gem "kaminari"
-gem "solid_queue", "~> 1.4"
-gem "hanmoto"

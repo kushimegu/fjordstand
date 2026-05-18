@@ -34,7 +34,6 @@ module FjordStand
     # in config/environments, which are processed later.
     #
     config.time_zone = "Tokyo"
-    config.active_record.default_timezone = :local
     # config.eager_load_paths << Rails.root.join("extras")
 
     config.i18n.default_locale = :ja
@@ -50,6 +49,6 @@ module FjordStand
                         system_specs: true
     end
 
-    config.active_job.queue_adapter = :async
+    config.active_job.queue_adapter = :solid_queue
   end
 end
