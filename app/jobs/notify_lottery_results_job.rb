@@ -9,7 +9,7 @@ class NotifyLotteryResultsJob < ApplicationJob
       { entries: :user },
       images_attachments: :blob
     ).find(item_id)
-      
+
     now = Time.current
     notifications = item.entries.map do |entry|
       {
