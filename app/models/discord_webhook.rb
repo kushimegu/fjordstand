@@ -7,6 +7,17 @@ class DiscordWebhook
     @client = Discordrb::Webhooks::Client.new(url: ENV["WEBHOOK_URL"])
   end
 
+  def notify_job_failure(job_name, error_message)
+    @error_client = Discordrb::Webhooks::Client.new(url: ENV["ERROR_WEBHOOK_URL"])
+    @error_client.execute do |builder|
+      builder.content = "❌ジョブ実行に失敗しました"
+      builder.add_embed do |embed|
+        embed.title = job_name
+        embed.description = error_message
+      end
+    end
+  end
+
   def notify_item_published(item)
     send_webhook("🛒新しい商品が出品されました！", item, use_image: true)
   end
