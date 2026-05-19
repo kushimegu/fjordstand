@@ -67,6 +67,7 @@ env:
     - DISCORD_SERVER_ID
     - DISCORD_REDIRECT_URI
     - WEBHOOK_URL
+    - ERROR_WEBHOOK_URL
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
 # "bin/kamal logs -r job" will tail logs from the first server in the job section.
