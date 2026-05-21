@@ -48,6 +48,7 @@ gem "active_storage_validations"
 gem "kaminari"
 gem "solid_queue", "~> 1.4"
 gem "hanmoto"
+gem "mission_control-jobs"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
