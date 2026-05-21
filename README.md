@@ -1,4 +1,5 @@
 # FjordStand
+<img width="1126" height="402" alt="fjordstand-image" src="https://github.com/user-attachments/assets/bfe85896-ba90-4b1b-91d7-7c6dc63aa3f9" />
 
 ## サービス概要
 
@@ -7,6 +8,28 @@ FjordBootCamp (FBC) 内の人に不用品を安く譲って役立ててもらい
 - 出品者は購入希望申請期間を設けて商品を出品できます
 - 締切日時になると購入希望者から自動的に抽選が行われ、購入者が決定します
 - 購入確定後は出品者・購入者間の連絡ページでやり取りができます
+
+## サービスURL
+https://fjordstand.com
+
+## 使い方
+出品するボタンから商品情報を入力して出品します。購入希望の申請締切は選択した日付の23時59分に設定されます。
+
+<img width="874" height="644" alt="スクリーンショット 2026-05-21 17 50 39" src="https://github.com/user-attachments/assets/87ddee7c-166f-4994-ab70-74014da8edac" />
+
+購入希望の申請締切日を過ぎると自動で抽選が行われ、希望者の中から購入者が決定します。抽選は毎日8時頃に行われます。
+
+<img width="876" height="538" alt="スクリーンショット 2026-05-21 17 51 05" src="https://github.com/user-attachments/assets/f1b9962d-cb59-4cfb-b0a9-b66820e44132" />
+
+購入確定後は非公開の連絡ページで出品者と購入者の間でやり取りし、外部のサービスを使用して送金および商品の発送を行ってください。
+
+<img width="698" height="473" alt="スクリーンショット 2026-05-21 17 51 25" src="https://github.com/user-attachments/assets/1ed495e1-04ee-4114-89f7-f2027c123752" />
+
+出品した商品およびコメントした商品はWatch中の状態になり、一覧で見る事ができる他、その商品に新しいコメントが投稿された際にDiscordおよびアプリ内で通知を受け取る事ができます。（Watchはボタンから登録・解除することもできます。）
+
+Discordで受け取る通知にはメンションがついており、抽選結果やコメント、メッセージの見逃し防止に役立ちます。
+
+<img width="330" height="223" alt="スクリーンショット 2026-05-21 18 10 38" src="https://github.com/user-attachments/assets/66169cf2-e14a-422c-9edf-05cc52d48357" />
 
 ## 技術スタック
 
@@ -74,6 +97,7 @@ DISCORD_REDIRECT_URI=
 DISCORD_BOT_TOKEN=
 DISCORD_SERVER_ID=
 WEBHOOK_URL=
+ERROR_WEBHOOK_URL=
 ```
 
 ### Discord アプリの設定
@@ -87,6 +111,7 @@ WEBHOOK_URL=
 5. Bot を作成してトークンを `DISCORD_BOT_TOKEN` に設定
 6. 開発に使用する Discord サーバーの ID を `DISCORD_SERVER_ID` に設定
 7. Discord チャンネル設定の Webhook 画面から URL を取得し、`DISCORD_WEBHOOK_URL` に設定
+8. ジョブに失敗した際に通知を受け取る Discord チャンネルの Webhook 画面から URL を取得し、`ERROR_WEBHOOK_URL` に設定
 
 ## 開発サーバーの起動
 
