@@ -1,4 +1,5 @@
 # FjordStand
+
 <img width="1126" height="402" alt="fjordstand-image" src="https://github.com/user-attachments/assets/bfe85896-ba90-4b1b-91d7-7c6dc63aa3f9" />
 
 ## サービス概要
@@ -10,9 +11,11 @@ FjordBootCamp (FBC) 内の人に不用品を安く譲って役立ててもらい
 - 購入確定後は出品者・購入者間の連絡ページでやり取りができます
 
 ## サービスURL
+
 https://fjordstand.com
 
 ## 使い方
+
 出品するボタンから商品情報を入力して出品します。購入希望の申請締切は選択した日付の23時59分に設定されます。
 
 <img width="874" height="644" alt="スクリーンショット 2026-05-21 17 50 39" src="https://github.com/user-attachments/assets/87ddee7c-166f-4994-ab70-74014da8edac" />
