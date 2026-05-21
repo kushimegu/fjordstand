@@ -29,6 +29,9 @@ header.site-header.sticky.top-0.bg-white.z-10.border-b.border-gray-200.shadow-sm
               - display_count = current_user.notifications.unread.count > 99 ? "99+" : current_user.notifications.unread.count
               span.notification-badge.absolute.top-0.-right-1.min-w-5.px-1.bg-red-500.text-white.text-xs.font-bold.rounded-full.flex.items-center.justify-center
                 = display_count
+        - if current_user.admin?
+          = link_to "ジョブ管理", "/jobs", target: "_blank", rel: "noopener",
+          class: "text-sm cursor-pointer px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
         .user-menu[data-controller="hamburger",
         data-hamburger-target="button" data-action="click->hamburger#toggle" aria-expanded="false" aria-controls="header__nav"]
           .user-menu__trigger.flex.items-center.cursor-pointer.px-2.py-1.rounded-lg.hover:bg-gray-100.transition-colors

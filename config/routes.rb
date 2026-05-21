@@ -1,3 +1,13 @@
+class AdminConstraint
+  def matches?(request)
+    user_id = request.session[:user_id]
+    return false unless user_id
+
+    user = User.find_by(id: user_id)
+    user&.admin?
+  end
+end
+
 Rails.application.routes.draw do
   resources :items do
     resource :entries, only: %i[create destroy]
@@ -27,6 +37,9 @@ Rails.application.routes.draw do
   get "/terms", to: "pages#terms"
   get "/privacy", to: "pages#privacy"
   root to: "pages#home"
+  constraints AdminConstraint.new do
+    mount MissionControl::Jobs::Engine, at: "/jobs"
+  end
   get "up" => "rails/health#show", as: :rails_health_check
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
