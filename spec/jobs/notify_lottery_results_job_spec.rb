@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe NotifyLotteryResultsJob, type: :job do
-    let!(:webhook) { stub_discord_webhook }
+  let!(:webhook) { stub_discord_webhook }
 
   let(:seller) { create(:user) }
   let(:item) { create(:item, :sold, user: seller) }
@@ -21,6 +21,15 @@ RSpec.describe NotifyLotteryResultsJob, type: :job do
     it "sends webhook notification" do
       described_class.perform_now(item.id)
       expect(webhook).to have_received(:notify_lottery_completed).with([ winner, seller ], item)
+    end
+
+    context 'when item has no applicants' do
+      let(:closed_item) { create(:item, :closed, user: seller) }
+
+      it 'does not create an item notification' do
+        expect { described_class.perform_now(closed_item.id) }.not_to change(Notification, :count)
+        expect(webhook).to have_received(:notify_lottery_completed).with([ seller ], closed_item)
+      end
     end
   end
 end
