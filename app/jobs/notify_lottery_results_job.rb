@@ -23,7 +23,7 @@ class NotifyLotteryResultsJob < ApplicationJob
     end
     ActiveRecord::Base.transaction do
       Notification.insert_all!(notifications) if notifications.any?
-      Notification.create!(user: item.user, notifiable: item)
+      Notification.create!(user: item.user, notifiable: item) if item.entries.any?
     end
     DiscordWebhook.new.notify_lottery_completed(item.applicants + [ item.user ], item)
   end
