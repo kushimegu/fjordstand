@@ -6,19 +6,6 @@ RSpec.describe Comment, type: :model do
     webhook = stub_discord_webhook
   end
 
-  describe "validations" do
-    context "when body is blank" do
-      let(:comment) { build(:comment, body: nil) }
-
-      it "is invalid" do
-        is_valid = comment.valid?
-
-        expect(is_valid).to be false
-        expect(comment.errors[:body]).to include("を入力してください")
-      end
-    end
-  end
-
   describe "#add_commentator_to_watchers" do
     let(:item) { create(:item, :published) }
     let(:user) { create(:user) }

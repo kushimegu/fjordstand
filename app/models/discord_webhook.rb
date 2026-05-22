@@ -60,14 +60,14 @@ class DiscordWebhook
 
   private
 
+  def create_mentions(users)
+    Array.wrap(users).map { |user| "<@#{user.uid}>" }.join(" ")
+  end
+
   def create_prefix(mentions)
     return "" if mentions.blank?
 
     mentions + "\n"
-  end
-
-  def create_mentions(users)
-    Array.wrap(users).map { |user| "<@#{user.uid}>" }.join(" ")
   end
 
   def send_webhook(content, item, use_image: false)
