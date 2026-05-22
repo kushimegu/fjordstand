@@ -21,9 +21,11 @@ gem "tailwindcss-rails"
 # gem "bcrypt", "~> 3.1.7"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem "tzinfo-data", platforms: %i[ windows jruby ]
+# gem "tzinfo-data", platforms: %i[ windows jruby ]
 
 # Use the database-backed adapters for Rails.cache and Active Job
+gem "solid_cache"
+gem "solid_queue", "~> 1.4"
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
@@ -46,7 +48,6 @@ gem "ruby-vips"
 gem "rails-i18n"
 gem "active_storage_validations"
 gem "kaminari"
-gem "solid_queue", "~> 1.4"
 gem "hanmoto"
 gem "mission_control-jobs"
 
@@ -60,17 +61,14 @@ group :development, :test do
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
 
-  gem "rspec-rails"
-  gem "factory_bot_rails"
   gem "rubocop-rspec", require: false
-  gem "faker"
+  gem "rubocop-fjord", require: false
 end
 
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
 
-  gem "rubocop-fjord", require: false
   gem "slim_lint", require: false
 end
 
@@ -78,4 +76,7 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem "webmock"
+  gem "factory_bot_rails"
+  gem "faker"
+  gem "rspec-rails"
 end
