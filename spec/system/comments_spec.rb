@@ -27,7 +27,7 @@ RSpec.describe "Items", type: :system do
 
         visit item_path(item)
         fill_in "comment_body", with: "初版ですか？"
-        click_on "送信する"
+        click_on "投稿する"
 
         expect(page).to have_content("初版ですか？")
       end
@@ -39,7 +39,7 @@ RSpec.describe "Items", type: :system do
 
         visit item_path(item)
         fill_in "comment_body", with: "\n"
-        click_on "送信する"
+        click_on "投稿する"
 
         expect(page).to have_content("コメントを入力してください")
       end

@@ -1,6 +1,7 @@
 class ItemsController < ApplicationController
   before_action :set_item, only: %i[show edit update destroy]
   before_action :ensure_user, only: %i[edit update]
+  before_action :ensure_item_editable, only: %i[edit update]
 
   # GET /items
   def index
@@ -30,9 +31,6 @@ class ItemsController < ApplicationController
 
   # GET /items/1/edit
   def edit
-    unless @item.editable?
-      redirect_to @item, alert: "締切を過ぎた商品は編集できません"
-    end
   end
 
   # POST /items
@@ -49,7 +47,7 @@ class ItemsController < ApplicationController
       end
     else
       if @item.save
-        redirect_to listings_path, notice: "下書き保存しました"
+        redirect_to listings_path, notice: "下書きとして保存しました"
       else
         render :new, status: :unprocessable_content
       end
@@ -58,11 +56,6 @@ class ItemsController < ApplicationController
 
   # PATCH/PUT /items/1
   def update
-    unless @item.editable?
-      redirect_to @item, alert: "締切を過ぎた商品は編集できません"
-      return
-    end
-
     if params[:close]
       @item.close(reason: :user_action)
       redirect_to listings_path, notice: "商品を取り下げました", status: :see_other
@@ -74,17 +67,9 @@ class ItemsController < ApplicationController
     description_append = params[:item][:description_append]
     payment_method_append = params[:item][:payment_method_append]
 
-    if title_append.present?
-      @item.title = [ @item.title, title_append ].join(" ")
-    end
-
-    if description_append.present?
-      @item.description = [ @item.description.presence, description_append ].compact.join("\n")
-    end
-
-    if payment_method_append.present?
-      @item.payment_method = [ @item.payment_method, payment_method_append ].join(" ")
-    end
+    @item.title = [ @item.title, title_append ].join(" ") if title_append.present?
+    @item.description = [ @item.description.presence, description_append ].compact.join("\n") if description_append.present?
+    @item.payment_method = [ @item.payment_method, payment_method_append ].join(" ") if payment_method_append.present?
 
     if params[:publish]
       if @item.valid?(:publish)
@@ -136,5 +121,11 @@ class ItemsController < ApplicationController
     @items = current_user.items
     @item = @items.find_by(id: params[:id])
     redirect_to items_path unless @item
+  end
+
+  def ensure_item_editable
+    unless @item.editable?
+      redirect_to @item, alert: "締切を過ぎた商品は編集できません"
+    end
   end
 end

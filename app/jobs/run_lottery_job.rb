@@ -7,7 +7,7 @@ class RunLotteryJob < ApplicationJob
       return unless item.published?
 
       Lottery.new(item).run
-      NotifyLotteryResultsJob.perform_later(item_id)
+      NotifyLotteryResultsJob.perform_later(item_id) if item.sold?
     end
   end
 end

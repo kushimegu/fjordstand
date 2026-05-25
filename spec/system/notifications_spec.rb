@@ -49,7 +49,7 @@ RSpec.describe "Notifications", type: :system do
 
         find("a[href='#{notification_read_path(notification_for_closed_item)}']").click
 
-        expect(page).to have_current_path(item_path(closed_item))
+        expect(page).to have_current_path("#{item_path(closed_item)}?from=notifications")
         expect(page).to have_css("span.absolute", text: "1")
       end
     end

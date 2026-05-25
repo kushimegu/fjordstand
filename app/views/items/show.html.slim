@@ -253,7 +253,7 @@ article.item-show.mt-2.flex.flex-col.md:grid.md:grid-cols-2.md:gap-10.md:items-s
                   placeholder: "コメントを入力...", required: true
                 = render "shared/error_messages", model: @comment, attribute: :body
                 .flex.justify-end.mt-2
-                  = form.submit "送信する",
+                  = form.submit "投稿する",
                   class: "cursor-pointer border border-cyan-600 text-cyan-600 font-semibold px-5 py-2 rounded-lg hover:bg-cyan-50 text-base transition-colors"
 
 = back_link_for_item(@item)

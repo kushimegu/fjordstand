@@ -1,11 +1,7 @@
 header.site-header.sticky.top-0.bg-white.z-10.border-b.border-gray-200.shadow-sm
   - if logged_in?
     ruby:
-      on_items = [ items_path, watches_path ].any? { |p| current_page?(p) }
-      on_entries = current_page?(entries_path)
-      on_listings = [ new_item_path, listings_path ].any? { |p| current_page?(p) } || request.path.match?(%r{\A/items/\d+/edit\z})
-      on_transactions = request.path.start_with?(transactions_path)
-      active_cls  = "nav-link nav-link--active bg-white text-gray-900 font-semibold rounded-full px-2 sm:px-4 py-1.5 shadow-sm text-sm flex flex-row \
+      active_cls = "nav-link nav-link--active bg-white text-gray-900 font-semibold rounded-full px-2 sm:px-4 py-1.5 shadow-sm text-sm flex flex-row \
       flex-wrap items-center justify-center content-center"
       inactive_cls = "nav-link text-gray-500 rounded-full px-2 sm:px-4 py-1.5 hover:text-gray-800 transition-colors text-sm flex flex-row flex-wrap \
       items-center justify-center content-center"
@@ -44,16 +40,16 @@ header.site-header.sticky.top-0.bg-white.z-10.border-b.border-gray-200.shadow-sm
             class: "block px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors"
       nav.nav-wrapper.flex.items-center.w-full.order-last.lg:w-auto.lg:absolute.lg:left-1/2.lg:-translate-x-1/2
         .site-nav.bg-gray-100.mx-auto.rounded-full.p-1.flex.items-center.relative
-          = link_to items_path, class: nav_class.call(on_items)
+          = link_to items_path, class: nav_class.call(active_items_tab?)
             span みんなの
             span 商品
-          = link_to entries_path, class: nav_class.call(on_entries)
+          = link_to entries_path, class: nav_class.call(active_entries_tab?)
             span 希望
             span 商品
-          = link_to listings_path, class: nav_class.call(on_listings)
+          = link_to listings_path, class: nav_class.call(active_listings_tab?)
             span 自分の
             span 出品
-          = link_to transactions_path, class: nav_class.call(on_transactions)
+          = link_to transactions_path, class: nav_class.call(active_transactions_tab?)
             span 連絡
             span ページ
           - if current_user.has_unread_messages?

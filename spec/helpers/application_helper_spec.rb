@@ -75,4 +75,228 @@ RSpec.describe ApplicationHelper, type: :helper do
       end
     end
   end
+
+  describe "#active_items_tab?" do
+    context "when current page is items_path" do
+      before do
+        allow(helper).to receive(:current_page?) { |path| path == items_path }
+        allow(helper).to receive(:request).and_return(double(fullpath: items_path))
+      end
+
+      it "returns true" do
+        expect(helper.active_items_tab?).to be true
+      end
+    end
+
+    context "when current page is watches_path" do
+      before do
+        allow(helper).to receive(:current_page?) { |path| path == watches_path }
+        allow(helper).to receive(:request).and_return(double(fullpath: watches_path))
+      end
+
+      it "returns true" do
+        expect(helper.active_items_tab?).to be true
+      end
+    end
+
+    context "when fullpath includes from=watches" do
+      before do
+        allow(helper).to receive_messages(
+          current_page?: false,
+          request: double(fullpath: "/items/1?from=watches", path: "/items/1")
+        )
+      end
+
+      it "returns true" do
+        expect(helper.active_items_tab?).to be true
+      end
+    end
+
+    context "when fullpath includes from=items" do
+      before do
+        allow(helper).to receive_messages(
+          current_page?: false,
+          request: double(fullpath: "/items/1?from=items", path: "/items/1")
+        )
+      end
+
+      it "returns true" do
+        expect(helper.active_items_tab?).to be true
+      end
+    end
+
+    context "when fullpath includes from=notifications" do
+      before do
+        allow(helper).to receive_messages(
+          current_page?: false,
+          request: double(fullpath: "/items/1?from=notifications", path: "/items/1")
+        )
+        allow(helper).to receive(:request).and_return(double(fullpath: "/items/1?from=notifications"))
+      end
+
+      it "returns true" do
+        expect(helper.active_items_tab?).to be true
+      end
+    end
+
+    context "when current page is other path and fullpath does not include from param" do
+      before do
+        allow(helper).to receive_messages(
+          current_page?: false,
+          request: double(fullpath: "/listings")
+        )
+      end
+
+      it "returns false" do
+        expect(helper.active_items_tab?).to be false
+      end
+    end
+  end
+
+  describe "#active_entries_tab?" do
+    context "when current page is entries_path" do
+      before do
+        allow(helper).to receive(:current_page?) { |path| path == entries_path }
+        allow(helper).to receive(:request).and_return(double(fullpath: entries_path))
+      end
+
+      it "returns true" do
+        expect(helper.active_entries_tab?).to be true
+      end
+    end
+
+    context "when fullpath includes from=entries" do
+      before do
+        allow(helper).to receive_messages(
+          current_page?: false,
+          request: double(fullpath: "/items/1?from=entries", path: "/items/1")
+        )
+      end
+
+      it "returns true" do
+        expect(helper.active_entries_tab?).to be true
+      end
+    end
+
+    context "when current page is other path and fullpath does not include from=entries" do
+      before do
+        allow(helper).to receive_messages(
+          current_page?: false,
+          request: double(fullpath: "/listings")
+        )
+      end
+
+      it "returns false" do
+        expect(helper.active_entries_tab?).to be false
+      end
+    end
+  end
+
+  describe "#active_listings_tab?" do
+    context "when current page is new_item_path" do
+      before do
+        allow(helper).to receive(:current_page?) { |path| path == new_item_path }
+        allow(helper).to receive(:request).and_return(double(fullpath: new_item_path))
+      end
+
+      it "returns true" do
+        expect(helper.active_listings_tab?).to be true
+      end
+    end
+
+    context "when current page is listings_path" do
+      before do
+        allow(helper).to receive(:current_page?) { |path| path == listings_path }
+        allow(helper).to receive(:request).and_return(double(fullpath: listings_path))
+      end
+
+      it "returns true" do
+        expect(helper.active_listings_tab?).to be true
+      end
+    end
+
+    context "when current page is edit item path" do
+      let(:item) { create(:item) }
+
+      before do
+        allow(helper).to receive_messages(
+          current_page?: false,
+          request: double(path: "/items/#{item.id}/edit")
+        )
+      end
+
+      it "returns true" do
+        expect(helper.active_listings_tab?).to be true
+      end
+    end
+
+    context "when fullpath includes from=listings" do
+      before do
+        allow(helper).to receive_messages(
+          current_page?: false,
+          request: double(fullpath: "/items/1/edit?from=listings", path: "/items/1/edit")
+        )
+      end
+
+      it "returns true" do
+        expect(helper.active_listings_tab?).to be true
+      end
+    end
+
+    context "when current page is other path and fullpath does not include from=listings" do
+      before do
+        allow(helper).to receive_messages(
+          current_page?: false,
+          request: double(fullpath: "/items/1/edit", path: "/items/1/edit")
+        )
+        allow(helper).to receive(:request).and_return(double(fullpath: "/items/1?from=entries", path: "/items/1"))
+      end
+
+      it "returns false" do
+        expect(helper.active_listings_tab?).to be false
+      end
+    end
+  end
+
+  describe "#active_transactions_tab?" do
+    context "when current page is transactions_path" do
+      before do
+        allow(helper).to receive_messages(
+          current_page?: true,
+          request: double(fullpath: transactions_path)
+        )
+      end
+
+      it "returns true" do
+        expect(helper.active_transactions_tab?).to be true
+      end
+    end
+
+    context "when fullpath includes from=messages" do
+      before do
+        allow(helper).to receive_messages(
+          current_page?: false,
+          request: double(fullpath: "/items/1?from=messages")
+        )
+        allow(helper).to receive(:request).and_return(double(fullpath: "/items/1?from=messages"))
+      end
+
+      it "returns true" do
+        expect(helper.active_transactions_tab?).to be true
+      end
+    end
+
+    context "when current page is other path and fullpath does not include from=messages" do
+      before do
+        allow(helper).to receive_messages(
+          current_page?: false,
+          request: double(fullpath: "/listings")
+        )
+      end
+
+      it "returns false" do
+        expect(helper.active_transactions_tab?).to be false
+      end
+    end
+  end
 end

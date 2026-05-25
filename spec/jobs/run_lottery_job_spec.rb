@@ -23,7 +23,7 @@ RSpec.describe RunLotteryJob, type: :job do
     end
 
     it 'enqueues NotifyLotteryResultsJob' do
-      allow(Lottery).to receive(:new).and_return(double(run: true))
+      create(:entry, item: item, user: create(:user))
 
       expect { described_class.perform_now(item.id) }.to have_enqueued_job(NotifyLotteryResultsJob).with(item.id)
     end

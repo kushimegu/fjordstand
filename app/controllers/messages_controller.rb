@@ -32,6 +32,7 @@ class MessagesController < ApplicationController
     @message.destroy!
     redirect_to transaction_messages_path(@item), notice: "コメントを削除しました", status: :see_other
   end
+
   private
 
   def set_item

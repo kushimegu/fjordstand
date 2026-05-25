@@ -146,7 +146,7 @@ RSpec.describe "Items", type: :system do
         expect(page).to have_selector('[data-image-preview-target="extraContainer"]:not(.hidden)', count: 2)
 
         click_on '下書きとして保存する'
-        expect(page).to have_content('下書き保存しました')
+        expect(page).to have_content('下書きとして保存しました')
 
         item = Item.last
         expect(item.images[0].filename.to_s).to eq 'book1.png'
@@ -169,7 +169,7 @@ RSpec.describe "Items", type: :system do
         expect(page).to have_selector('[data-image-preview-target="extraContainer"]:not(.hidden)', count: 3)
 
         click_on '下書きとして保存する'
-        expect(page).to have_content('下書き保存しました')
+        expect(page).to have_content('下書きとして保存しました')
 
         item = Item.last
         expect(item.images[0].filename.to_s).to eq 'book1.png'
@@ -192,7 +192,7 @@ RSpec.describe "Items", type: :system do
         expect(page).to have_selector('[data-image-preview-target="extraContainer"]:not(.hidden)', count: 1)
 
         click_on '下書きとして保存する'
-        expect(page).to have_content('下書き保存しました')
+        expect(page).to have_content('下書きとして保存しました')
 
         expect(Item.last.images[0].filename.to_s).to eq 'book1.png'
         expect(Item.last.images[3].filename.to_s).to eq 'book4.png'
@@ -213,7 +213,7 @@ RSpec.describe "Items", type: :system do
         expect(page).to have_no_selector('[data-image-preview-target="savedPreview"] img')
 
         click_on '下書きとして保存する'
-        expect(page).to have_content('下書き保存しました')
+        expect(page).to have_content('下書きとして保存しました')
 
         expect(Item.last.images).to be_empty
       end

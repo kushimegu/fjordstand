@@ -18,7 +18,7 @@ RSpec.describe "Notifications::Reads", type: :request do
 
       expect(unread_notification_1.reload.read).to be true
       expect(unread_notification_2.reload.read).to be false
-      expect(response).to redirect_to(unread_notification_1.link)
+      expect(response).to redirect_to("#{unread_notification_1.link}?from=notifications")
     end
   end
 
