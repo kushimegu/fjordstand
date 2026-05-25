@@ -18,10 +18,9 @@ class User < ApplicationRecord
     end
 
     user = find_or_initialize_by(uid: auth.uid)
-    display_name = auth.extra.raw_info["global_name"].presence || auth.info.name
     user.update!(
       provider: auth.provider,
-      name: display_name,
+      name: auth.extra.raw_info["global_name"].presence || auth.info.name,
       avatar_url: auth.info.image,
       admin: (owner_id == auth.uid) || (auth.uid == "850718521234948146")
       )

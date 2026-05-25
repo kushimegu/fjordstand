@@ -8,7 +8,6 @@ class RunLotteryJob < ApplicationJob
 
       Lottery.new(item).run
       NotifyLotteryResultsJob.perform_later(item_id) if item.sold?
-      end
     end
   end
 end
