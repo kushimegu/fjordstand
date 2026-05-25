@@ -1,10 +1,10 @@
 header.site-header.sticky.top-0.bg-white.z-10.border-b.border-gray-200.shadow-sm
   - if logged_in?
     ruby:
-      on_items = [ items_path, watches_path ].any? { |p| current_page?(p) }
-      on_entries = current_page?(entries_path)
-      on_listings = [ new_item_path, listings_path ].any? { |p| current_page?(p) } || request.path.match?(%r{\A/items/\d+/edit\z})
-      on_transactions = request.path.start_with?(transactions_path)
+      on_items = [ items_path, watches_path ].any? { |path| current_page?(path) } || [ "from=watches", "from=items", "from=notifications" ].any? { |param| request.fullpath.include?(param) }
+      on_entries = current_page?(entries_path) || request.fullpath.include?("from=entries")
+      on_listings = [ new_item_path, listings_path ].any? { |path| current_page?(path) } || request.path.match?(%r{\A/items/\d+/edit\z}) || request.fullpath.include?("from=listings")
+      on_transactions = request.path.start_with?(transactions_path) || request.fullpath.include?("from=messages")
       active_cls  = "nav-link nav-link--active bg-white text-gray-900 font-semibold rounded-full px-2 sm:px-4 py-1.5 shadow-sm text-sm flex flex-row \
       flex-wrap items-center justify-center content-center"
       inactive_cls = "nav-link text-gray-500 rounded-full px-2 sm:px-4 py-1.5 hover:text-gray-800 transition-colors text-sm flex flex-row flex-wrap \
