@@ -23,4 +23,25 @@ module ApplicationHelper
       label
     end
   end
+
+  def active_items_tab?
+    return true if [ items_path, watches_path ].any? { |path| current_page?(path) }
+
+    %w[from=watches from=items from=notifications].any? { |param| request.fullpath.include?(param) }
+  end
+
+  def active_entries_tab?
+    current_page?(entries_path) || request.fullpath.include?("from=entries")
+  end
+
+  def active_listings_tab?
+    return true if [ new_item_path, listings_path ].any? { |path| current_page?(path) }
+    return true if request.path.match?(%r{\A/items/\d+/edit\z})
+
+    request.fullpath.include?("from=listings")
+  end
+
+  def active_transactions_tab?
+    current_page?(transactions_path) || request.fullpath.include?("from=messages")
+  end
 end
