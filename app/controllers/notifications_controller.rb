@@ -5,5 +5,6 @@ class NotificationsController < ApplicationController
                                   .by_target(params[:status])
                                   .order(created_at: :desc)
                                   .page(params[:page])
+                                  .per(20)
   end
 end
