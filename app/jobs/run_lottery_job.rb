@@ -7,10 +7,7 @@ class RunLotteryJob < ApplicationJob
       return unless item.published?
 
       Lottery.new(item).run
-      if item.applicants.any?
-        NotifyLotteryResultsJob.perform_later(item_id)
-      else
-        NotifyItemClosedJob.perform_later(item_id, reason: :no_applicants)
+      NotifyLotteryResultsJob.perform_later(item_id) if item.sold?
       end
     end
   end
