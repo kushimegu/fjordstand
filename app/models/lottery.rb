@@ -6,13 +6,15 @@ class Lottery
   def run
     return if @item.winner.present?
 
-    if @item.entries.exists?
-      entries = @item.entries
-      winner = entries.offset(rand(entries.count)).first
-      losers = entries.where.not(id: winner.id)
-      losers.update_all(status: :lost)
-      winner.update!(status: :won)
-      @item.update!(status: :sold)
+    entries = @item.entries.to_a
+    if entries.any?
+      won_entry = entries.sample
+      lost_entries = entries - [ won_entry ]
+      ActiveRecord::Base.transaction do
+        @item.entries.where(id: lost_entries.map(&:id)).update_all(status: :lost) if lost_entries.any?
+        won_entry.update!(status: :won)
+        @item.update!(status: :sold)
+      end
     else
       @item.close(reason: :no_applicants)
     end
