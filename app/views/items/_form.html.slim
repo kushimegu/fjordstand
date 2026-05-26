@@ -19,7 +19,6 @@
     .flex.items-center.gap-x-2.mb-1
       h2.font-semibold.text-sm.text-gray-700.block 商品画像
       span.text-xs.text-gray-500 最大5枚
-    - images = @item.images.sort_by(&:id)
     .grid.grid-cols-5.gap-2.mb-2 data-image-preview-target="preview"
       label.cursor-pointer.col-span-full.py-1.w-full.border.border-gray-400.bg-gray-100.rounded-lg.hover:bg-gray-200.flex.items-center.justify-center [
         data-image-preview-target="multipleContainer"
@@ -27,7 +26,7 @@
         span.text-xs data-image-preview-target="labelText" まとめて追加する
         = form.file_field :images, multiple: true, direct_upload: true, accept: "image/png, image/jpeg", class: "hidden",
           data: { "image-preview-target": "input", action: "change->image-preview#previewMultipleImages" }
-      - images.each do |image|
+      - @item.ordered_images.each do |image|
         label.rounded-lg.overflow-hidden.flex.items-center.justify-center data-image-preview-target="savedPreview"
           .relative.aspect-square.rounded-lg.border.border-gray-200.bg-gray-100
             = image_tag image.variant(resize_to_limit: [ 200, 200 ]).processed, class: "object-contain w-full h-full"

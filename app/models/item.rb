@@ -1,10 +1,14 @@
 class Item < ApplicationRecord
   belongs_to :user
   has_many_attached :images
+  has_many :ordered_image_attachments, -> { order(id: :asc) }, as: :record, class_name: "ActiveStorage::Attachment"
+  has_many :ordered_images, through: :ordered_image_attachments, source: :blob
+  has_one :first_image_attachment, -> { order(id: :asc) }, as: :record, class_name: "ActiveStorage::Attachment"
+  has_one :first_image, through: :first_image_attachment, source: :blob
   has_many :entries, dependent: :destroy
   has_many :applicants, through: :entries, source: :user
-  has_one :winning_entry, -> { where(status: :won) }, class_name: "Entry"
-  has_one :winner, through: :winning_entry, source: :user
+  has_one :won_entry, -> { where(status: :won) }, class_name: "Entry"
+  has_one :winner, through: :won_entry, source: :user
   has_many :messages, dependent: :destroy
   has_many :comments, dependent: :destroy
   has_many :watches, dependent: :destroy

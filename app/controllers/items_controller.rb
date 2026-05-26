@@ -1,12 +1,13 @@
 class ItemsController < ApplicationController
-  before_action :set_item, only: %i[show edit update destroy]
+  before_action :set_item, only: %i[destroy]
+  before_action :set_item_with_images, only: %i[show edit update]
   before_action :ensure_user, only: %i[edit update]
   before_action :ensure_item_editable, only: %i[edit update]
 
   # GET /items
   def index
     items_scope = Item.published
-                      .includes(:user, :winner, images_attachments: :blob)
+                      .includes(:user, :winner, first_image_attachment: :blob)
                       .where("entry_deadline_at >= ?", Time.current.beginning_of_day)
                       .order(entry_deadline_at: :asc, created_at: :asc)
     @my_entries  = current_user.entries.where(item: items_scope).index_by(&:item_id) if current_user
@@ -108,6 +109,10 @@ class ItemsController < ApplicationController
   private
 
   # Use callbacks to share common setup or constraints between actions.
+  def set_item_with_images
+    @item = Item.includes(ordered_image_attachments: :blob).find(params[:id])
+  end
+
   def set_item
     @item = Item.find(params.expect(:id))
   end
