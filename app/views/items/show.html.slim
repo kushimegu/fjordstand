@@ -8,7 +8,7 @@ article.item-show.mt-2.flex.flex-col.md:grid.md:grid-cols-2.md:gap-10.md:items-s
     - if @item.images.attached?
       figure.flex.flex-col.gap-3[data-controller="image-gallery"]
         .aspect-square.rounded-2xl.overflow-hidden.bg-gray-100.relative.flex.items-center.justify-center
-          = image_tag @item.images.first.variant(resize_to_limit: [ 600, 600 ]).processed,
+          = image_tag @item.first_image.variant(resize_to_limit: [ 600, 600 ]).processed,
             id: "big-image", data: { image_gallery_target: "bigImage" }, alt: "#{@item.title} 1枚目", class: "object-contain w-full h-full"
           - if @item.images.length > 1
             .absolute.inset-y-0.left-0.flex.items-center.pl-3

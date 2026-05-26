@@ -14,7 +14,7 @@ h1.page-title.font-bold.text-2xl.mb-6.text-gray-900.text-center 連絡ページ�
         "duration-200 flex gap-4 items-center relative"]
           .transaction-thumbnail.aspect-square.w-20.h-20.flex-shrink-0.rounded-lg.overflow-hidden.bg-gray-100
             - if item.images.attached?
-              = image_tag item.images.first.variant(resize_to_limit: [ 200, 200 ]).processed,
+              = image_tag item.first_image.variant(resize_to_limit: [ 200, 200 ]).processed,
                 alt: "#{item.title} 1枚目", class: "object-contain w-full h-full"
             - else
               = image_tag "listing-image.png", alt: "商品画像なし", class: "object-contain w-full h-full opacity-30"

@@ -88,7 +88,7 @@ class DiscordWebhook
     embed.add_field(name: "購入希望申込期限", value: "#{I18n.l(item.entry_deadline_at, format: :default)}", inline: false)
 
     if !Rails.env.development? && item.images.attached?
-      image_url = url_for(item.images.first)
+      image_url = url_for(item.first_image)
       if use_image
         embed.image = Discordrb::Webhooks::EmbedImage.new(url: image_url)
         embed.thumbnail = nil
