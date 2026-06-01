@@ -18,12 +18,13 @@ class User < ApplicationRecord
     end
 
     user = find_or_initialize_by(uid: auth.uid)
-    admin_status = user.persisted? ? (user.admin? || owner_id == auth.uid) : (owner_id == auth.uid)
+    if user.new_record?
+      user.provider = auth.provider
+      user.admin = true if auth.uid == owner_id
+    end
     user.update!(
-      provider: auth.provider,
       name: auth.extra.raw_info["global_name"].presence || auth.info.name,
-      avatar_url: auth.info.image,
-      admin: admin_status
+      avatar_url: auth.info.image
       )
     user
   end
