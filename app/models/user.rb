@@ -22,7 +22,7 @@ class User < ApplicationRecord
       provider: auth.provider,
       name: auth.extra.raw_info["global_name"].presence || auth.info.name,
       avatar_url: auth.info.image,
-      admin: user.admin || (owner_id == auth.uid)
+      admin: (owner_id == auth.uid) || (user.persisted? && user.admin?)
       )
     user
   end
