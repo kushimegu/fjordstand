@@ -95,6 +95,7 @@ DISCORD_BOT_TOKEN=
 DISCORD_SERVER_ID=
 WEBHOOK_URL=
 ERROR_WEBHOOK_URL=
+ADMIN_USER_ID=
 ```
 
 ### Discord アプリの設定
@@ -109,6 +110,7 @@ ERROR_WEBHOOK_URL=
 6. 開発に使用する Discord サーバーの ID を `DISCORD_SERVER_ID` に設定
 7. Discord チャンネル設定の Webhook 画面から URL を取得し、`DISCORD_WEBHOOK_URL` に設定
 8. ジョブに失敗した際に通知を受け取る Discord チャンネルの Webhook 画面から URL を取得し、`ERROR_WEBHOOK_URL` に設定
+9. 設定したDiscordサーバーのオーナー以外のユーザーに管理者権限を付与するには`ADMIN_USER_ID`にDiscordのuidを設定する
 
 ## 開発サーバーの起動
 
