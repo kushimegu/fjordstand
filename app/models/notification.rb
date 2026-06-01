@@ -13,8 +13,8 @@ class Notification < ApplicationRecord
 
   def message
     case notifiable
-    when Message
-      "#{notifiable.item.other_user_for(user).name}さんから「#{notifiable.item.title}」についてメッセージが届きました。"
+    when Comment
+      "#{notifiable.user.name}さんが「#{notifiable.item.title}」についてコメントしました。"
     when Entry
       if notifiable.won?
         "「#{notifiable.item.title}」の購入が確定しました！連絡ページから出品者へご連絡ください。"
@@ -27,15 +27,15 @@ class Notification < ApplicationRecord
       else
         "「#{notifiable.title}」は当選者なしで公開終了しました。"
       end
-    when Comment
-      "#{notifiable.user.name}さんが「#{notifiable.item.title}」についてコメントしました。"
+    when Message
+      "#{notifiable.item.other_user_for(user).name}さんから「#{notifiable.item.title}」についてメッセージが届きました。"
     end
   end
 
   def link
     case notifiable
-    when Message
-      Rails.application.routes.url_helpers.transaction_messages_path(notifiable.item)
+    when Comment
+      Rails.application.routes.url_helpers.item_path(notifiable.item)
     when Entry
       if notifiable.won?
         Rails.application.routes.url_helpers.transaction_messages_path(notifiable.item)
@@ -48,8 +48,8 @@ class Notification < ApplicationRecord
       else
         Rails.application.routes.url_helpers.item_path(notifiable)
       end
-    when Comment
-      Rails.application.routes.url_helpers.item_path(notifiable.item)
+    when Message
+      Rails.application.routes.url_helpers.transaction_messages_path(notifiable.item)
     end
   end
 end
