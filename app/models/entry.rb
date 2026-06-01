@@ -7,9 +7,9 @@ class Entry < ApplicationRecord
 
   validates :user_id, uniqueness: { scope: :item_id, message: "はこの商品にすでに応募しています" }
 
-  validate :cannot_apply_for_own_item
+  validate :cannot_apply_for_own_item, on: :create
   validate :cannot_apply_for_expired_item, on: :create
-  validate :cannot_apply_for_closed_item
+  validate :cannot_apply_for_closed_item, on: :create
 
   scope :by_target, ->(target) {
   if target.present? && statuses.key?(target)
