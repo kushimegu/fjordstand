@@ -28,10 +28,9 @@ RSpec.describe "/items", type: :request do
   end
 
   describe "GET /show" do
-    before { login(user) }
-
     it "renders a successful response" do
       item = create(:item, :published)
+      login(user)
       get item_url(item)
       expect(response).to be_successful
     end
@@ -41,7 +40,8 @@ RSpec.describe "/items", type: :request do
         item = create(:item, :published, user: user)
         create_list(:comment, 2, item: item, user: admin)
         expect(user.notifications.pluck(:read)).to all(be false)
-        get items_path(item, from: :notifications)
+        login(user)
+        get item_path(item, from: :notifications)
         expect(user.notifications.reload.pluck(:read)).to all(be true)
       end
     end
@@ -51,7 +51,8 @@ RSpec.describe "/items", type: :request do
         item = create(:item, :published, user: user)
         create_list(:comment, 2, item: item, user: admin)
         expect(user.notifications.pluck(:read)).to all(be false)
-        get items_path(item)
+        login(user)
+        get item_path(item)
         expect(user.notifications.reload.pluck(:read)).to all(be false)
       end
     end
