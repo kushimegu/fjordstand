@@ -20,7 +20,6 @@ class User < ApplicationRecord
     if user.new_record?
       user.admin = (auth.uid == owner_id)
     end
-    user.admin = true if auth.uid == owner_id && user.new_record?
     user.provider = auth.provider if user.provider.blank?
     user.name = auth.extra.raw_info["global_name"].presence || auth.info.name
     user.avatar_url = auth.info.image
