@@ -26,7 +26,10 @@ class User < ApplicationRecord
     user.name = auth.extra.raw_info["global_name"].presence || auth.info.name
     user.avatar_url = auth.info.image
 
-    user.save!
+    if user.has_changes_to_save?
+      user.save!
+    end
+
     user
   end
 
