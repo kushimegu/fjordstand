@@ -14,11 +14,12 @@ class User < ApplicationRecord
       return nil
     end
 
-    guild = Discordrb::API::Server.resolve("Bot #{ENV['DISCORD_BOT_TOKEN']}", ENV["DISCORD_SERVER_ID"])
-    owner_id = JSON.parse(guild)["owner_id"]
-
     user = find_or_initialize_by(uid: auth.uid)
+
     if user.new_record?
+      guild = Discordrb::API::Server.resolve("Bot #{ENV['DISCORD_BOT_TOKEN']}", ENV["DISCORD_SERVER_ID"])
+      owner_id = JSON.parse(guild)["owner_id"]
+
       user.admin = (auth.uid == owner_id)
     end
     user.provider = auth.provider if user.provider.blank?
