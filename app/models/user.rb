@@ -15,7 +15,7 @@ class User < ApplicationRecord
     begin
       Discordrb::API::Server.resolve_member("Bot #{ENV['DISCORD_BOT_TOKEN']}", ENV["DISCORD_SERVER_ID"], auth.uid)
     rescue Discordrb::Errors::UnknownMember
-      return :not_member
+      return nil
     end
 
     user = find_or_initialize_by(uid: auth.uid, provider: auth.provider)
