@@ -8,8 +8,10 @@ class SessionsController < ApplicationController
       reset_session
       session[:user_id] = user.id
       redirect_to items_path, notice: "ログインしました"
-    else
+    elsif user == :not_member
       redirect_to root_path, alert: "FjordBootCampのDiscordサーバーに参加していません"
+    else
+      redirect_to root_path, alert: "ログインに失敗しました"
     end
   end
 
