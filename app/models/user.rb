@@ -7,6 +7,10 @@ class User < ApplicationRecord
   has_many :watches, dependent: :destroy
   has_many :notifications, dependent: :destroy
 
+  validates :provider, presence: true
+  validates :uid, presence: true, uniqueness: { scope: :provider }
+  validates :name, presence: true
+
   def self.from_omniauth(auth)
     begin
       Discordrb::API::Server.resolve_member("Bot #{ENV['DISCORD_BOT_TOKEN']}", ENV["DISCORD_SERVER_ID"], auth.uid)
@@ -14,22 +18,28 @@ class User < ApplicationRecord
       return nil
     end
 
-    user = find_or_initialize_by(uid: auth.uid)
+    user = find_or_initialize_by(uid: auth.uid, provider: auth.provider)
 
+    auth_global_name = auth.dig("extra", "raw_info", "global_name")
+    auth_name = auth.dig("info", "name")
+    incoming_name = auth_global_name.presence || auth_name.presence
     if user.new_record?
       guild = Discordrb::API::Server.resolve("Bot #{ENV['DISCORD_BOT_TOKEN']}", ENV["DISCORD_SERVER_ID"])
       owner_id = JSON.parse(guild)["owner_id"]
 
       user.admin = (auth.uid == owner_id)
+      user.provider = auth.provider
+      user.name = incoming_name || "ユーザー_#{auth.uid}"
+    else
+      user.name = incoming_name if incoming_name.present? && user.name != incoming_name
     end
-    user.provider = auth.provider if user.provider.blank?
-    user.name = auth.extra.raw_info["global_name"].presence || auth.info.name
-    user.avatar_url = auth.info.image
-
-    if user.has_changes_to_save?
-      user.save!
+    auth_image = auth.dig("info", "image")
+    if auth_image.present?
+      new_avatar_url = URI.parse(auth_image).tap { |uri| uri.query = nil }.to_s
+      user.avatar_url = new_avatar_url if user.avatar_url != new_avatar_url
     end
 
+    user.save!
     user
   end
 
