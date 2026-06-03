@@ -15,7 +15,7 @@ class User < ApplicationRecord
     begin
       Discordrb::API::Server.resolve_member("Bot #{ENV['DISCORD_BOT_TOKEN']}", ENV["DISCORD_SERVER_ID"], auth.uid)
     rescue Discordrb::Errors::UnknownMember
-      return nil
+      return :not_member
     end
 
     user = find_or_initialize_by(uid: auth.uid, provider: auth.provider)
@@ -39,8 +39,11 @@ class User < ApplicationRecord
       user.avatar_url = new_avatar_url if user.avatar_url != new_avatar_url
     end
 
-    user.save!
-    user
+    if user.save
+      user
+    else
+      nil
+    end
   end
 
   def entry_for(item)
