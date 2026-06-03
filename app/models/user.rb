@@ -28,7 +28,6 @@ class User < ApplicationRecord
       owner_id = JSON.parse(guild)["owner_id"]
 
       user.admin = (auth.uid == owner_id)
-      user.provider = auth.provider
       user.name = incoming_name || "ユーザー_#{auth.uid}"
     else
       user.name = incoming_name if incoming_name.present? && user.name != incoming_name
