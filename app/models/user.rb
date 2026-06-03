@@ -20,8 +20,8 @@ class User < ApplicationRecord
 
     user = find_or_initialize_by(uid: auth.uid, provider: auth.provider)
 
-    auth_global_name = auth.dig("extra", "raw_info", "global_name")
-    auth_name = auth.dig("info", "name")
+    auth_global_name = auth.dig(:extra, :raw_info, :global_name)
+    auth_name = auth.dig(:info, :name)
     incoming_name = auth_global_name.presence || auth_name.presence
     if user.new_record?
       guild = Discordrb::API::Server.resolve("Bot #{ENV['DISCORD_BOT_TOKEN']}", ENV["DISCORD_SERVER_ID"])
@@ -33,7 +33,7 @@ class User < ApplicationRecord
     else
       user.name = incoming_name if incoming_name.present? && user.name != incoming_name
     end
-    auth_image = auth.dig("info", "image")
+    auth_image = auth.dig(:info, :image)
     if auth_image.present?
       new_avatar_url = URI.parse(auth_image).tap { |uri| uri.query = nil }.to_s
       user.avatar_url = new_avatar_url if user.avatar_url != new_avatar_url
