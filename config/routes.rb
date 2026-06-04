@@ -14,6 +14,11 @@ Rails.application.routes.draw do
     resources :comments, only: %i[create destroy]
     resource :watches, only: %i[create destroy]
   end
+  scope module: :items do
+    resources :listings, only: %i[index]
+  end
+  resources :entries, only: %i[index]
+  resources :watches, only: %i[index]
   resources :transactions, only: [:index] do
     resources :messages, only: %i[index create destroy]
   end
@@ -25,11 +30,6 @@ Rails.application.routes.draw do
       end
     end
   end
-  resources :entries, only: %i[index]
-  scope module: :items do
-    resources :listings, only: %i[index]
-  end
-  resources :watches, only: %i[index]
   resource :session, only: %i[create destroy]
   get "auth/:provider/callback", to: "sessions#create"
   get "auth/failure", to: "sessions#failure"
