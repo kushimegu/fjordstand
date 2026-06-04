@@ -3,7 +3,7 @@ class ApplicationController < ActionController::Base
 
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   # allow_browser versions: :modern
-  before_action :check_logged_in
+  before_action :authenticate_user!
   before_action :preload_current_user_notifications, if: :logged_in?
 
   def current_user
@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def check_logged_in
+  def authenticate_user!
     return if current_user
 
     redirect_to root_path
