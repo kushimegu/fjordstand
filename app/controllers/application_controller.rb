@@ -10,7 +10,8 @@ class ApplicationController < ActionController::Base
   def current_user
     return unless (user_id = session[:user_id])
 
-    defined?(@current_user) ? @current_user : @current_user = User.find_by(id: user_id)
+    @current_user = User.find_by(id: user_id) unless defined?(@current_user)
+    @current_user
   end
 
   def logged_in?
