@@ -112,7 +112,7 @@ class ItemsController < ApplicationController
   end
 
   def set_item
-    @item = Item.find(params.expect(:id))
+    @item = Item.find(params[:id])
   end
 
   # Only allow a list of trusted parameters through.
