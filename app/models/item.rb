@@ -38,7 +38,9 @@ class Item < ApplicationRecord
   after_save_commit :notify_publishing, if: -> { saved_change_to_attribute?(:status, to: :published) }
   after_update_commit :notify_deadline_extension, if: :saved_only_change_deadline?
 
-  scope :expired, -> { where("entry_deadline_at < ?", Time.current).where(status: :published) }
+  scope :not_expired, -> { where(entry_deadline_at: Time.current.beginning_of_day..) }
+  scope :expired, -> { where.not(id: not_expired).where(status: :published) }
+  scope :by_nearest_deadline, -> { order(entry_deadline_at: :asc, created_at: :asc) }
   scope :by_target, ->(target) {
   if target.present? && statuses.key?(target)
     where(status: target)
