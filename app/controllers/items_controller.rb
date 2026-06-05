@@ -1,5 +1,4 @@
 class ItemsController < ApplicationController
-  before_action :set_item, only: %i[destroy]
   before_action :set_item_with_images, only: %i[show edit update]
   before_action :ensure_user, only: %i[edit update]
   before_action :ensure_item_editable, only: %i[edit update]
@@ -92,6 +91,7 @@ class ItemsController < ApplicationController
   def destroy
     raise ActionController::RoutingError, "Not Found" unless @item.deletable_by?(current_user)
 
+    @item = Item.find(params[:id])
     @item.destroy!
 
     if @item.draft?
@@ -106,10 +106,6 @@ class ItemsController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_item_with_images
     @item = Item.includes(ordered_image_attachments: :blob).find(params[:id])
-  end
-
-  def set_item
-    @item = Item.find(params[:id])
   end
 
   # Only allow a list of trusted parameters through.
