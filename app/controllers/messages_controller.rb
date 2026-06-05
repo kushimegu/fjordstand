@@ -59,8 +59,6 @@ class MessagesController < ApplicationController
   end
 
   def require_admin
-    unless current_user.admin?
-      redirect_to conversation_messages_path(@item), alert: "削除する権限がありません"
-    end
+    redirect_to conversation_messages_path(@item), alert: "削除する権限がありません" unless current_user.admin?
   end
 end
