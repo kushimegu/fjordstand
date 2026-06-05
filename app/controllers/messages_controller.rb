@@ -8,6 +8,8 @@ class MessagesController < ApplicationController
   def index
     @messages = @item.messages.includes(:user).order(:created_at)
     @message = @item.messages.build
+    return unless current_user
+
     current_user.notifications
                 .unread
                 .where(notifiable_type: "Message", notifiable_id: @item.message_ids)
