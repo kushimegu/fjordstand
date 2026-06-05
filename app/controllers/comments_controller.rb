@@ -5,10 +5,7 @@ class CommentsController < ApplicationController
 
   # POST /comments
   def create
-    unless @item.commentable?
-      redirect_to @item, alert: "下書きにはコメントできません"
-      return
-    end
+    raise ActionController::RoutingError, "Not Found" unless @item.commentable?
 
     @comment = current_user.comments.new(comment_params)
     @comment.item_id = @item.id
@@ -42,8 +39,6 @@ class CommentsController < ApplicationController
   end
 
   def require_admin
-    unless current_user.admin?
-      redirect_to @item, alert: "削除する権限がありません"
-    end
+    raise ActionController::RoutingError, "Not Found" unless current_user.admin?
   end
 end

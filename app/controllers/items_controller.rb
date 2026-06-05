@@ -90,10 +90,7 @@ class ItemsController < ApplicationController
 
   # DELETE /items/1
   def destroy
-    unless @item.deletable_by?(current_user)
-      redirect_to @item, alert: "削除する権限がありません"
-      return
-    end
+    raise ActionController::RoutingError, "Not Found" unless @item.deletable_by?(current_user)
 
     @item.destroy!
 
@@ -126,8 +123,7 @@ class ItemsController < ApplicationController
   end
 
   def ensure_item_editable
-    unless @item.editable?
-      redirect_to @item, alert: "締切を過ぎた商品は編集できません"
-    end
+    return if @item.editable?
+    redirect_to @item, alert: "締切を過ぎた商品は編集できません"
   end
 end
