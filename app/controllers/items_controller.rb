@@ -15,8 +15,6 @@ class ItemsController < ApplicationController
 
   # GET /items/1
   def show
-    @comment = Comment.new
-    @comments = @item.comments.includes(:user).order(created_at: :asc)
     if params[:from] == "notifications" && current_user
       current_user.notifications
                   .unread
