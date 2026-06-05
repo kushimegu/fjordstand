@@ -27,6 +27,14 @@ class User < ApplicationRecord
     user
   end
 
+  def applying_item_ids_for(items)
+    entries.applied.where(item_id: items.map(&:id)).pluck(:item_id).to_set
+  end
+
+  def watching_item_ids_for(items)
+    watches.where(item_id: items.map(&:id)).pluck(:item_id).to_set
+  end
+
   def entry_for(item)
     entries.find_by(item_id: item.id)
   end

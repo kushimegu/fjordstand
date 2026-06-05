@@ -6,13 +6,11 @@ class ItemsController < ApplicationController
 
   # GET /items
   def index
-    items_scope = Item.published
-                      .includes(:user, :winner, first_image_attachment: :blob)
-                      .where("entry_deadline_at >= ?", Time.current.beginning_of_day)
-                      .order(entry_deadline_at: :asc, created_at: :asc)
-    @my_entries  = current_user.entries.where(item: items_scope).index_by(&:item_id) if current_user
-    @my_watches  = current_user.watches.where(item: items_scope).pluck(:item_id).to_set if current_user
-    @items = items_scope.page(params[:page]).per(20)
+    @items = Item.published
+                  .includes(:user, :winner, first_image_attachment: :blob)
+                  .where("entry_deadline_at >= ?", Time.current.beginning_of_day)
+                  .order(entry_deadline_at: :asc, created_at: :asc)
+                  .page(params[:page]).per(20)
   end
 
   # GET /items/1
@@ -125,8 +123,7 @@ class ItemsController < ApplicationController
   end
 
   def ensure_user
-    @items = current_user.items
-    @item = @items.find_by(id: params[:id])
+    @item = current_user.items.find_by(id: params[:id])
     redirect_to items_path unless @item
   end
 
