@@ -1,6 +1,5 @@
 class ItemsController < ApplicationController
-  before_action :set_item_with_images, only: %i[show edit update]
-  before_action :ensure_user, only: %i[edit update]
+  before_action :set_user_item_with_images, only: %i[edit update]
   before_action :ensure_item_editable, only: %i[edit update]
 
   # GET /items
@@ -14,6 +13,7 @@ class ItemsController < ApplicationController
 
   # GET /items/1
   def show
+    @item = Item.includes(ordered_image_attachments: :blob).find(params[:id])
     if params[:from] == "notifications" && current_user
       current_user.notifications
                   .unread
@@ -24,7 +24,7 @@ class ItemsController < ApplicationController
 
   # GET /items/new
   def new
-    @item = Item.new
+    @item = current_user.items.build
   end
 
   # GET /items/1/edit
@@ -104,18 +104,13 @@ class ItemsController < ApplicationController
   private
 
   # Use callbacks to share common setup or constraints between actions.
-  def set_item_with_images
-    @item = Item.includes(ordered_image_attachments: :blob).find(params[:id])
+  def set_user_item_with_images
+    @item = current_user.items.includes(ordered_image_attachments: :blob).find(params[:id])
   end
 
   # Only allow a list of trusted parameters through.
   def item_params
     params.expect(item: [ :title, :title_append, :description, :description_append, :price, :shipping_fee_payer, :payment_method, :payment_method_append, :entry_deadline_at, :status, images: [] ])
-  end
-
-  def ensure_user
-    @item = current_user.items.find_by(id: params[:id])
-    redirect_to items_path unless @item
   end
 
   def ensure_item_editable

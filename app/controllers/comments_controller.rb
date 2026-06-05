@@ -19,8 +19,7 @@ class CommentsController < ApplicationController
   def destroy
     raise ActionController::RoutingError, "Not Found" unless current_user.admin?
 
-    @comment = @item.comments.find(params[:id])
-    @comment.destroy!
+    @item.comments.find(params[:id]).destroy!
     redirect_to @item, notice: "コメントを削除しました", status: :see_other
   end
 
