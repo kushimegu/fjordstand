@@ -1,5 +1,6 @@
 class PagesController < ApplicationController
-  skip_before_action :check_logged_in
+  skip_before_action :authenticate_user!
+
   def home
   end
 
