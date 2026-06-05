@@ -7,6 +7,8 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user!
   before_action :preload_current_user_notifications, if: :logged_in?
 
+  private
+
   def current_user
     return unless (user_id = session[:user_id])
 
@@ -17,8 +19,6 @@ class ApplicationController < ActionController::Base
   def logged_in?
     !current_user.nil?
   end
-
-  private
 
   def authenticate_user!
     return if current_user
