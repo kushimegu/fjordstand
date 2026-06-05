@@ -1,8 +1,6 @@
 class MessagesController < ApplicationController
   before_action :set_item
   before_action :authorize_user
-  before_action :set_message, only: [ :destroy ]
-  before_action :require_admin, only: [ :destroy ]
 
   # GET /messages
   def index
@@ -31,6 +29,9 @@ class MessagesController < ApplicationController
 
   # DELETE /messages/1
   def destroy
+    raise ActionController::RoutingError, "Not Found" unless current_user.admin?
+
+    @message = @item.messages.find(params[:id])
     @message.destroy!
     redirect_to conversation_messages_path(@item), notice: "コメントを削除しました", status: :see_other
   end

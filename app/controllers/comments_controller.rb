@@ -1,7 +1,5 @@
 class CommentsController < ApplicationController
   before_action :set_item
-  before_action :set_comment, only: [ :destroy ]
-  before_action :require_admin, only: [ :destroy ]
 
   # POST /comments
   def create
@@ -19,6 +17,9 @@ class CommentsController < ApplicationController
 
   # DELETE /comments/1
   def destroy
+    raise ActionController::RoutingError, "Not Found" unless current_user.admin?
+
+    @comment = @item.comments.find(params[:id])
     @comment.destroy!
     redirect_to @item, notice: "コメントを削除しました", status: :see_other
   end
@@ -29,16 +30,8 @@ class CommentsController < ApplicationController
     @item = Item.find(params[:item_id])
   end
 
-  def set_comment
-    @comment = @item.comments.find(params[:id])
-  end
-
   # Only allow a list of trusted parameters through.
   def comment_params
     params.expect(comment: [ :body ])
-  end
-
-  def require_admin
-    raise ActionController::RoutingError, "Not Found" unless current_user.admin?
   end
 end
