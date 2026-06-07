@@ -13,9 +13,13 @@ Rails.application.routes.draw do
     resource :entries, only: %i[create destroy]
     resources :comments, only: %i[create destroy]
     resource :watches, only: %i[create destroy]
+    scope module: :items do
+      resource :close, only: %i[update]
+    end
   end
   scope module: :items do
     resources :listings, only: %i[index]
+    resources :drafts, only: %i[create update destroy]
   end
   resources :entries, only: %i[index]
   resources :watches, only: %i[index]
