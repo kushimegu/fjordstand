@@ -126,15 +126,19 @@
 
   - if item.draft?
     div
-      - label = item.persisted? ? "update" : "new"
-      = form.submit I18n.t("helpers.submit.item.draft.#{label}"), name: "draft",
-      class: "cursor-pointer w-full block px-4 py-2.5 rounded-lg border border-cyan-500 text-cyan-600 text-sm font-semibold hover:bg-cyan-50 \
-      transition-colors text-center"
+      - if item.persisted?
+        = form.submit "下書きを更新する", name: "draft", formaction: draft_path(item), formmethod: :patch,
+        class: "cursor-pointer w-full block px-4 py-2.5 rounded-lg border border-cyan-500 text-cyan-600 text-sm font-semibold hover:bg-cyan-50 \
+        transition-colors text-center"
+      - else
+        = form.submit "下書きとして保存する", name: "draft", formaction: drafts_path, formmethod: :post,
+        class: "cursor-pointer w-full block px-4 py-2.5 rounded-lg border border-cyan-500 text-cyan-600 text-sm font-semibold hover:bg-cyan-50 \
+        transition-colors text-center"
 
   - if item.published?
     div
       p.text-red-400.text-sm
         | 商品を取り下げると購入希望が全て取り消され、購入希望者に通知が送られます。再度公開する際は全ての項目を編集でき、新たに購入希望を受け付けることができます。
-      = form.submit "出品を取り下げる", name: "close",
+      = form.submit "出品を取り下げる", name: "close", formaction: item_close_path(item_id: item.id),
       class: "cursor-pointer w-full block px-4 py-2.5 rounded-lg border border-gray-300 text-gray-500 text-sm font-semibold hover:bg-gray-100 \
       transition-colors text-center"

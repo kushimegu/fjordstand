@@ -35,31 +35,17 @@ class ItemsController < ApplicationController
   def create
     @item = current_user.items.build(item_params)
 
-    if params[:publish]
-      if @item.valid?(:publish)
-        @item.status = :published
-        @item.save!
-        redirect_to @item, notice: "商品を出品しました"
-      else
-        render :new, status: :unprocessable_content
-      end
+    if @item.valid?(:publish)
+      @item.status = :published
+      @item.save!
+      redirect_to @item, notice: "商品を出品しました"
     else
-      if @item.save
-        redirect_to listings_path, notice: "下書きとして保存しました"
-      else
-        render :new, status: :unprocessable_content
-      end
+      render :new, status: :unprocessable_content
     end
   end
 
   # PATCH/PUT /items/1
   def update
-    if params[:close]
-      @item.close(reason: :user_action)
-      redirect_to listings_path, notice: "商品を取り下げました", status: :see_other
-      return
-    end
-
     @item.assign_attributes(item_params)
     title_append = params[:item][:title_append]
     description_append = params[:item][:description_append]
@@ -69,36 +55,21 @@ class ItemsController < ApplicationController
     @item.description = [ @item.description.presence, description_append ].compact.join("\n") if description_append.present?
     @item.payment_method = [ @item.payment_method, payment_method_append ].join(" ") if payment_method_append.present?
 
-    if params[:publish]
-      if @item.valid?(:publish)
-        @item.status = :published
-        @item.save!
-        notice_key = @item.saved_change_to_status? ? :publish : :update
-        redirect_to @item, notice: t("notices.item.#{notice_key}"), status: :see_other
-      else
-        render :edit, status: :unprocessable_content
-      end
+    if @item.save(context: :publish)
+      notice_key = @item.saved_change_to_status? ? :publish : :update
+      redirect_to @item, notice: t("notices.item.#{notice_key}"), status: :see_other
     else
-      if @item.save
-        redirect_to listings_path, notice: "下書きを更新しました", status: :see_other
-      else
-        render :edit, status: :unprocessable_content
-      end
+      render :edit, status: :unprocessable_content
     end
   end
 
   # DELETE /items/1
   def destroy
-    raise ActionController::RoutingError, "Not Found" unless @item.deletable_by?(current_user)
+    item = Item.find(params[:id])
+    raise ActiveRecord::RecordNotFound unless item.deletable_by?(current_user)
 
-    @item = Item.find(params[:id])
-    @item.destroy!
-
-    if @item.draft?
-      redirect_to listings_path, notice: "下書きを削除しました", status: :see_other
-    else
-      redirect_to items_path, notice: "商品を削除しました", status: :see_other
-    end
+    item.destroy
+    redirect_to items_path, notice: "商品を削除しました", status: :see_other
   end
 
   private
