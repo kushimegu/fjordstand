@@ -29,7 +29,7 @@ class MessagesController < ApplicationController
 
   # DELETE /messages/1
   def destroy
-    raise ActionController::RoutingError, "Not Found" unless current_user.admin?
+    raise ActiveRecord::RecordNotFound unless current_user.admin?
 
     @message = @item.messages.find(params[:id])
     @message.destroy!
