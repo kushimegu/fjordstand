@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe "/items", type: :request do
-  let(:user) { create(:user) }
-  let(:admin) { create(:user, :admin, uid: "123") }
+  let!(:user) { create(:user) }
+  let!(:admin) { create(:user, :admin, uid: "123") }
 
   describe "GET /index" do
     before { login(user) }
@@ -136,6 +136,7 @@ RSpec.describe "/items", type: :request do
 
       it "redirects to the item" do
         item = create(:item, :published, user: user)
+
         expect {
           delete item_url(item)
         }.not_to change(Item, :count)
