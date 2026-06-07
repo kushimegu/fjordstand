@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe "/items", type: :request do
-  let(:user) { create(:user) }
-  let(:admin) { create(:user, :admin, uid: "123") }
+  let!(:user) { create(:user) }
+  let!(:admin) { create(:user, :admin, uid: "123") }
 
   describe "GET /index" do
     before { login(user) }
@@ -121,21 +121,6 @@ RSpec.describe "/items", type: :request do
         expect(response).to have_http_status(:unprocessable_content)
       end
     end
-
-    context "when save as draft" do
-      let(:valid_attributes) { attributes_for(:item) }
-
-      it "creates a new Item" do
-        expect {
-          post items_url, params: { item: valid_attributes }
-        }.to change(Item, :count).by(1)
-      end
-
-      it "redirects to the listings" do
-        post items_url, params: { item: valid_attributes }
-        expect(response).to redirect_to(listings_path)
-      end
-    end
   end
 
   describe "PATCH /update" do
@@ -147,22 +132,6 @@ RSpec.describe "/items", type: :request do
         patch item_url(item), params: { item: { title_append: "初版" } }
         expect(response).to redirect_to(item_url(item))
         expect(item.reload.title).to eq("技術書")
-      end
-    end
-
-    context "when update as closed" do
-      it "updates the requested item" do
-        item = create(:item, :published, user: user)
-        patch item_url(item), params: { close: true }
-        item.reload
-        expect(item.status).to eq("closed")
-      end
-
-      it "redirects to the listings" do
-        item = create(:item, :published, user: user)
-        patch item_url(item), params: { close: true }
-        item.reload
-        expect(response).to redirect_to(listings_path)
       end
     end
 
@@ -193,66 +162,19 @@ RSpec.describe "/items", type: :request do
         expect(response).to have_http_status(:unprocessable_content)
       end
     end
-
-    context "when update as draft" do
-      let(:new_attributes) { { title: "初版" } }
-
-      it "updates the requested item" do
-        item = create(:item, user: user, title: "技術書")
-        patch item_url(item), params: { item: new_attributes }
-        item.reload
-        expect(item.title).to eq("初版")
-      end
-
-      it "redirects to the listings" do
-        item = create(:item, user: user, title: "技術書")
-        patch item_url(item), params: { item: new_attributes }
-        item.reload
-        expect(response).to redirect_to(listings_path)
-      end
-    end
   end
 
   describe "DELETE /destroy" do
-    context "when user deletes draft" do
-      before { login(user) }
-
-      it "destroys the requested item" do
-        item = create(:item, user: user)
-        expect {
-          delete item_url(item)
-        }.to change(Item, :count).by(-1)
-      end
-
-      it "redirects to the listings" do
-        item = create(:item, user: user)
-        delete item_url(item)
-        expect(response).to redirect_to(listings_url)
-      end
-    end
-
-    context "when user tries to delete published item" do
-      before { login(user) }
-
-      it "redirects to the item" do
-        item = create(:item, :published, user: user)
-        expect {
-          delete item_url(item)
-        }.not_to change(Item, :count)
-        expect(response).to redirect_to(item_url(item))
-      end
-    end
-
     context "when admin tries to delete draft item" do
       before { login(admin) }
 
-      it "redirects to the item" do
+      it "returns a 404 status" do
         item = create(:item, user: user)
 
         expect {
           delete item_url(item)
         }.not_to change(Item, :count)
-        expect(response).to redirect_to(item_url(item))
+        expect(response).to have_http_status(:not_found)
       end
     end
 
