@@ -60,8 +60,9 @@ RSpec.describe "/messages", type: :request do
 
   describe "DELETE /destroy" do
     context "when user tries to delete message" do
+      before { login(user) }
+
       it "redirects to messages" do
-        login(user)
         expect {
           delete conversation_message_url(item, message)
         }.not_to change(Message, :count)

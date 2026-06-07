@@ -3,7 +3,7 @@ class CommentsController < ApplicationController
 
   # POST /comments
   def create
-    raise ActionController::RoutingError, "Not Found" unless @item.commentable?
+    raise ActiveRecord::RecordNotFound unless @item.commentable?
 
     @comment = current_user.comments.new(comment_params)
     @comment.item_id = @item.id
@@ -17,7 +17,7 @@ class CommentsController < ApplicationController
 
   # DELETE /comments/1
   def destroy
-    raise ActionController::RoutingError, "Not Found" unless current_user.admin?
+    raise ActiveRecord::RecordNotFound unless current_user.admin?
 
     @item.comments.find(params[:id]).destroy!
     redirect_to @item, notice: "コメントを削除しました", status: :see_other
