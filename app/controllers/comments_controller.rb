@@ -5,8 +5,8 @@ class CommentsController < ApplicationController
   def create
     raise ActiveRecord::RecordNotFound unless @item.commentable?
 
-    @comment = current_user.comments.new(comment_params)
-    @comment.item_id = @item.id
+    @comment = @item.comments.build(comment_params)
+    @comment.user = current_user
 
     if @comment.save
       redirect_to @item, notice: "コメントを投稿しました"

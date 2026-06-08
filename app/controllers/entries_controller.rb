@@ -1,16 +1,17 @@
 class EntriesController < ApplicationController
+  before_action :set_item, only: %i[create destroy]
+
   def index
     @entries = current_user.entries
-                            .includes(item: [ :user, :winner, first_image_attachment: :blob ])
                             .by_target(params[:status])
                             .order("items.entry_deadline_at DESC, entries.created_at DESC")
+                            .includes(item: [ :user, :winner, first_image_attachment: :blob ])
                             .page(params[:page])
                             .per(12)
   end
 
   # POST /entries
   def create
-    @item = Item.find(params[:item_id])
     @entry = current_user.entries.build(item_id: @item.id)
 
     if @entry.save
@@ -22,8 +23,13 @@ class EntriesController < ApplicationController
 
   # DELETE /entries/1
   def destroy
-    item = Item.find(params[:item_id])
-    current_user.entries.find_by(item_id: item.id).destroy!
-    redirect_to item, notice: "購入希望を取り消しました", status: :see_other
+    current_user.entries.find_by(item_id: @item.id).destroy!
+    redirect_to @item, notice: "購入希望を取り消しました", status: :see_other
+  end
+
+  private
+
+  def set_item
+    @item = Item.find(params[:item_id])
   end
 end
