@@ -1,19 +1,9 @@
 class Notifications::ReadsController < ApplicationController
   def update
     notification = current_user.notifications.find(params[:notification_id])
-    case notification.notifiable_type
-    when "Comment"
+    if notification.notifiable_type == "Comment"
       comment = notification.notifiable
-      current_user.notifications
-                  .unread
-                  .where(notifiable_type: "Comment", notifiable_id: comment.item.comment_ids)
-                  .update_all(read: true)
-    when "Message"
-      message = notification.notifiable
-      current_user.notifications
-                  .unread
-                  .where(notifiable_type: "Message", notifiable_id: message.item.message_ids)
-                  .update_all(read: true)
+      Notification.update_all_read_by_ids!(current_user, "Comment", comment.item.comment_ids)
     else
       notification.update(read: true)
     end

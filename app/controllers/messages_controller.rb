@@ -6,6 +6,7 @@ class MessagesController < ApplicationController
   def index
     @messages = @item.messages.includes(:user).order(:created_at)
     @message = @item.messages.build
+    Notifications.update_all_read_by_ids!(current_user, "Message", @item.message_ids)
   end
 
   # POST /messages
@@ -25,9 +26,8 @@ class MessagesController < ApplicationController
   def destroy
     raise ActiveRecord::RecordNotFound unless current_user.admin?
 
-    @message = @item.messages.find(params[:id])
-    @message.destroy!
-    redirect_to conversation_messages_path(@item), notice: "コメントを削除しました", status: :see_other
+    @item.messages.find(params[:id]).destroy!
+    redirect_to transaction_messages_path(@item), notice: "メッセージを削除しました", status: :see_other
   end
 
   private
