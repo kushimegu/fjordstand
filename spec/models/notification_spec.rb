@@ -30,6 +30,20 @@ RSpec.describe Notification, type: :model do
     end
   end
 
+  describe ".update_all_read_by_ids!" do
+    it "updates all associated notifications read" do
+      comments = create_list(:comment, 2, item: sold_item)
+      comments.each do |comment|
+        create(:notification, :for_comment, notifiable: comment, user: seller)
+      end
+
+      expect(seller.notifications.pluck(:read)).to eq([ false, false ])
+      described_class.update_all_read_by_ids!(seller, "Comment", sold_item.comment_ids)
+
+      expect(seller.notifications.pluck(:read)).to eq([ true, true ])
+    end
+  end
+
   describe "#message" do
     context "when notifiable is message" do
       let(:notification) { create(:notification, :for_message, user: user) }
