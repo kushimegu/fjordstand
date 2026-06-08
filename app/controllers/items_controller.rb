@@ -6,9 +6,10 @@ class ItemsController < ApplicationController
   def index
     @items = Item.published
                   .not_expired
-                  .by_nearest_deadline
+                  .order(entry_deadline_at: :asc, created_at: :asc)
                   .includes(:user, :winner, first_image_attachment: :blob)
-                  .page(params[:page]).per(20)
+                  .page(params[:page])
+                  .per(20)
   end
 
   # GET /items/1
