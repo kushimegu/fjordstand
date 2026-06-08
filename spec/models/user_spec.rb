@@ -59,6 +59,40 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe "#applying_item_ids_for" do
+    let(:user) { create(:user) }
+    let(:applying_items) { create_list(:item, 2) }
+    let(:unapplied_item) { create(:item) }
+
+    it "returns users applying item ids" do
+      applying_items.each do |item|
+        create(:entry, item: item, user: user)
+      end
+      items = applying_items + [ unapplied_item ]
+      result = user.applying_item_ids_for(items)
+
+      expect(result).to match_array(applying_items.map(&:id))
+      expect(result).not_to include(unapplied_item.id)
+    end
+  end
+
+  describe "#watching_item_ids_for" do
+    let(:user) { create(:user) }
+    let(:watching_items) { create_list(:item, 2) }
+    let(:other_item) { create(:item) }
+
+    it "returns users watching item ids" do
+      watching_items.each do |item|
+        create(:watch, item: item, user: user)
+      end
+      items = watching_items + [ other_item ]
+      result = user.watching_item_ids_for(items)
+
+      expect(result).to match_array(watching_items.map(&:id))
+      expect(result).not_to include(other_item.id)
+    end
+  end
+
   describe "#entry_for" do
     let(:user) { create(:user) }
     let(:item) { create(:item) }
