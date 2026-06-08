@@ -6,7 +6,7 @@ class MessagesController < ApplicationController
   def index
     @messages = @item.messages.includes(:user).order(:created_at)
     @message = @item.messages.build
-    Notifications.update_all_read_by_ids!(current_user, "Message", @item.message_ids)
+    Notification.update_all_read_by_ids!(current_user, "Message", @item.message_ids)
   end
 
   # POST /messages
