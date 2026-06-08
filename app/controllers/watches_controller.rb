@@ -1,4 +1,6 @@
 class WatchesController < ApplicationController
+  before_action :set_item, only: %i[create destroy]
+
   # GET /watches
   def index
     @watches = current_user.watches
