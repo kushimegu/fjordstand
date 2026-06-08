@@ -14,12 +14,6 @@ class ItemsController < ApplicationController
   # GET /items/1
   def show
     @item = Item.includes(ordered_image_attachments: :blob).find(params[:id])
-    if params[:from] == "notifications"
-      current_user.notifications
-                  .unread
-                  .where(notifiable_type: "Comment", notifiable_id: @item.comment_ids)
-                  .update_all(read: true)
-    end
   end
 
   # GET /items/new
