@@ -40,7 +40,6 @@ class Item < ApplicationRecord
 
   scope :not_expired, -> { where(entry_deadline_at: Time.current.beginning_of_day..) }
   scope :expired, -> { where.not(id: not_expired).where(status: :published) }
-  scope :by_nearest_deadline, -> { order(entry_deadline_at: :asc, created_at: :asc) }
   scope :by_target, ->(target) {
   if target.present? && statuses.key?(target)
     where(status: target)
@@ -48,6 +47,13 @@ class Item < ApplicationRecord
     all
   end
   }
+
+  def self.in_transaction_with(user)
+    sold_by_me = where(user_id: user.id, status: :sold)
+    won_item_ids = user.entries.where(status: :won).select(:item_id)
+    won_by_me = where(id: won_item_ids)
+    sold_by_me.or(won_by_me)
+  end
 
   def other_user_for(current_user)
     if current_user.admin? && [ user, winner ].exclude?(current_user)
@@ -78,10 +84,7 @@ class Item < ApplicationRecord
   end
 
   def unread_messages_for?(user)
-    user.notifications.unread
-        .where(notifiable_type: "Message")
-        .joins("INNER JOIN messages ON notifications.notifiable_id = messages.id")
-        .exists?(messages: { item_id: id })
+    user.notifications.unread.exists?(notifiable_type: "Message", notifiable_id: message_ids)
   end
 
   private
