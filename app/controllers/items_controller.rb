@@ -55,7 +55,9 @@ class ItemsController < ApplicationController
     @item.description = [ @item.description.presence, description_append ].compact.join("\n") if description_append.present?
     @item.payment_method = [ @item.payment_method, payment_method_append ].join(" ") if payment_method_append.present?
 
-    if @item.save(context: :publish)
+    if @item.valid?(:publish)
+      @item.status = :published
+      @item.save!
       notice_key = @item.saved_change_to_status? ? :publish : :update
       redirect_to @item, notice: t("notices.item.#{notice_key}"), status: :see_other
     else
