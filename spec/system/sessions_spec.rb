@@ -4,7 +4,7 @@ require 'webmock/rspec'
 RSpec.describe "Sessions", type: :system do
   before { driven_by(:rack_test) }
 
-    describe 'login' do
+  describe 'login' do
     context 'when user is a guild member' do
       before do
         uid = '12345678890'
@@ -39,6 +39,7 @@ RSpec.describe "Sessions", type: :system do
       it 'can login' do
         visit root_path
         click_on 'Discordでログイン'
+        expect(page).to have_current_path(items_path)
         expect(page).to have_link, 'ログアウト'
       end
     end
@@ -51,8 +52,24 @@ RSpec.describe "Sessions", type: :system do
       it 'fails to login' do
         visit root_path
         click_on 'Discordでログイン'
-        expect(page).to have_button, 'Discordでログイン'
+        expect(page).to have_current_path(root_path)
       end
+    end
+  end
+
+  describe 'logout' do
+    let(:user) { create(:user) }
+
+    before { login(user) }
+
+    it "can logout" do
+      expect(page).to have_current_path(items_path)
+
+      find(".user-menu__trigger").click
+      click_on 'ログアウト'
+
+      expect(page).to have_content 'ログアウトしました'
+      expect(page).to have_current_path(root_path)
     end
   end
 end
