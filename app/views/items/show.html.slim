@@ -51,11 +51,11 @@ article.item-show.mt-2.flex.flex-col.md:grid.md:grid-cols-2.md:gap-10.md:items-s
                 class: "thumbnail object-contain w-full h-full",
                 data: { image_gallery_target: "thumbnail", action: "click->image-gallery#show", image: url_for(image) }
     - else
-      .aspect-square.rounded-2xl.overflow-hidden.bg-gray-50.flex.items-center.justify-center
+      .aspect-square.rounded-2xl.overflow-hidden.bg-gray-100.flex.items-center.justify-center
         = image_tag "listing-image.png", alt: "商品画像なし", class: "object-contain w-1/2 h-1/2 opacity-25"
 
   / 商品情報
-  section.item-info.mt-8.lg:mt-0.flex.flex-col.gap-5
+  section.item-info.lg:mt-0.flex.flex-col.gap-5
 
     / タイトル
     h1.text-2xl.font-bold.text-gray-900.leading-snug = @item.title
@@ -86,7 +86,7 @@ article.item-show.mt-2.flex.flex-col.md:grid.md:grid-cols-2.md:gap-10.md:items-s
       - else
         = link_to item_watches_path(@item),
                   data: { "turbo-method": :post },
-                  class: "watch-btn flex items-center gap-1.5 border border-gray-300 px-3 py-1.5 cursor-pointer rounded-lg hover:bg-gray-50 text-sm \
+                  class: "watch-btn flex items-center gap-1.5 border border-gray-300 px-3 py-1.5 cursor-pointer rounded-lg hover:bg-gray-100 text-sm \
                   text-gray-700 transition-colors flex-shrink-0",
                   aria_label: "通知をオンにする" do
           svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4"
@@ -192,11 +192,11 @@ article.item-show.mt-2.flex.flex-col.md:grid.md:grid-cols-2.md:gap-10.md:items-s
                   3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"
                 | 出品者と連絡をとる
           - elsif current_user.entry_for(@item)&.lost?
-            p.text-center.py-3.text-gray-700.text-base.bg-gray-50.rounded-lg 落選しました
+            p.text-center.py-3.text-gray-700.text-base.bg-gray-100.rounded-lg 落選しました
           - elsif current_user.entry_for(@item)&.applied?
             p.text-center.py-3.text-cyan-600.text-base.bg-cyan-50.rounded-lg 購入希望中です
           - else
-            p.text-center.py-3.text-gray-700.text-base.bg-gray-50.rounded-lg 応募期間が終了しています
+            p.text-center.py-3.text-gray-700.text-base.bg-gray-100.rounded-lg 応募期間が終了しています
     = render "shared/error_messages", model: @entry, attribute: :base
 
     / 支払い方法・商品説明
@@ -216,7 +216,7 @@ article.item-show.mt-2.flex.flex-col.md:grid.md:grid-cols-2.md:gap-10.md:items-s
       .item-edit-actions.flex.items-center.justify-end.gap-3.border-t.border-gray-300.pt-4
         - if @item.user == current_user && @item.editable?
           = link_to "編集する", edit_item_path(@item),
-          class: "border border-gray-300 text-base px-4 py-2 rounded-lg hover:bg-gray-50 text-gray-700 transition-colors"
+          class: "border border-gray-300 text-base px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
         - if current_user.admin?
           = button_to "削除する", @item, method: :delete, data: { turbo_confirm: "本当に削除しますか？" },
             class: "cursor-pointer text-base text-gray-700 underline hover:text-red-400"
