@@ -14,7 +14,7 @@ class SessionsController < ApplicationController
   end
 
   def failure
-    redirect_to root_path, alert: "ログインがキャンセルされました"
+    redirect_to root_path
   end
 
   def destroy
