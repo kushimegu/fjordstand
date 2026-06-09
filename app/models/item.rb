@@ -68,9 +68,7 @@ class Item < ApplicationRecord
   end
 
   def deletable_by?(user)
-    return true if draft? && user.id == self.user_id
-    return true if !draft? && user.admin?
-    false
+    draft? ? user.id == self.user_id : user.admin?
   end
 
   def editable?
