@@ -9,13 +9,23 @@ header.site-header.sticky.top-0.bg-white.z-10.border-b.border-gray-200.shadow-sm
       on_notifications = current_page?(notifications_path)
       notifications_url = current_user.notifications.unread.exists? ? notifications_path(status: "unread") : notifications_path
     .header-inner.flex.flex-wrap.items-center.justify-between.px-4.py-3.gap-2.sm:gap-4.relative
-      = link_to items_path, class: "site-logo" do
-        = image_tag "fjordstand-logo.png", alt: "FjordStandロゴ", class: "w-10 h-10"
+      .header-meta.flex.items-center.gap-3
+        = link_to items_path, class: "site-logo" do
+          = image_tag "fjordstand-logo.png", alt: "FjordStandロゴ", class: "w-10 h-10"
+        - if current_user.admin?
+            = link_to "/jobs", target: "_blank", rel: "noopener",
+            class: "cursor-pointer flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors" do
+              svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4"
+                path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548
+                2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0
+                2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z"
+                path stroke-linecap="round" stroke-linejoin="round" d="M4.867 19.125h.008v.008h-.008v-.008Z"
+              span.text-sm ジョブ
       .header-actions.flex.items-center.gap-3
         = link_to "出品する", new_item_path,
         class: "btn-primary px-4 py-2 rounded-lg bg-cyan-600 text-white text-sm font-semibold hover:bg-cyan-700 transition-colors"
         = link_to notifications_url do
-          div class=["relative flex items-center justify-center gap-1.5 flex-wrap flex items-center cursor-pointer px-3 py-2 rounded-lg",
+          div class=["relative flex items-center justify-center gap-1.5 flex-wrap cursor-pointer px-3 py-2 rounded-lg",
           "hover:bg-gray-100 transition-colors", (on_notifications && "bg-gray-100")]
             svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4"
               path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6
@@ -25,9 +35,6 @@ header.site-header.sticky.top-0.bg-white.z-10.border-b.border-gray-200.shadow-sm
               - display_count = current_user.notifications.unread.count > 99 ? "99+" : current_user.notifications.unread.count
               span.notification-badge.absolute.top-0.-right-1.min-w-5.px-1.bg-red-500.text-white.text-xs.font-bold.rounded-full.flex.items-center.justify-center
                 = display_count
-        - if current_user.admin?
-          = link_to "ジョブ管理", "/jobs", target: "_blank", rel: "noopener",
-          class: "text-sm cursor-pointer px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
         .user-menu[data-controller="hamburger",
         data-hamburger-target="button" data-action="click->hamburger#toggle" aria-expanded="false" aria-controls="header__nav"]
           .user-menu__trigger.flex.items-center.cursor-pointer.px-2.py-1.rounded-lg.hover:bg-gray-100.transition-colors
