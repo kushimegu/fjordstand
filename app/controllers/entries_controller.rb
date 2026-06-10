@@ -5,7 +5,7 @@ class EntriesController < ApplicationController
     @entries = current_user.entries
                             .by_target(params[:status])
                             .order("items.entry_deadline_at DESC, entries.created_at DESC")
-                            .includes(item: [ :user, :winner, first_image_attachment: :blob ])
+                            .includes(item: [ :user, :winner, first_image_attachment: { blob: :variant_records } ])
                             .page(params[:page])
                             .per(12)
   end

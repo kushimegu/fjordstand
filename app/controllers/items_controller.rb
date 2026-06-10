@@ -8,14 +8,14 @@ class ItemsController < ApplicationController
     @items = Item.published
                   .not_expired
                   .order(entry_deadline_at: :asc, created_at: :asc)
-                  .includes(:user, :winner, first_image_attachment: :blob)
+                  .includes(:user, :winner, first_image_attachment: { blob: :variant_records })
                   .page(params[:page])
                   .per(20)
   end
 
   # GET /items/1
   def show
-    @item = Item.includes(ordered_image_attachments: :blob).find(params[:id])
+    @item = Item.includes(ordered_image_attachments: { blob: :variant_records }).find(params[:id])
   end
 
   # GET /items/new
@@ -73,7 +73,7 @@ class ItemsController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_user_item_with_images
-    @item = current_user.items.includes(ordered_image_attachments: :blob).find(params[:id])
+    @item = current_user.items.includes(ordered_image_attachments: { blob: :variant_records }).find(params[:id])
   end
 
   # Only allow a list of trusted parameters through.
