@@ -23,7 +23,7 @@ class EntriesController < ApplicationController
 
   # DELETE /entries/1
   def destroy
-    current_user.entries.find_by(item_id: @item.id).destroy!
+    current_user.entries.find_by(item_id: @item.id)&.destroy!
     redirect_to @item, notice: "購入希望を取り消しました", status: :see_other
   end
 
