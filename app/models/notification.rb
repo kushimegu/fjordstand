@@ -11,12 +11,6 @@ class Notification < ApplicationRecord
   end
   }
 
-  def self.update_all_read_by_ids!(user, type, ids)
-    return if ids.blank?
-
-    unread.where(notifiable_type: type, notifiable_id: ids).update_all(read: true)
-  end
-
   def message
     case notifiable
     when Comment
