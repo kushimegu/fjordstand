@@ -28,9 +28,11 @@ Rails.application.routes.draw do
   end
   resources :notifications, only: [:index] do
     scope module: :notifications do
-      resource :read, only: %i[update]
+      member do
+        patch :mark_as_read, to: "reads#mark_as_read"
+      end
       collection do
-        patch :read_all, to: "reads#update_all"
+        patch :mark_all_as_read, to: "reads#mark_all_as_read"
       end
     end
   end
