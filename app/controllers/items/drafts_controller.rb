@@ -10,25 +10,24 @@ class Items::DraftsController < ApplicationController
   end
 
   def update
-    item = current_user.items.includes(ordered_image_attachments: :blob).find(params[:id])
+    @item = current_user.items.find(params[:id])
 
-    if item.update(item_params)
+    if @item.update(item_params)
       redirect_to listings_path, notice: "下書きを更新しました", status: :see_other
     else
+      @item = current_user.items.includes(ordered_image_attachments: { blob: :variant_records }).find(@item.id)
       render :edit, status: :unprocessable_content
     end
   end
 
   def destroy
-    item = current_user.items.draft.find(params[:id])
-
-    item.destroy!
+    current_user.items.draft.find(params[:id])destroy!
     redirect_to listings_path, notice: "下書きを削除しました", status: :see_other
   end
 
   private
 
   def item_params
-    params.expect(item: [ :title, :title_append, :description, :description_append, :price, :shipping_fee_payer, :payment_method, :payment_method_append, :entry_deadline_at, :status, images: [] ])
+    params.expect(item: [ :title, :description, :price, :shipping_fee_payer, :payment_method, :entry_deadline_at, :status, images: [] ])
   end
 end
