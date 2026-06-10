@@ -1,7 +1,10 @@
 class User < ApplicationRecord
   has_many :items, dependent: :destroy
+  has_many :sold_items, -> { where(status: :sold) }, class_name: "Item"
   has_many :entries, dependent: :destroy
   has_many :applied_items, through: :entries, source: :item
+  has_many :won_entries, -> { where(status: :won) }, class_name: "Entry"
+  has_many :won_items, through: :won_entries, source: :item
   has_many :messages, dependent: :destroy
   has_many :comments, dependent: :destroy
   has_many :watches, dependent: :destroy
@@ -44,6 +47,10 @@ class User < ApplicationRecord
 
     user.save!
     user
+  end
+
+  def in_transaction_items
+    Item.where(id: sold_items).or(Item.where(id: won_items))
   end
 
   def applying_item_ids_for(items)
