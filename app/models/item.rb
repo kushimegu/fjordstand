@@ -40,6 +40,7 @@ class Item < ApplicationRecord
 
   scope :not_expired, -> { where(entry_deadline_at: Time.current.beginning_of_day..) }
   scope :expired, -> { where.not(id: not_expired).where(status: :published) }
+  scope :commentable, -> { where.not(status: :draft) }
   scope :by_target, ->(target) {
   if target.present? && statuses.key?(target)
     where(status: target)

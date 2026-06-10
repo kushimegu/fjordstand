@@ -20,8 +20,7 @@ class Items::DraftsController < ApplicationController
   end
 
   def destroy
-    item = current_user.items.find(params[:id])
-    raise ActiveRecord::RecordNotFound unless item.deletable_by?(current_user)
+    item = current_user.items.draft.find(params[:id])
 
     item.destroy!
     redirect_to listings_path, notice: "下書きを削除しました", status: :see_other
