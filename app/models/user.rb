@@ -50,4 +50,8 @@ class User < ApplicationRecord
   def has_unread_messages?
     notifications.unread.where(notifiable_type: "Message").exists?
   end
+
+  def mark_notifications_as_read!(notifiable_type, notifiable_ids)
+    notifications.unread.where(notifiable_type: notifiable_type, notifiable_id: notifiable_ids).update_all(read: true)
+  end
 end
