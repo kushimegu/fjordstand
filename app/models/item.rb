@@ -49,13 +49,6 @@ class Item < ApplicationRecord
   end
   }
 
-  def self.in_transaction_with(user)
-    sold_by_me = where(user_id: user.id, status: :sold)
-    won_item_ids = user.entries.where(status: :won).select(:item_id)
-    won_by_me = where(id: won_item_ids)
-    sold_by_me.or(won_by_me)
-  end
-
   def other_user_for(current_user)
     if current_user.admin?
       return nil unless [ user, winner ].include?(current_user)

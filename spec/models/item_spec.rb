@@ -97,25 +97,6 @@ RSpec.describe Item, type: :model do
     end
   end
 
-  describe ".in_transaction_with" do
-    let!(:user) { create(:user) }
-    let!(:other_user) { create(:user) }
-
-    let!(:sold_item_by_me) { create(:item, :sold, user: user) }
-    let!(:won_item_by_me) { create(:item, :sold) }
-
-    let!(:other_item) { create(:item, user: other_user) }
-
-    it "returns users sold or won item" do
-      create(:entry, :won, item: won_item_by_me, user: user)
-      result = described_class.in_transaction_with(user)
-
-      expect(result).to include(sold_item_by_me)
-      expect(result).to include(won_item_by_me)
-      expect(result).not_to include(other_item)
-    end
-  end
-
   describe "#other_user_for" do
     let(:seller) { create(:user) }
     let(:item) { create(:item, :sold, user: seller) }
