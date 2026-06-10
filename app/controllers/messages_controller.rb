@@ -1,6 +1,7 @@
 class MessagesController < ApplicationController
   before_action :set_item
   before_action :authorize_user
+  before_action :require_admin, only: %i[destroy]
 
   # GET /messages
   def index
@@ -24,8 +25,6 @@ class MessagesController < ApplicationController
 
   # DELETE /messages/1
   def destroy
-    raise ActiveRecord::RecordNotFound unless current_user.admin?
-
     @item.messages.find(params[:id]).destroy!
     redirect_to transaction_messages_path(@item), notice: "メッセージを削除しました", status: :see_other
   end
@@ -47,10 +46,6 @@ class MessagesController < ApplicationController
     return if current_user.admin?
 
     redirect_to items_path, alert: "この連絡ページを閲覧する権限がありません"
-  end
-
-  def set_message
-    @message = @item.messages.find(params[:id])
   end
 
   def require_admin

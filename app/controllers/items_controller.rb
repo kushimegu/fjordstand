@@ -1,6 +1,7 @@
 class ItemsController < ApplicationController
   before_action :set_user_item_with_images, only: %i[edit update]
   before_action :ensure_item_editable, only: %i[edit update]
+  before_action :require_admin, only: %i[destroy]
 
   # GET /items
   def index
@@ -63,9 +64,8 @@ class ItemsController < ApplicationController
   # DELETE /items/1
   def destroy
     item = Item.find(params[:id])
-    raise ActiveRecord::RecordNotFound unless item.deletable_by?(current_user)
 
-    item.destroy
+    item.destroy!
     redirect_to items_path, notice: "商品を削除しました", status: :see_other
   end
 
@@ -82,7 +82,10 @@ class ItemsController < ApplicationController
   end
 
   def ensure_item_editable
-    return if @item.editable?
-    redirect_to @item, alert: "締切を過ぎた商品は編集できません"
+    redirect_to @item, alert: "締切を過ぎた商品は編集できません" unless @item.editable?
+  end
+
+  def require_admin
+    redirect_to @item, alert: "削除する権限がありません" unless current_user.admin?
   end
 end
