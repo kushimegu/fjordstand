@@ -75,10 +75,6 @@ class Item < ApplicationRecord
     !draft?
   end
 
-  def unread_messages_for?(user)
-    user.notifications.unread.exists?(notifiable_type: "Message", notifiable_id: message_ids)
-  end
-
   private
 
   def deadline_today_or_later
