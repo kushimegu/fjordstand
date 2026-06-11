@@ -44,10 +44,10 @@ class MessagesController < ApplicationController
 
   def authorize_user
     return if @item.user_id == current_user.id
-    return if @item.entries.exists?(user_id: current_user.id, status: :won)
+    return if @item.winner == current_user
     return if current_user.admin?
 
-    redirect_to items_path, alert: "この連絡ページを閲覧する権限がありません"
+    redirect_to @item, alert: "この連絡ページを閲覧する権限がありません"
   end
 
   def require_admin
