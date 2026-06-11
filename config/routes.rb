@@ -19,7 +19,7 @@ Rails.application.routes.draw do
   end
   resources :entries, only: %i[index]
   resources :watches, only: %i[index]
-  resources :transactions, only: [:index] do
+  resources :conversations, only: [:index] do
     resources :messages, only: %i[index create destroy]
   end
   resources :notifications, only: [:index] do

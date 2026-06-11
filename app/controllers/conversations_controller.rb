@@ -1,4 +1,4 @@
-class TransactionsController < ApplicationController
+class ConversationsController < ApplicationController
   def index
     @items = Item.includes(:user, :winner, first_image_attachment: :blob, notifications: :notifiable)
                   .where(user_id: current_user.id, status: :sold)

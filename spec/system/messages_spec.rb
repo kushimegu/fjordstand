@@ -16,7 +16,7 @@ RSpec.describe "Messages", type: :system do
         login(buyer)
         expect(page).to have_current_path(items_path)
 
-        visit transaction_messages_path(item)
+        visit conversation_messages_path(item)
 
         fill_in "message_body", with: "こんにちは"
         click_on "送信する"
@@ -32,7 +32,7 @@ RSpec.describe "Messages", type: :system do
         login(other_user)
         expect(page).to have_current_path(items_path)
 
-        visit transaction_messages_path(item)
+        visit conversation_messages_path(item)
 
         expect(page).to have_current_path(items_path)
         expect(page).to have_content("この連絡ページを閲覧する権限がありません")
@@ -46,7 +46,7 @@ RSpec.describe "Messages", type: :system do
         login(seller)
         expect(page).to have_current_path(items_path)
 
-        visit transaction_messages_path(item)
+        visit conversation_messages_path(item)
 
         fill_in "message_body", with: "\n"
         click_on "送信する"
@@ -65,7 +65,7 @@ RSpec.describe "Messages", type: :system do
       create(:message, user: seller, item: item, body: "大丈夫です")
       expect(page).to have_current_path(items_path)
 
-      visit transaction_messages_path(item)
+      visit conversation_messages_path(item)
 
       within(find(".message", text: "大丈夫です")) do
         accept_confirm do

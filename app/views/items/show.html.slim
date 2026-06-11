@@ -146,7 +146,7 @@ article.item-show.mt-2.flex.flex-col.md:grid.md:grid-cols-2.md:gap-10.md:items-s
           | 当選者の
           span.font-semibold = @item.winner.name
           | さんに代金の送り先を伝えるなどのやり取りを行ってください。
-        = link_to transaction_messages_path(@item), class: "flex items-center justify-center gap-2 bg-cyan-600 text-white font-bold py-2.5 px-5 rounded-lg \
+        = link_to conversation_messages_path(@item), class: "flex items-center justify-center gap-2 bg-cyan-600 text-white font-bold py-2.5 px-5 rounded-lg \
           hover:bg-cyan-700 transition-colors text-base" do
           svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4"
             path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98
@@ -182,7 +182,7 @@ article.item-show.mt-2.flex.flex-col.md:grid.md:grid-cols-2.md:gap-10.md:items-s
                 | 出品者の
                 span.font-semibold = @item.user.name
                 | さんに商品の配送先を伝えるなどのやり取りを行ってください。
-              = link_to transaction_messages_path(@item), class: "flex items-center justify-center gap-2 bg-cyan-600 text-white font-bold py-2.5 px-5 \
+              = link_to conversation_messages_path(@item), class: "flex items-center justify-center gap-2 bg-cyan-600 text-white font-bold py-2.5 px-5 \
                 rounded-lg hover:bg-cyan-700 transition-colors text-base" do
                 svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4"
                   path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98

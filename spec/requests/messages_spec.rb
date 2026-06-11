@@ -10,7 +10,7 @@ RSpec.describe "/messages", type: :request do
       it "redirects to items" do
         other_user = create(:user)
         login(other_user)
-        get transaction_messages_path(item)
+        get conversation_messages_path(item)
         expect(response).to redirect_to(items_path)
       end
     end
@@ -20,7 +20,7 @@ RSpec.describe "/messages", type: :request do
         login(buyer)
         create(:entry, :won, item: item, user: buyer)
         create(:message, user: buyer, item: item)
-        get transaction_messages_path(item)
+        get conversation_messages_path(item)
         expect(response).to be_successful
       end
 
@@ -29,7 +29,7 @@ RSpec.describe "/messages", type: :request do
         create_list(:message, 2, user: seller, item: item)
         login(buyer)
         expect(buyer.notifications.pluck(:read)).to all(be false)
-        get transaction_messages_path(item)
+        get conversation_messages_path(item)
         expect(buyer.notifications.reload.pluck(:read)).to all(be true)
       end
     end
@@ -44,14 +44,14 @@ RSpec.describe "/messages", type: :request do
       it "creates a new Message" do
         create(:entry, :won, item: item, user: buyer)
         expect {
-          post transaction_messages_path(item), params: { message: valid_attributes }
+          post conversation_messages_path(item), params: { message: valid_attributes }
         }.to change(Message, :count).by(1)
       end
 
       it "redirects to the message index" do
         create(:entry, :won, item: item, user: buyer)
-        post transaction_messages_path(item), params: { message: valid_attributes }
-        expect(response).to redirect_to(transaction_messages_path(item))
+        post conversation_messages_path(item), params: { message: valid_attributes }
+        expect(response).to redirect_to(conversation_messages_path(item))
       end
     end
 
@@ -61,13 +61,13 @@ RSpec.describe "/messages", type: :request do
       it "does not create a new Message" do
         create(:entry, :won, item: item, user: buyer)
         expect {
-          post transaction_messages_path(item), params: { message: invalid_attributes }
+          post conversation_messages_path(item), params: { message: invalid_attributes }
         }.not_to change(Message, :count)
       end
 
       it "renders a response with 422 status (i.e. to display the 'new' template)" do
         create(:entry, :won, item: item, user: buyer)
-        post transaction_messages_path(item), params: { message: invalid_attributes }
+        post conversation_messages_path(item), params: { message: invalid_attributes }
         expect(response).to have_http_status(:unprocessable_content)
       end
     end
@@ -80,9 +80,9 @@ RSpec.describe "/messages", type: :request do
         login(buyer)
         message = create(:message, user: buyer, item: item)
         expect {
-          delete transaction_message_url(item, message)
+          delete conversation_message_url(item, message)
         }.not_to change(Message, :count)
-        expect(response).to redirect_to(transaction_messages_url(item))
+        expect(response).to redirect_to(conversation_messages_url(item))
       end
     end
 
@@ -95,15 +95,15 @@ RSpec.describe "/messages", type: :request do
         message = create(:message, user: buyer, item: item)
 
         expect {
-          delete transaction_message_url(item, message)
+          delete conversation_message_url(item, message)
         }.to change(Message, :count).by(-1)
       end
 
       it "redirects to item" do
         message = create(:message, user: buyer, item: item)
 
-        delete transaction_message_url(item, message)
-        expect(response).to redirect_to(transaction_messages_url(item))
+        delete conversation_message_url(item, message)
+        expect(response).to redirect_to(conversation_messages_url(item))
       end
     end
   end

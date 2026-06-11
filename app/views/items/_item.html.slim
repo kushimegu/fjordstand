@@ -24,7 +24,7 @@
       - else
         .item-price.mt-1.text-sm.text-gray-400 価格未入力
 
-    - if request.path.include?("transactions")
+    - if request.path.include?("conversations")
       .mt-2
         .flex.items-center.gap-2.flex-wrap
           - if current_user == item.user

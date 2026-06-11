@@ -56,9 +56,8 @@ header.site-header.sticky.top-0.bg-white.z-10.border-b.border-gray-200.shadow-sm
           = link_to listings_path, class: nav_class.call(active_listings_tab?)
             span 自分の
             span 出品
-          = link_to transactions_path, class: nav_class.call(active_transactions_tab?)
-            span 連絡
-            span ページ
+          = link_to conversations_path, class: nav_class.call(active_conversations_tab?)
+            span やり取り
           - if current_user.has_unread_messages?
             - count = current_user.unread_message_items_count
             - display_count = count > 99 ? "99+" : count

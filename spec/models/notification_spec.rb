@@ -103,7 +103,7 @@ RSpec.describe Notification, type: :model do
         message = create(:message, user: buyer, item: sold_item)
         notification = create(:notification, :for_message, user: seller, notifiable: message)
 
-        expect(notification.link).to eq("/transactions/#{sold_item.id}/messages")
+        expect(notification.link).to eq("/conversations/#{sold_item.id}/messages")
       end
     end
 
@@ -111,7 +111,7 @@ RSpec.describe Notification, type: :model do
       it "returns link to messages" do
         notification = create(:notification, :for_entry, notifiable: entry, user: buyer)
 
-        expect(notification.link).to eq("/transactions/#{sold_item.id}/messages")
+        expect(notification.link).to eq("/conversations/#{sold_item.id}/messages")
       end
     end
 
@@ -129,7 +129,7 @@ RSpec.describe Notification, type: :model do
       it "returns link to message" do
         notification = create(:notification, :for_item, notifiable: sold_item, user: seller)
 
-        expect(notification.link).to eq("/transactions/#{sold_item.id}/messages")
+        expect(notification.link).to eq("/conversations/#{sold_item.id}/messages")
       end
     end
 
