@@ -42,6 +42,6 @@ module ApplicationHelper
   end
 
   def active_conversations_tab?
-    request.fullpath.match?(%r{\A/conversations|from=messages})
+    request.path.start_with?("/conversations") || request.fullpath.include?("from=messages")
   end
 end
