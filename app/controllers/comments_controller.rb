@@ -4,8 +4,6 @@ class CommentsController < ApplicationController
 
   # POST /comments
   def create
-    @item = Item.commentable.find(params[:item_id])
-
     @comment = @item.comments.build(comment_params)
     @comment.user = current_user
 
@@ -25,9 +23,10 @@ class CommentsController < ApplicationController
   end
 
   private
+
   # Use callbacks to share common setup or constraints between actions.
   def set_item
-    @item = Item.find(params[:item_id])
+    @item = Item.commentable.find(params[:item_id])
   end
 
   # Only allow a list of trusted parameters through.
