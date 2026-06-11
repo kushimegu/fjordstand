@@ -9,13 +9,7 @@ RSpec.describe "Items::Closes", type: :request do
   describe "PATCH /update" do
     it "updates the requested item" do
       patch item_close_path(item_id: item.id)
-      item.reload
-      expect(item.status).to eq("closed")
-    end
-
-    it "redirects to the listings" do
-      patch item_close_path(item_id: item.id)
-      item.reload
+      expect(item.reload.status).to eq("closed")
       expect(response).to redirect_to(listings_path)
     end
   end
