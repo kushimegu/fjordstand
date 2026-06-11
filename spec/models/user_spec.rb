@@ -72,7 +72,6 @@ RSpec.describe User, type: :model do
       result = user.applying_item_ids_for(items)
 
       expect(result).to match_array(applying_items.map(&:id))
-      expect(result).not_to include(unapplied_item.id)
     end
   end
 
@@ -89,7 +88,6 @@ RSpec.describe User, type: :model do
       result = user.watching_item_ids_for(items)
 
       expect(result).to match_array(watching_items.map(&:id))
-      expect(result).not_to include(other_item.id)
     end
   end
 
