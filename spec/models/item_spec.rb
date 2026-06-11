@@ -140,73 +140,15 @@ RSpec.describe Item, type: :model do
 
     context "when closed by user action" do
       it "changes status and queues job" do
-        expect { item.close(reason: :user_action) }.to have_enqueued_job(NotifyItemClosedJob).with(item.id, { reason: :user_action })
+        expect { item.close!(reason: :user_action) }.to have_enqueued_job(NotifyItemClosedJob).with(item.id, { reason: :user_action })
         expect(item.status).to eq("closed")
       end
     end
 
     context "when closed by deadline" do
       it "changes status and queues job" do
-        expect { item.close(reason: :no_applicants) }.to have_enqueued_job(NotifyItemClosedJob).with(item.id, { reason: :no_applicants })
+        expect { item.close!(reason: :no_applicants) }.to have_enqueued_job(NotifyItemClosedJob).with(item.id, { reason: :no_applicants })
         expect(item.status).to eq("closed")
-      end
-    end
-  end
-
-  describe "#deletable_by?" do
-    let(:admin) { create(:user, :admin) }
-    let(:user) { create(:user) }
-    let(:other_user) { create(:user) }
-
-    context "when item is draft" do
-      let(:item) { create(:item, user: user) }
-
-      it "is deletable by item user" do
-        expect(item.deletable_by?(user)).to be true
-      end
-
-      it "is not deletable by other user" do
-        expect(item.deletable_by?(other_user)).to be false
-      end
-
-      it "is not deletable by other admin" do
-        expect(item.deletable_by?(admin)).to be false
-      end
-    end
-
-    context "when item is published" do
-      let(:item) { create(:item, :published, user: user) }
-
-      it "is deletable by admin" do
-        expect(item.deletable_by?(admin)).to be true
-      end
-
-      it "is not deletable by user" do
-        expect(item.deletable_by?(user)).to be false
-      end
-    end
-
-    context "when item is sold" do
-      let(:item) { create(:item, :sold, user: user) }
-
-      it "is deletable by admin" do
-        expect(item.deletable_by?(admin)).to be true
-      end
-
-      it "is not deletable by user" do
-        expect(item.deletable_by?(user)).to be false
-      end
-    end
-
-    context "when item is closed" do
-      let(:item) { create(:item, :closed, user: user) }
-
-      it "is deletable by admin" do
-        expect(item.deletable_by?(admin)).to be true
-      end
-
-      it "is not deletable by user" do
-        expect(item.deletable_by?(user)).to be false
       end
     end
   end

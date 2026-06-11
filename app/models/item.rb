@@ -56,13 +56,9 @@ class Item < ApplicationRecord
     user == current_user ? winner : user
   end
 
-  def close(reason: :user_action)
+  def close!(reason: :user_action)
     update!(status: :closed)
     NotifyItemClosedJob.perform_later(id, reason: reason)
-  end
-
-  def deletable_by?(user)
-    draft? ? user.id == self.user_id : user.admin?
   end
 
   def editable?

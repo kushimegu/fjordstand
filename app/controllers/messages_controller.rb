@@ -25,14 +25,16 @@ class MessagesController < ApplicationController
 
   # DELETE /messages/1
   def destroy
-    @item.messages.find(params[:id]).destroy!
+    message = @item.messages.find(params[:id])
+
+    message.destroy!
     redirect_to transaction_messages_path(@item), notice: "メッセージを削除しました", status: :see_other
   end
 
   private
 
   def set_item
-    @item = Item.find(params[:conversation_id])
+    @item = Item.sold.find(params[:conversation_id])
   end
 
   # Only allow a list of trusted parameters through.
