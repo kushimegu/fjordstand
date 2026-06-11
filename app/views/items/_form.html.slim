@@ -126,14 +126,14 @@
 
   - if item.draft?
     div
+      - draft_btn = "cursor-pointer w-full block px-4 py-2.5 rounded-lg border border-cyan-500 text-cyan-600 text-sm font-semibold hover:bg-cyan-50 \
+        transition-colors text-center"
       - if item.persisted?
         = form.submit "下書きを更新する", name: "draft", formaction: draft_path(item), formmethod: :patch,
-        class: "cursor-pointer w-full block px-4 py-2.5 rounded-lg border border-cyan-500 text-cyan-600 text-sm font-semibold hover:bg-cyan-50 \
-        transition-colors text-center"
+        class: draft_btn
       - else
         = form.submit "下書きとして保存する", name: "draft", formaction: drafts_path, formmethod: :post,
-        class: "cursor-pointer w-full block px-4 py-2.5 rounded-lg border border-cyan-500 text-cyan-600 text-sm font-semibold hover:bg-cyan-50 \
-        transition-colors text-center"
+        class: draft_btn
 
   - if item.published?
     div
