@@ -28,14 +28,7 @@ RSpec.describe "Items::Drafts", type: :request do
     it "updates the requested item" do
       item = create(:item, user: user, title: "技術書")
       patch draft_url(item), params: { item: new_attributes }
-      item.reload
-      expect(item.title).to eq("初版")
-    end
-
-    it "redirects to the listings" do
-      item = create(:item, user: user, title: "技術書")
-      patch draft_url(item), params: { item: new_attributes }
-      item.reload
+      expect(item.reload.title).to eq("初版")
       expect(response).to redirect_to(listings_path)
     end
   end
@@ -47,11 +40,6 @@ RSpec.describe "Items::Drafts", type: :request do
         expect {
           delete draft_url(item)
         }.to change(Item, :count).by(-1)
-      end
-
-      it "redirects to the listings" do
-        item = create(:item, user: user)
-        delete draft_url(item)
         expect(response).to redirect_to(listings_path)
       end
     end
