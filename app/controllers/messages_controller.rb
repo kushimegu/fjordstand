@@ -22,7 +22,7 @@ class MessagesController < ApplicationController
     @message.user = current_user
 
     if @message.save
-      redirect_to transaction_messages_path(@item), notice: "メッセージを送信しました"
+      redirect_to conversation_messages_path(@item), notice: "メッセージを送信しました"
     else
       @messages = @item.messages.includes(:user).order(:created_at)
       render :index, status: :unprocessable_content
@@ -32,13 +32,13 @@ class MessagesController < ApplicationController
   # DELETE /messages/1
   def destroy
     @message.destroy!
-    redirect_to transaction_messages_path(@item), notice: "コメントを削除しました", status: :see_other
+    redirect_to conversation_messages_path(@item), notice: "コメントを削除しました", status: :see_other
   end
 
   private
 
   def set_item
-    @item = Item.find(params[:transaction_id])
+    @item = Item.find(params[:conversation_id])
   end
 
   # Only allow a list of trusted parameters through.
@@ -60,7 +60,7 @@ class MessagesController < ApplicationController
 
   def require_admin
     unless current_user.admin?
-      redirect_to transaction_messages_path(@item), alert: "削除する権限がありません"
+      redirect_to conversation_messages_path(@item), alert: "削除する権限がありません"
     end
   end
 end

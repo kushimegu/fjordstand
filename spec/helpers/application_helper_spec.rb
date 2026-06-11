@@ -63,7 +63,7 @@ RSpec.describe ApplicationHelper, type: :helper do
       it "returns link to messages" do
         result = helper.back_link_for_item(item)
         expect(result).to include("連絡ページへ")
-        expect(result).to include(transaction_messages_path(item))
+        expect(result).to include(conversation_messages_path(item))
       end
     end
 
@@ -258,17 +258,17 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
-  describe "#active_transactions_tab?" do
-    context "when current page is transactions_path" do
+  describe "#active_conversations_tab?" do
+    context "when current page is conversations_path" do
       before do
         allow(helper).to receive_messages(
           current_page?: true,
-          request: double(fullpath: transactions_path)
+          request: double(fullpath: conversations_path)
         )
       end
 
       it "returns true" do
-        expect(helper.active_transactions_tab?).to be true
+        expect(helper.active_conversations_tab?).to be true
       end
     end
 
@@ -282,7 +282,7 @@ RSpec.describe ApplicationHelper, type: :helper do
       end
 
       it "returns true" do
-        expect(helper.active_transactions_tab?).to be true
+        expect(helper.active_conversations_tab?).to be true
       end
     end
 
@@ -295,7 +295,7 @@ RSpec.describe ApplicationHelper, type: :helper do
       end
 
       it "returns false" do
-        expect(helper.active_transactions_tab?).to be false
+        expect(helper.active_conversations_tab?).to be false
       end
     end
   end

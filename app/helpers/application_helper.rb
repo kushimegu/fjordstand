@@ -14,7 +14,7 @@ module ApplicationHelper
     when "listings"
       label, path = "自分の出品一覧へ", listings_path
     when "messages"
-      label, path = "連絡ページへ", transaction_messages_path(item)
+      label, path = "連絡ページへ", conversation_messages_path(item)
     else
       label, path = "販売中一覧へ", items_path
     end
@@ -41,7 +41,7 @@ module ApplicationHelper
     request.fullpath.include?("from=listings")
   end
 
-  def active_transactions_tab?
-    current_page?(transactions_path) || request.fullpath.include?("from=messages")
+  def active_conversations_tab?
+    request.path.start_with?("/conversations") || request.fullpath.include?("from=messages")
   end
 end

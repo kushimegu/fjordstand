@@ -38,18 +38,18 @@ class Notification < ApplicationRecord
       Rails.application.routes.url_helpers.item_path(notifiable.item)
     when Entry
       if notifiable.won?
-        Rails.application.routes.url_helpers.transaction_messages_path(notifiable.item)
+        Rails.application.routes.url_helpers.conversation_messages_path(notifiable.item)
       else
         Rails.application.routes.url_helpers.item_path(notifiable.item)
       end
     when Item
       if notifiable.sold?
-        Rails.application.routes.url_helpers.transaction_messages_path(notifiable)
+        Rails.application.routes.url_helpers.conversation_messages_path(notifiable)
       else
         Rails.application.routes.url_helpers.item_path(notifiable)
       end
     when Message
-      Rails.application.routes.url_helpers.transaction_messages_path(notifiable.item)
+      Rails.application.routes.url_helpers.conversation_messages_path(notifiable.item)
     end
   end
 end
