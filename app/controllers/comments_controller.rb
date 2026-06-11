@@ -18,7 +18,9 @@ class CommentsController < ApplicationController
 
   # DELETE /comments/1
   def destroy
-    @item.comments.find(params[:id]).destroy!
+    comment = @item.comments.find(params[:id])
+
+    comment.destroy!
     redirect_to @item, notice: "コメントを削除しました", status: :see_other
   end
 

@@ -10,18 +10,16 @@ class Items::DraftsController < ApplicationController
   end
 
   def update
-    @item = current_user.items.find(params[:id])
+    item = current_user.items.find(params[:id])
 
-    if @item.update(item_params)
-      redirect_to listings_path, notice: "下書きを更新しました", status: :see_other
-    else
-      @item = current_user.items.includes(ordered_image_attachments: { blob: :variant_records }).find(@item.id)
-      render :edit, status: :unprocessable_content
-    end
+    item.update!(item_params)
+    redirect_to listings_path, notice: "下書きを更新しました", status: :see_other
   end
 
   def destroy
-    current_user.items.draft.find(params[:id])destroy!
+    item = current_user.items.draft.find(params[:id])
+
+    item.destroy!
     redirect_to listings_path, notice: "下書きを削除しました", status: :see_other
   end
 

@@ -23,13 +23,15 @@ class EntriesController < ApplicationController
 
   # DELETE /entries/1
   def destroy
-    current_user.entries.find_by(item_id: @item.id)&.destroy!
+    entry = current_user.entries.find_by!(item_id: @item.id)
+
+    entry.destroy!
     redirect_to @item, notice: "購入希望を取り消しました", status: :see_other
   end
 
   private
 
   def set_item
-    @item = Item.find(params[:item_id])
+    @item = Item.published.find(params[:item_id])
   end
 end

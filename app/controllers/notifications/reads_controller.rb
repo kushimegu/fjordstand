@@ -1,6 +1,7 @@
 class Notifications::ReadsController < ApplicationController
   def mark_as_read
     notification = current_user.notifications.find(params[:id])
+
     if notification.notifiable_type == "Comment"
       comment = notification.notifiable
       current_user.mark_notifications_as_read!("Comment", comment.item.comment_ids)

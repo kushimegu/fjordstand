@@ -23,7 +23,9 @@ class WatchesController < ApplicationController
 
   # DELETE /watches/1
   def destroy
-    current_user.watches.find_by(item_id: @item.id)&.destroy!
+    watch = current_user.watches.find_by!(item_id: @item.id)
+
+    watch.destroy!
     redirect_to @item, notice: "コメント欄のWatchを外しました", status: :see_other
   end
 
