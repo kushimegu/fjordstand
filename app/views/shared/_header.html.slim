@@ -59,10 +59,7 @@ header.site-header.sticky.top-0.bg-white.z-10.border-b.border-gray-200.shadow-sm
           = link_to conversations_path, class: nav_class.call(active_conversations_tab?)
             span やり取り
           - if current_user.has_unread_messages?
-            - count = current_user.unread_message_items_count
-            - display_count = count > 99 ? "99+" : count
-            span#message-count.absolute.top-0.right-0.min-w-5.px-1.bg-red-500.text-white.text-xs.font-bold.rounded-full.flex.items-center.justify-center
-              = display_count
+            .message-notification.absolute.top-0.right-0.bg-red-500.rounded-full style="width: 15px; height: 15px;"
   - else
     .flex.justify-between.items-center.px-6.py-3
       = link_to root_path do
