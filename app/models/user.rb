@@ -30,19 +30,20 @@ class User < ApplicationRecord
       user.admin = (auth.uid == owner_id)
       user.name = incoming_name || "ユーザー_#{auth.uid}"
     else
-      user.name = incoming_name if incoming_name.present? && user.name != incoming_name
+      if incoming_name.present? && user.name != incoming_name
+        user.name = incoming_name
+      end
+      user.name ||= "ユーザー_#{auth.uid}"
     end
+
     auth_image = auth.dig(:info, :image)
     if auth_image.present?
       new_avatar_url = URI.parse(auth_image).tap { |uri| uri.query = nil }.to_s
       user.avatar_url = new_avatar_url if user.avatar_url != new_avatar_url
     end
 
-    if user.save
-      user
-    else
-      nil
-    end
+    user.save!
+    user
   end
 
   def entry_for(item)

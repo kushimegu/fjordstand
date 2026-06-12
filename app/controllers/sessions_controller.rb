@@ -9,7 +9,7 @@ class SessionsController < ApplicationController
       session[:user_id] = user.id
       redirect_to items_path, notice: "ログインしました"
     else
-      redirect_to root_path, alert: "ログインに失敗しました"
+      redirect_to root_path, alert: "FjordBootCampのDiscordサーバーに参加していません"
     end
   end
 
