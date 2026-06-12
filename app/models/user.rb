@@ -7,23 +7,42 @@ class User < ApplicationRecord
   has_many :watches, dependent: :destroy
   has_many :notifications, dependent: :destroy
 
-  def self.from_omniauth(auth)
-    guild_info = Discordrb::API::Server.resolve("Bot #{ENV['DISCORD_BOT_TOKEN']}", ENV["DISCORD_SERVER_ID"])
-    owner_id = JSON.parse(guild_info)["owner_id"]
+  validates :provider, presence: true
+  validates :uid, presence: true, uniqueness: { scope: :provider }
+  validates :name, presence: true
 
+  def self.from_omniauth(auth)
     begin
       Discordrb::API::Server.resolve_member("Bot #{ENV['DISCORD_BOT_TOKEN']}", ENV["DISCORD_SERVER_ID"], auth.uid)
     rescue Discordrb::Errors::UnknownMember
       return nil
     end
 
-    user = find_or_initialize_by(uid: auth.uid)
-    user.update!(
-      provider: auth.provider,
-      name: auth.extra.raw_info["global_name"].presence || auth.info.name,
-      avatar_url: auth.info.image,
-      admin: (owner_id == auth.uid) || (auth.uid == "850718521234948146")
-      )
+    user = find_or_initialize_by(uid: auth.uid, provider: auth.provider)
+
+    auth_global_name = auth.dig(:extra, :raw_info, :global_name)
+    auth_name = auth.dig(:info, :name)
+    incoming_name = auth_global_name.presence || auth_name.presence
+    if user.new_record?
+      guild = Discordrb::API::Server.resolve("Bot #{ENV['DISCORD_BOT_TOKEN']}", ENV["DISCORD_SERVER_ID"])
+      owner_id = JSON.parse(guild)["owner_id"]
+
+      user.admin = (auth.uid == owner_id)
+      user.name = incoming_name || "ユーザー_#{auth.uid}"
+    else
+      if incoming_name.present? && user.name != incoming_name
+        user.name = incoming_name
+      end
+      user.name ||= "ユーザー_#{auth.uid}"
+    end
+
+    auth_image = auth.dig(:info, :image)
+    if auth_image.present?
+      new_avatar_url = URI.parse(auth_image).tap { |uri| uri.query = nil }.to_s
+      user.avatar_url = new_avatar_url if user.avatar_url != new_avatar_url
+    end
+
+    user.save!
     user
   end
 
