@@ -17,7 +17,7 @@ h1.page-title.font-bold.text-2xl.mb-6.text-gray-900.text-center やり取り一�
               = image_tag item.first_image.variant(resize_to_limit: [ 200, 200 ]).processed,
                 alt: "#{item.title} 1枚目", class: "object-contain w-full h-full"
             - else
-              = image_tag "listing-image.png", alt: "商品画像なし", class: "object-contain w-full h-full opacity-30"
+              = image_tag "no-item-image.png", alt: "商品画像なし", class: "object-contain w-full h-full opacity-25"
           .conversation-info.flex.flex-col.gap-1.flex-1.min-w-0
             p.conversation-title.font-semibold.text-gray-900.text-base.line-clamp-1 = item.title
             .conversation-price.flex.items-baseline.gap-1.5
