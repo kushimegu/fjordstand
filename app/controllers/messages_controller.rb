@@ -28,7 +28,7 @@ class MessagesController < ApplicationController
     message = @item.messages.find(params[:id])
 
     message.destroy!
-    redirect_to transaction_messages_path(@item), notice: "メッセージを削除しました", status: :see_other
+    redirect_to conversation_messages_path(@item), notice: "メッセージを削除しました", status: :see_other
   end
 
   private
