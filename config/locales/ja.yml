@@ -55,9 +55,6 @@ ja:
           draft: '出品する'
           published: '更新する'
           closed: '出品する'
-        draft:
-          update: '下書きを更新する'
-          new: '下書きとして保存する'
   notices:
     item:
       update: '商品情報を更新しました'

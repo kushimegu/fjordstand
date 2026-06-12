@@ -1,19 +1,13 @@
 class MessagesController < ApplicationController
   before_action :set_item
   before_action :authorize_user
-  before_action :set_message, only: [ :destroy ]
-  before_action :require_admin, only: [ :destroy ]
+  before_action :require_admin, only: %i[destroy]
 
   # GET /messages
   def index
     @messages = @item.messages.includes(:user).order(:created_at)
     @message = @item.messages.build
-    return unless current_user
-
-    current_user.notifications
-                .unread
-                .where(notifiable_type: "Message", notifiable_id: @item.message_ids)
-                .update_all(read: true)
+    current_user.mark_notifications_as_read!("Message", @item.message_ids)
   end
 
   # POST /messages
@@ -31,14 +25,16 @@ class MessagesController < ApplicationController
 
   # DELETE /messages/1
   def destroy
-    @message.destroy!
-    redirect_to conversation_messages_path(@item), notice: "コメントを削除しました", status: :see_other
+    message = @item.messages.find(params[:id])
+
+    message.destroy!
+    redirect_to conversation_messages_path(@item), notice: "メッセージを削除しました", status: :see_other
   end
 
   private
 
   def set_item
-    @item = Item.find(params[:conversation_id])
+    @item = Item.sold.find(params[:conversation_id])
   end
 
   # Only allow a list of trusted parameters through.
@@ -48,19 +44,13 @@ class MessagesController < ApplicationController
 
   def authorize_user
     return if @item.user_id == current_user.id
-    return if @item.entries.exists?(user_id: current_user.id, status: :won)
+    return if @item.winner == current_user
     return if current_user.admin?
 
-    redirect_to items_path, alert: "この連絡ページを閲覧する権限がありません"
-  end
-
-  def set_message
-    @message = @item.messages.find(params[:id])
+    redirect_to @item, alert: "この連絡ページを閲覧する権限がありません"
   end
 
   def require_admin
-    unless current_user.admin?
-      redirect_to conversation_messages_path(@item), alert: "削除する権限がありません"
-    end
+    redirect_to conversation_messages_path(@item), alert: "削除する権限がありません" unless current_user.admin?
   end
 end

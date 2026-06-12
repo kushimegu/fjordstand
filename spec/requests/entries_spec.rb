@@ -5,7 +5,6 @@ RSpec.describe "/entries", type: :request do
   let(:published_item) { create(:item, :published) }
   let(:sold_item_where_user_won) { create(:item, :sold) }
   let(:sold_item_where_user_lost) { create(:item, :sold) }
-  let(:closed_item) { create(:item, :closed) }
 
   before { login(user) }
 
@@ -110,14 +109,12 @@ RSpec.describe "/entries", type: :request do
     end
 
     context "when entry is invalid" do
+      let(:expired_item) { create(:item, :published, entry_deadline_at: Date.yesterday) }
+
       it "does not create a new Entry" do
         expect {
-          post item_entries_path(closed_item)
+          post item_entries_path(expired_item)
         }.not_to change(Entry, :count)
-      end
-
-      it "renders a response with 422 status (i.e. to display the 'new' template)" do
-        post item_entries_path(closed_item)
         expect(response).to have_http_status(:unprocessable_content)
       end
     end

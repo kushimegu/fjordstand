@@ -7,14 +7,14 @@ RSpec.describe "Notifications::Reads", type: :request do
 
   before { login(seller) }
 
-  describe "PATCH /update" do
+  describe "PATCH /mark_as_read" do
     it "updates read status to true and redirect to notification link" do
       unread_notification_1 = create(:notification, :for_item, user: seller, notifiable: sold_item)
       unread_notification_2 = create(:notification, :for_item, user: seller, notifiable: closed_item)
 
       expect(unread_notification_1.read).to be false
       expect(unread_notification_2.read).to be false
-      patch notification_read_path(unread_notification_1)
+      patch mark_as_read_notification_path(unread_notification_1)
 
       expect(unread_notification_1.reload.read).to be true
       expect(unread_notification_2.reload.read).to be false
@@ -22,14 +22,14 @@ RSpec.describe "Notifications::Reads", type: :request do
     end
   end
 
-  describe "PATCH /update_all" do
+  describe "PATCH /mark_all_as_read" do
     it "updates all notifications status to read and redirect to notifications path" do
       unread_notification_1 = create(:notification, :for_item, user: seller, notifiable: sold_item)
       unread_notification_2 = create(:notification, :for_item, user: seller, notifiable: closed_item)
 
       expect(unread_notification_1.read).to be false
       expect(unread_notification_2.read).to be false
-      patch read_all_notifications_path
+      patch mark_all_as_read_notifications_path
 
       expect(unread_notification_1.reload.read).to be true
       expect(unread_notification_2.reload.read).to be true

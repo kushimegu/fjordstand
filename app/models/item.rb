@@ -38,7 +38,9 @@ class Item < ApplicationRecord
   after_save_commit :notify_publishing, if: -> { saved_change_to_attribute?(:status, to: :published) }
   after_update_commit :notify_deadline_extension, if: :saved_only_change_deadline?
 
-  scope :expired, -> { where("entry_deadline_at < ?", Time.current).where(status: :published) }
+  scope :not_expired, -> { where(entry_deadline_at: Time.current.beginning_of_day..) }
+  scope :expired, -> { where.not(id: not_expired).where(status: :published) }
+  scope :commentable, -> { where.not(status: :draft) }
   scope :by_target, ->(target) {
   if target.present? && statuses.key?(target)
     where(status: target)
@@ -54,15 +56,9 @@ class Item < ApplicationRecord
     user == current_user ? winner : user
   end
 
-  def close(reason: :user_action)
+  def close!(reason: :user_action)
     update!(status: :closed)
     NotifyItemClosedJob.perform_later(id, reason: reason)
-  end
-
-  def deletable_by?(user)
-    return true if draft? && user.id == self.user_id
-    return true if !draft? && user.admin?
-    false
   end
 
   def editable?
@@ -73,13 +69,6 @@ class Item < ApplicationRecord
 
   def commentable?
     !draft?
-  end
-
-  def unread_messages_for?(user)
-    user.notifications.unread
-        .where(notifiable_type: "Message")
-        .joins("INNER JOIN messages ON notifications.notifiable_id = messages.id")
-        .exists?(messages: { item_id: id })
   end
 
   private

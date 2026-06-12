@@ -59,6 +59,54 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe "#dealing_items" do
+    let(:user) { create(:user) }
+    let(:sold_item) { create(:item, :sold,  user: user) }
+    let(:won_item) { create(:item, :sold) }
+    let(:other_item) { create(:item, :published) }
+
+    before do
+      create(:entry) { create(:entry, :won, item: won_item, user: user) }
+    end
+
+    it "returns users sold or won item" do
+      items = [ sold_item, won_item, other_item ]
+      expect(user.dealing_items).to contain_exactly(sold_item, won_item)
+    end
+  end
+
+  describe "#applying_item_ids_for" do
+    let(:user) { create(:user) }
+    let(:applying_items) { create_list(:item, 2) }
+    let(:unapplied_item) { create(:item) }
+
+    it "returns users applying item ids" do
+      applying_items.each do |item|
+        create(:entry, item: item, user: user)
+      end
+      items = applying_items + [ unapplied_item ]
+      result = user.applying_item_ids_for(items)
+
+      expect(result).to match_array(applying_items.map(&:id))
+    end
+  end
+
+  describe "#watching_item_ids_for" do
+    let(:user) { create(:user) }
+    let(:watching_items) { create_list(:item, 2) }
+    let(:other_item) { create(:item) }
+
+    it "returns users watching item ids" do
+      watching_items.each do |item|
+        create(:watch, item: item, user: user)
+      end
+      items = watching_items + [ other_item ]
+      result = user.watching_item_ids_for(items)
+
+      expect(result).to match_array(watching_items.map(&:id))
+    end
+  end
+
   describe "#entry_for" do
     let(:user) { create(:user) }
     let(:item) { create(:item) }
@@ -131,6 +179,39 @@ RSpec.describe User, type: :model do
         create(:notification, :for_message, :read, user: user)
         expect(user.has_unread_messages?).to be(false)
       end
+    end
+  end
+
+  describe "#has_unread_messages_for?" do
+    let(:user) { create(:user) }
+    let(:item_with_unread_message) { create(:item, :sold) }
+    let(:item_with_read_message) { create(:item, :sold) }
+    let(:unread_message) { create(:message, item: item_with_unread_message) }
+    let(:read_message) { create(:message, item: item_with_read_message) }
+
+    before do
+      create(:notification, :for_message, notifiable: unread_message, user: user)
+      create(:notification, :for_message, :read, notifiable: read_message, user: user)
+    end
+
+    it "returns true if user has unread messages for item" do
+      expect(user.has_unread_messages_for?(item_with_unread_message)).to be true
+      expect(user.has_unread_messages_for?(item_with_read_message)).to be false
+    end
+  end
+
+  describe "#mark_notifications_as_read!" do
+    let(:user) { create(:user) }
+    let(:item) { create(:item, user: user) }
+    let(:comments) { create_list(:comment, 2, item: item) }
+    let!(:notifications_for_comments) do
+      comments.map { |comment| create(:notification, :for_comment, notifiable: comment, user: user) }
+    end
+
+    it "marks all notification for item as read" do
+      user.mark_notifications_as_read!("Comment", item.comment_ids)
+      notifications_for_comments.each(&:reload)
+      expect(notifications_for_comments).to all(be_read)
     end
   end
 end
