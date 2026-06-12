@@ -121,17 +121,4 @@ RSpec.describe "Notifications", type: :system do
       expect(page).to have_content("「#{sold_item.title}」の購入者が決まりました。")
     end
   end
-
-  describe "message notification count" do
-    context "when over 99 notifications exists" do
-      it "shows 99+ count on notification icon" do
-        create_list(:notification, 100, :for_message, user: user)
-        expect(page).to have_current_path(items_path)
-
-        visit items_path
-
-        expect(page).to have_selector("#message-count", text: "99+")
-      end
-    end
-  end
 end

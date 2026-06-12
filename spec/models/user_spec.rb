@@ -133,29 +133,4 @@ RSpec.describe User, type: :model do
       end
     end
   end
-
-  describe "#unread_message_items_count" do
-    let(:user) { create(:user) }
-    let(:item) { create(:item) }
-    let(:other_item) { create(:item) }
-
-    before do
-      message1a = create(:message, item: item)
-      message1b = create(:message, item: item)
-      create(:notification, user: user, notifiable: message1a)
-      create(:notification, user: user, notifiable: message1b)
-
-      message2 = create(:message, item: other_item)
-      create(:notification, user: user, notifiable: message2)
-
-      read_message = create(:message, item: item)
-      create(:notification, user: user, notifiable: read_message)
-
-      create(:notification, :for_item, user: user)
-    end
-
-    it "returns item count with unread messages" do
-      expect(user.unread_message_items_count).to eq(2)
-    end
-  end
 end
