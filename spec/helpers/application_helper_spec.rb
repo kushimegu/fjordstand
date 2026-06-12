@@ -131,7 +131,6 @@ RSpec.describe ApplicationHelper, type: :helper do
           current_page?: false,
           request: double(fullpath: "/items/1?from=notifications", path: "/items/1")
         )
-        allow(helper).to receive(:request).and_return(double(fullpath: "/items/1?from=notifications"))
       end
 
       it "returns true" do
@@ -247,9 +246,8 @@ RSpec.describe ApplicationHelper, type: :helper do
       before do
         allow(helper).to receive_messages(
           current_page?: false,
-          request: double(fullpath: "/items/1/edit", path: "/items/1/edit")
+          request: double(fullpath: "/items/1?from=entries", path: "/items/1")
         )
-        allow(helper).to receive(:request).and_return(double(fullpath: "/items/1?from=entries", path: "/items/1"))
       end
 
       it "returns false" do
@@ -263,7 +261,7 @@ RSpec.describe ApplicationHelper, type: :helper do
       before do
         allow(helper).to receive_messages(
           current_page?: true,
-          request: double(fullpath: conversations_path)
+          request: double(fullpath: conversations_path, path: conversations_path)
         )
       end
 
@@ -276,9 +274,8 @@ RSpec.describe ApplicationHelper, type: :helper do
       before do
         allow(helper).to receive_messages(
           current_page?: false,
-          request: double(fullpath: "/items/1?from=messages")
+          request: double(fullpath: "/items/1?from=messages", path: "/items/1")
         )
-        allow(helper).to receive(:request).and_return(double(fullpath: "/items/1?from=messages"))
       end
 
       it "returns true" do
@@ -290,7 +287,7 @@ RSpec.describe ApplicationHelper, type: :helper do
       before do
         allow(helper).to receive_messages(
           current_page?: false,
-          request: double(fullpath: "/listings")
+          request: double(fullpath: "/listings", path: "/listings")
         )
       end
 
