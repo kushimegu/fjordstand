@@ -1,4 +1,6 @@
 class Items::DraftsController < ApplicationController
+  include ParamSet
+
   before_action :set_item, only: %i[update destroy]
 
   def create
@@ -28,6 +30,6 @@ class Items::DraftsController < ApplicationController
   end
 
   def item_params
-    params.expect(item: [ :title, :description, :price, :shipping_fee_payer, :payment_method, :entry_deadline_at, :status, images: [] ])
+    params.expect(item: [ *base_item_params ])
   end
 end

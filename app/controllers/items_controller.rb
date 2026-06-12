@@ -1,4 +1,6 @@
 class ItemsController < ApplicationController
+  include ParamSet
+
   before_action :set_user_item_with_images, only: %i[edit update]
   before_action :ensure_item_editable, only: %i[edit update]
   before_action :require_admin, only: %i[destroy]
@@ -78,7 +80,7 @@ class ItemsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def item_params
-    params.expect(item: [ :title, :title_append, :description, :description_append, :price, :shipping_fee_payer, :payment_method, :payment_method_append, :entry_deadline_at, :status, images: [] ])
+    params.expect(item: [ *base_item_params, :title_append, :description_append, :payment_method_append ])
   end
 
   def ensure_item_editable
