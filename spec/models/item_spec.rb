@@ -51,6 +51,15 @@ RSpec.describe Item, type: :model do
     end
   end
 
+  describe ".not_expired" do
+    let(:expired_item) { create(:item, :published, entry_deadline_at: Date.yesterday) }
+    let(:unexpired_item) { create(:item, :published, entry_deadline_at: Date.current) }
+
+    it "returns only not expired items" do
+      expect(Item.not_expired).to contain_exactly(unexpired_item)
+    end
+  end
+
   describe ".expired" do
     let(:expired_item) { create(:item, :published, entry_deadline_at: Date.yesterday) }
     let(:unexpired_item) { create(:item, :published, entry_deadline_at: Date.current) }
@@ -137,7 +146,7 @@ RSpec.describe Item, type: :model do
     end
   end
 
-  describe "#close" do
+  describe "#close!" do
     let(:user) { create(:user) }
     let(:item) { create(:item, :published, user: user) }
 

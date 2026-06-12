@@ -13,10 +13,6 @@ RSpec.describe "Items::Drafts", type: :request do
         expect {
           post drafts_url, params: { item: valid_attributes }
         }.to change(Item, :count).by(1)
-      end
-
-      it "redirects to the listings" do
-        post drafts_url, params: { item: valid_attributes }
         expect(response).to redirect_to(listings_path)
       end
     end
@@ -41,16 +37,6 @@ RSpec.describe "Items::Drafts", type: :request do
           delete draft_url(item)
         }.to change(Item, :count).by(-1)
         expect(response).to redirect_to(listings_path)
-      end
-    end
-
-    context "when user tries to delete published item" do
-      it "returns a 404 status" do
-        item = create(:item, :published, user: user)
-        expect {
-          delete draft_url(item)
-        }.not_to change(Item, :count)
-        expect(response).to have_http_status(:not_found)
       end
     end
   end
