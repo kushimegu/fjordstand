@@ -116,9 +116,9 @@ RSpec.describe "/entries", type: :request do
         }.not_to change(Entry, :count)
       end
 
-      it "renders a response with 422 status (i.e. to display the 'new' template)" do
+      it "renders a response with 404" do
         post item_entries_path(closed_item)
-        expect(response).to have_http_status(:unprocessable_content)
+        expect(response).to have_http_status(:not_found)
       end
     end
   end

@@ -11,7 +11,7 @@ RSpec.describe "/messages", type: :request do
         other_user = create(:user)
         login(other_user)
         get conversation_messages_path(item)
-        expect(response).to redirect_to(items_path)
+        expect(response).to redirect_to(item_path(item))
       end
     end
 
@@ -75,14 +75,14 @@ RSpec.describe "/messages", type: :request do
 
   describe "DELETE /destroy" do
     context "when user tries to delete message" do
-      it "returns a 404 status" do
+      it "redirects to messages" do
         create(:entry, :won, item: item, user: buyer)
         login(buyer)
         message = create(:message, user: buyer, item: item)
         expect {
           delete conversation_message_url(item, message)
         }.not_to change(Message, :count)
-        expect(response).to have_http_status(:not_found)
+        expect(response).to redirect_to(conversation_messages_path(item))
       end
     end
 

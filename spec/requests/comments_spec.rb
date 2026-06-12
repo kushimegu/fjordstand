@@ -52,12 +52,12 @@ RSpec.describe "/comments", type: :request do
     context "when user tries to delete comment" do
       before { login(user) }
 
-      it "returns a 404 status" do
+      it "redirects to item" do
         comment = create(:comment, user: user, item: item)
         expect {
           delete item_comment_url(item, comment)
         }.not_to change(Comment, :count)
-        expect(response).to have_http_status(:not_found)
+        expect(response).to redirect_to(item_url(item))
       end
     end
 

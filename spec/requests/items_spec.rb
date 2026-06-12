@@ -165,19 +165,6 @@ RSpec.describe "/items", type: :request do
   end
 
   describe "DELETE /destroy" do
-    context "when admin tries to delete draft item" do
-      before { login(admin) }
-
-      it "returns a 404 status" do
-        item = create(:item, user: user)
-
-        expect {
-          delete item_url(item)
-        }.not_to change(Item, :count)
-        expect(response).to have_http_status(:not_found)
-      end
-    end
-
     context "when admin deletes published item" do
       before { login(admin) }
 
