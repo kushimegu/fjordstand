@@ -49,7 +49,7 @@ class User < ApplicationRecord
     user
   end
 
-  def in_transaction_items
+  def dealing_items
     Item.where(id: sold_items).or(Item.where(id: won_items))
   end
 
