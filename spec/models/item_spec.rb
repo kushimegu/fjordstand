@@ -52,8 +52,8 @@ RSpec.describe Item, type: :model do
   end
 
   describe ".not_expired" do
-    let!(:expired_item) { create(:item, :published, entry_deadline_at: Date.yesterday) }
-    let!(:unexpired_item) { create(:item, :published, entry_deadline_at: Date.current) }
+    let(:expired_item) { create(:item, :published, entry_deadline_at: Date.yesterday) }
+    let(:unexpired_item) { create(:item, :published, entry_deadline_at: Date.current) }
 
     it "returns only not expired items" do
       expect(Item.not_expired).to contain_exactly(unexpired_item)
