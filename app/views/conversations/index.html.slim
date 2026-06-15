@@ -13,7 +13,7 @@ h1.page-title.font-bold.text-2xl.mb-6.text-gray-900.text-center やり取り一�
         div class=["conversation-card bg-white border border-gray-200 rounded-xl shadow-sm p-4 hover:shadow-md transition-shadow",
         "duration-200 flex gap-4 items-center relative"]
           .conversation-thumbnail.aspect-square.w-20.h-20.flex-shrink-0.rounded-lg.overflow-hidden.bg-gray-100
-            - if item.images.attached?
+            - if item.first_image.present?
               = image_tag item.first_image.variant(resize_to_limit: [ 200, 200 ]).processed,
                 alt: "#{item.title} 1枚目", class: "object-contain w-full h-full"
             - else

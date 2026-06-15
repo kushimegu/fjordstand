@@ -5,12 +5,12 @@ article.item-show.mt-2.flex.flex-col.md:grid.md:grid-cols-2.md:gap-10.md:items-s
 
   / ギャラリー
   section.gallery.mb-8
-    - if @item.images.attached?
+    - if @item.ordered_images.present?
       figure.flex.flex-col.gap-3[data-controller="image-gallery"]
         .aspect-square.rounded-2xl.overflow-hidden.bg-gray-100.relative.flex.items-center.justify-center
           = image_tag @item.first_image.variant(resize_to_limit: [ 600, 600 ]).processed,
             id: "big-image", data: { image_gallery_target: "bigImage" }, alt: "#{@item.title} 1枚目", class: "object-contain w-full h-full"
-          - if @item.images.length > 1
+          - if @item.ordered_images.length > 1
             .absolute.inset-y-0.left-0.flex.items-center.pl-3
               button#prev type="button" data-action="image-gallery#prev" aria-label="前の画像へ"
                 svg(
@@ -44,7 +44,7 @@ article.item-show.mt-2.flex.flex-col.md:grid.md:grid-cols-2.md:gap-10.md:items-s
                     d="m8.25 4.5 7.5 7.5-7.5 7.5"
                   )
         .grid.grid-cols-5.gap-2
-          - @item.images.each_with_index do |image, index|
+          - @item.ordered_images.each_with_index do |image, index|
             .aspect-square.rounded-lg.overflow-hidden.bg-gray-100.hover:ring-2.hover:ring-cyan-400.cursor-pointer
               = image_tag image.variant(resize_to_limit: [ 200, 200 ]).processed,
                 alt: "#{@item.title} #{index + 1}枚目",

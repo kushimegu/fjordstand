@@ -17,7 +17,7 @@
     = link_to item_path(@item, from: :messages), class: "block group" do
       .p-4.flex.gap-4.items-center.hover:bg-white.transition-colors
         .aspect-square.w-20.h-20.flex-shrink-0.rounded-lg.overflow-hidden.bg-gray-100
-          - if @item.images.attached?
+          - if @item.first_image.present?
             = image_tag @item.first_image.variant(resize_to_limit: [ 200, 200 ]).processed,
               alt: "#{@item.title} 1枚目", class: "object-contain w-full h-full"
           - else
