@@ -5,7 +5,7 @@ class NotifyItemClosedJob < ApplicationJob
     item = Item.includes(
       :user,
       :applicants,
-      images_attachments: :blob
+      :first_image
     ).find(item_id)
 
     case reason

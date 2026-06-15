@@ -5,7 +5,7 @@ class NotifyDeadlineExtendedJob < ApplicationJob
     item = Item.includes(
       :applicants,
       :user,
-      images_attachments: :blob
+      :first_image
     ).find(item_id)
     DiscordWebhook.new.notify_item_deadline_extended(item.applicants, item)
   end

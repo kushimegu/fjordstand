@@ -7,7 +7,7 @@ class NotifyMessageCreatedJob < ApplicationJob
       item: [
         :user,
         :winner,
-        images_attachments: :blob
+        :first_image
       ],
     ).find(message_id)
     recipient = message.item.other_user_for(message.user)
