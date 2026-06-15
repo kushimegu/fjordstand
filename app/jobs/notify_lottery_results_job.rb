@@ -7,7 +7,7 @@ class NotifyLotteryResultsJob < ApplicationJob
       :winner,
       :applicants,
       { entries: :user },
-      images_attachments: :blob
+      :first_image
     ).find(item_id)
 
     now = Time.current

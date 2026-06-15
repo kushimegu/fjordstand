@@ -87,7 +87,7 @@ class DiscordWebhook
     embed.add_field(name: "お支払い方法", value: "#{item.payment_method}", inline: true)
     embed.add_field(name: "購入希望申込期限", value: "#{I18n.l(item.entry_deadline_at, format: :default)}", inline: false)
 
-    if !Rails.env.development? && item.images.attached?
+    if !Rails.env.development? && item.first_image.present?
       image_url = url_for(item.first_image)
       if use_image
         embed.image = Discordrb::Webhooks::EmbedImage.new(url: image_url)

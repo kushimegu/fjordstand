@@ -4,7 +4,7 @@ class NotifyItemPublishedJob < ApplicationJob
   def perform(item_id)
     item = Item.includes(
       :user,
-      images_attachments: :blob
+      :first_image
     ).find(item_id)
     DiscordWebhook.new.notify_item_published(item)
   end

@@ -6,7 +6,7 @@ class NotifyCommentCreatedJob < ApplicationJob
       item: [
         :user,
         :watchers,
-        images_attachments: :blob
+        :first_image
       ]
     ).find(comment_id)
     recipients = comment.item.watchers.where.not(id: comment.user_id)
