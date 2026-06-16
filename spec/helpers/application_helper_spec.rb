@@ -77,6 +77,8 @@ RSpec.describe ApplicationHelper, type: :helper do
   end
 
   describe "#active_items_tab?" do
+  let(:item) { create(:item) }
+
     context "when current page is conversations path and includes from=notifications" do
       before do
         allow(controller.request).to receive(:path).and_return("/conversations")
@@ -140,7 +142,7 @@ RSpec.describe ApplicationHelper, type: :helper do
 
     context "when current page is other path and fullpath does not include from param" do
       before do
-        allow(helper).to receive(:current_page?) { |path| path == listings_path }
+        allow(helper).to receive(:current_page?) { |path| path == item_path(item) }
       end
 
       it "returns false" do
@@ -172,7 +174,7 @@ RSpec.describe ApplicationHelper, type: :helper do
 
     context "when current page is other path and fullpath does not include from=entries" do
       before do
-        allow(helper).to receive(:current_page?) { |path| path == listings_path }
+        allow(helper).to receive(:current_page?) { |path| path == item_path(item) }
       end
 
       it "returns false" do
@@ -226,7 +228,7 @@ RSpec.describe ApplicationHelper, type: :helper do
 
     context "when current page is other path and fullpath does not include from=listings" do
       before do
-        allow(helper).to receive(:current_page?) { |path| path == entries_path }
+        allow(helper).to receive(:current_page?) { |path| path == item_path(item) }
       end
 
       it "returns false" do
@@ -258,7 +260,7 @@ RSpec.describe ApplicationHelper, type: :helper do
 
     context "when current page is other path and fullpath does not include from=messages" do
       before do
-        allow(controller.request).to receive(:path).and_return("/listings")
+        allow(controller.request).to receive(:path).and_return("/item/#{item.id}")
       end
 
       it "returns false" do
