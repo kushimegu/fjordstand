@@ -56,8 +56,8 @@ RSpec.describe Item, type: :model do
     let(:unexpired_item) { create(:item, :published, entry_deadline_at: Date.current) }
 
     it "returns only expired items" do
-      expect(described_class.expired).to include(expired_item)
-      expect(described_class.expired).not_to include(unexpired_item)
+      expect(Item.expired).to include(expired_item)
+      expect(Item.expired).not_to include(unexpired_item)
     end
   end
 
@@ -68,7 +68,7 @@ RSpec.describe Item, type: :model do
 
     context "when target is published" do
       it "returns published item" do
-        result = described_class.by_target("published")
+        result = Item.by_target("published")
 
         expect(result).to include(published_item)
         expect(result).not_to include(closed_item)
@@ -78,7 +78,7 @@ RSpec.describe Item, type: :model do
 
     context "when target is closed" do
       it "returns closed item" do
-        result = described_class.by_target("closed")
+        result = Item.by_target("closed")
 
         expect(result).to include(closed_item)
         expect(result).not_to include(published_item)
@@ -88,7 +88,7 @@ RSpec.describe Item, type: :model do
 
     context "when target is sold" do
       it "returns sold item" do
-        result = described_class.by_target("sold")
+        result = Item.by_target("sold")
 
         expect(result).to include(sold_item)
         expect(result).not_to include(published_item)

@@ -8,8 +8,8 @@ RSpec.describe RunLotteryJob, type: :job do
 
   describe '#perform_later' do
     it 'enqueues the job' do
-      described_class.perform_later(item.id)
-      expect(described_class).to have_been_enqueued.with(item.id)
+      RunLotteryJob.perform_later(item.id)
+      expect(RunLotteryJob).to have_been_enqueued.with(item.id)
     end
 
     it "calls Lottery#run" do
@@ -17,7 +17,7 @@ RSpec.describe RunLotteryJob, type: :job do
       allow(Lottery).to receive(:new).with(item).and_return(lottery_double)
       allow(lottery_double).to receive(:run)
 
-      described_class.perform_now(item.id)
+      RunLotteryJob.perform_now(item.id)
       expect(Lottery).to have_received(:new).with(instance_of(Item))
       expect(lottery_double).to have_received(:run)
     end
@@ -25,7 +25,7 @@ RSpec.describe RunLotteryJob, type: :job do
     it 'enqueues NotifyLotteryResultsJob' do
       create(:entry, item: item, user: create(:user))
 
-      expect { described_class.perform_now(item.id) }.to have_enqueued_job(NotifyLotteryResultsJob).with(item.id)
+      expect { RunLotteryJob.perform_now(item.id) }.to have_enqueued_job(NotifyLotteryResultsJob).with(item.id)
     end
   end
 end

@@ -14,11 +14,11 @@ RSpec.describe NotifyCommentCreatedJob, type: :job do
 
   describe '#perform_later' do
     it 'enqueues the job' do
-      expect(described_class).to have_been_enqueued.with(comment.id)
+      expect(NotifyCommentCreatedJob).to have_been_enqueued.with(comment.id)
     end
 
     it "sends webhook notification" do
-      described_class.perform_now(comment.id)
+      NotifyCommentCreatedJob.perform_now(comment.id)
       expect(webhook).to have_received(:notify_new_comment).with([ seller ], item)
     end
   end

@@ -18,7 +18,7 @@ RSpec.describe DiscordWebhook, discord_stub: false do
     let(:item) { create(:item, user: seller) }
 
     it "sends webhook notification" do
-      webhook = described_class.new
+      webhook = DiscordWebhook.new
       webhook.notify_item_published(item)
 
       expect(builder).to have_received(:content=)
@@ -30,7 +30,7 @@ RSpec.describe DiscordWebhook, discord_stub: false do
     let(:item) { create(:item, :closed, user: seller) }
 
     it "sends webhook notification" do
-      webhook = described_class.new
+      webhook = DiscordWebhook.new
       webhook.notify_item_closed([], item)
 
       expect(builder).to have_received(:content=).with("📢出品が取り下げられました")
@@ -41,7 +41,7 @@ RSpec.describe DiscordWebhook, discord_stub: false do
     let(:item) { create(:item, :published, user: seller) }
 
     it "sends webhook notification" do
-      webhook = described_class.new
+      webhook = DiscordWebhook.new
       webhook.notify_item_deadline_extended([], item)
 
       expect(builder).to have_received(:content=).with("⏰購入希望申込期限が延長されました")
@@ -53,7 +53,7 @@ RSpec.describe DiscordWebhook, discord_stub: false do
     let(:item) { create(:item, :published, user: seller, winner: applicant) }
 
     it "sends webhook notification" do
-      webhook = described_class.new
+      webhook = DiscordWebhook.new
       webhook.notify_lottery_completed([ applicant, seller ], item)
 
       expect(builder).to have_received(:content=).with("<@#{applicant.uid}> <@#{seller.uid}>\n🎉抽選が完了し#{applicant.name}さんが当選しました！")
@@ -64,7 +64,7 @@ RSpec.describe DiscordWebhook, discord_stub: false do
     let(:item) { create(:item, :published, user: seller) }
 
     it "sends webhook notification" do
-      webhook = described_class.new
+      webhook = DiscordWebhook.new
       webhook.notify_lottery_skipped([ seller ], item)
 
       expect(builder).to have_received(:content=).with("<@#{seller.uid}>\n⏭️希望者がいなかったため当選者なしで公開終了しました")
@@ -75,7 +75,7 @@ RSpec.describe DiscordWebhook, discord_stub: false do
     let(:item) { create(:item, :published, user: seller) }
 
     it "sends webhook notification" do
-      webhook = described_class.new
+      webhook = DiscordWebhook.new
       webhook.notify_new_comment([ seller ], item)
 
       expect(builder).to have_received(:content=).with("<@#{seller.uid}>\n📝新しいコメントがつきました")
@@ -86,7 +86,7 @@ RSpec.describe DiscordWebhook, discord_stub: false do
     let(:item) { create(:item, :published, user: seller) }
 
     it "sends webhook notification" do
-      webhook = described_class.new
+      webhook = DiscordWebhook.new
       webhook.notify_new_message([ seller ], item)
 
       expect(builder).to have_received(:content=).with("<@#{seller.uid}>\n💬新しいメッセージが届きました")

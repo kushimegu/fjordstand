@@ -12,12 +12,12 @@ RSpec.describe DestroyEntriesJob, type: :job do
 
   describe '#perform_later' do
     it 'enqueues the job' do
-      described_class.perform_later(item.id)
-      expect(described_class).to have_been_enqueued.with(item.id)
+      DestroyEntriesJob.perform_later(item.id)
+      expect(DestroyEntriesJob).to have_been_enqueued.with(item.id)
     end
 
     it 'destroys the entry' do
-      expect { described_class.perform_now(item.id) }.to change(Entry, :count).by(-1)
+      expect { DestroyEntriesJob.perform_now(item.id) }.to change(Entry, :count).by(-1)
     end
   end
 end

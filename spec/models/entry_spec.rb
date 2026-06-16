@@ -33,7 +33,7 @@ RSpec.describe Entry, type: :model do
         won_entry = create(:entry, :won, item: sold_item_where_applier_won, user: applier)
         lost_entry = create(:entry, :lost, item: sold_item_where_applier_lost, user: applier)
 
-        result = described_class.by_target("applied")
+        result = Entry.by_target("applied")
 
         expect(result).to include(applied_entry)
         expect(result).not_to include(won_entry)
@@ -46,7 +46,7 @@ RSpec.describe Entry, type: :model do
         applied_entry = create(:entry, item: published_item, user: applier)
         won_entry = create(:entry, :won, item: sold_item_where_applier_won, user: applier)
         lost_entry = create(:entry, :lost, item: sold_item_where_applier_lost, user: applier)
-        result = described_class.by_target("won")
+        result = Entry.by_target("won")
 
         expect(result).to include(won_entry)
         expect(result).not_to include(applied_entry)
@@ -59,7 +59,7 @@ RSpec.describe Entry, type: :model do
         applied_entry = create(:entry, item: published_item, user: applier)
         won_entry = create(:entry, :won, item: sold_item_where_applier_won, user: applier)
         lost_entry = create(:entry, :lost, item: sold_item_where_applier_lost, user: applier)
-        result = described_class.by_target("lost")
+        result = Entry.by_target("lost")
 
         expect(result).to include(lost_entry)
         expect(result).not_to include(applied_entry)
@@ -72,7 +72,7 @@ RSpec.describe Entry, type: :model do
         applied_entry = create(:entry, item: published_item, user: applier)
         won_entry = create(:entry, :won, item: sold_item_where_applier_won, user: applier)
         lost_entry = create(:entry, :lost, item: sold_item_where_applier_lost, user: applier)
-        result = described_class.by_target("invalid_status")
+        result = Entry.by_target("invalid_status")
 
         expect(result).to include(applied_entry)
         expect(result).to include(won_entry)

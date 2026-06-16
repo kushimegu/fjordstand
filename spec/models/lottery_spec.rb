@@ -11,7 +11,7 @@ RSpec.describe Lottery do
 
       it "selects winner and item gets sold status" do
         travel 1.day do
-          described_class.new(item).run
+          Lottery.new(item).run
           expect(entry.reload.status).to eq("won")
           expect(item.reload.status).to eq("sold")
         end
@@ -21,7 +21,7 @@ RSpec.describe Lottery do
     context "when no entry exists" do
       it "does not select winner and item gets closed status" do
         travel 1.day do
-          described_class.new(item).run
+          Lottery.new(item).run
           expect(item.reload.status).to eq("closed")
         end
       end

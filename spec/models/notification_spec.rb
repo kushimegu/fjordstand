@@ -12,7 +12,7 @@ RSpec.describe Notification, type: :model do
     it "returns only unread notification" do
       unread_notification = create(:notification, :for_item, user: seller, notifiable: sold_item)
       read_notification = create(:notification, :for_item, :read, user: seller, notifiable: closed_item)
-      result = described_class.unread
+      result = Notification.unread
 
       expect(result).to include(unread_notification)
       expect(result).not_to include(read_notification)
@@ -24,7 +24,7 @@ RSpec.describe Notification, type: :model do
       it "returns unread notifications" do
         unread_notification = create(:notification, :for_item, user: seller, notifiable: sold_item)
         read_notification = create(:notification, :for_item, :read, user: seller, notifiable: closed_item)
-        result = described_class.by_target("unread")
+        result = Notification.by_target("unread")
 
         expect(result).to include(unread_notification)
         expect(result).not_to include(read_notification)
@@ -35,7 +35,7 @@ RSpec.describe Notification, type: :model do
       it "returns all notifications" do
         unread_notification = create(:notification, :for_item, user: seller, notifiable: sold_item)
         read_notification = create(:notification, :for_item, :read, user: seller, notifiable: closed_item)
-        result = described_class.by_target("invalid_status")
+        result = Notification.by_target("invalid_status")
 
         expect(result).to include(unread_notification)
         expect(result).to include(read_notification)

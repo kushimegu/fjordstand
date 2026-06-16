@@ -19,7 +19,7 @@ RSpec.describe User, type: :model do
         }
       )
     end
-    let(:user) { described_class.from_omniauth(auth) }
+    let(:user) { User.from_omniauth(auth) }
 
     before do
       WebMock.stub_request(:get, "#{Discordrb::API.api_base}/guilds/#{ENV['DISCORD_SERVER_ID']}")
@@ -50,7 +50,7 @@ RSpec.describe User, type: :model do
 
     context 'when the user is new' do
       it 'increases user count by 1' do
-        expect { described_class.from_omniauth(auth) }.to change(described_class, :count).by(1)
+        expect { User.from_omniauth(auth) }.to change(User, :count).by(1)
       end
 
       it 'creates user' do
