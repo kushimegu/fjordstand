@@ -173,6 +173,8 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
 
     context "when current page is other path and fullpath does not include from=entries" do
+      let(:item) { create(:item) }
+
       before do
         allow(helper).to receive(:current_page?) { |path| path == item_path(item) }
       end
@@ -227,6 +229,8 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
 
     context "when current page is other path and fullpath does not include from=listings" do
+      let(:item) { create(:item) }
+
       before do
         allow(helper).to receive(:current_page?) { |path| path == item_path(item) }
       end
@@ -259,6 +263,8 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
 
     context "when current page is other path and fullpath does not include from=messages" do
+      let(:item) { create(:item) }
+
       before do
         allow(controller.request).to receive(:path).and_return("/item/#{item.id}")
       end
