@@ -1,9 +1,9 @@
 class User < ApplicationRecord
   has_many :items, dependent: :destroy
-  has_many :sold_items, -> { where(status: :sold) }, class_name: "Item"
+  has_many :sold_items, -> { where(status: :sold) }, class_name: "Item", inverse_of: false
   has_many :entries, dependent: :destroy
   has_many :applied_items, through: :entries, source: :item
-  has_many :won_entries, -> { where(status: :won) }, class_name: "Entry"
+  has_many :won_entries, -> { where(status: :won) }, class_name: "Entry", inverse_of: false
   has_many :won_items, through: :won_entries, source: :item
   has_many :messages, dependent: :destroy
   has_many :comments, dependent: :destroy
