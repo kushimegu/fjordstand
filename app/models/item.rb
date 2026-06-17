@@ -49,6 +49,8 @@ class Item < ApplicationRecord
   end
   }
 
+  EDITABLE_FIELDS = [ :title, :description, :price, :shipping_fee_payer, :payment_method, :entry_deadline_at, images: [] ].freeze
+
   def other_user_for(current_user)
     if current_user.admin? && [ user, winner ].exclude?(current_user)
       return nil

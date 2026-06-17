@@ -1,6 +1,4 @@
 class Items::DraftsController < ApplicationController
-  include ParamSet
-
   before_action :set_item, only: %i[update destroy]
 
   def create
@@ -30,6 +28,6 @@ class Items::DraftsController < ApplicationController
   end
 
   def item_params
-    params.expect(item: [ *base_item_params ])
+    params.expect(item: [ *Item::EDITABLE_FIELDS ])
   end
 end
