@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :entry do
     status { :applied }
     user
-    item
+    association :item, factory: :item, status: :published
 
     trait :won do
       status { :won }
