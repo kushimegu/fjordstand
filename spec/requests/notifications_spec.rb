@@ -10,7 +10,7 @@ RSpec.describe "Notifications", type: :request do
     context "when notifications exists" do
       let!(:unread_notification) { create(:notification, :for_item, user: user) }
       let!(:read_notification) { create(:notification, :for_item, :read, user: user) }
-      let!(:others_notification) { create(:notification, :for_item, user: buyer)}
+      let!(:others_notification) { create(:notification, :for_item, user: buyer) }
 
       it "returns current users notifications with http success" do
         get notifications_path

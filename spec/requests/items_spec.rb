@@ -124,7 +124,7 @@ RSpec.describe "/items", type: :request do
       it "renders a response with 422 status (i.e. to display the 'edit' template)" do
         item = create(:item, :published, user: user, price: 1000)
         patch item_url(item), params: { item: invalid_attributes, publish: true }
-        
+
         expect(response).to have_http_status(:unprocessable_content)
       end
     end

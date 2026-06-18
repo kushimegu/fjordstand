@@ -26,7 +26,7 @@ RSpec.describe "/messages", type: :request do
       before { login(user) }
 
       it "renders a successful response and marks all messages as read" do
-        expect { get conversation_messages_path(item)}.to change { user.notifications.reload.map(&:read) }.from(all(be false)).to(all(be true))
+        expect { get conversation_messages_path(item) }.to change { user.notifications.reload.map(&:read) }.from(all(be false)).to(all(be true))
         expect(response).to be_successful
       end
     end
