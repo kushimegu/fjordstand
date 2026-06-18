@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe ApplicationHelper, type: :helper do
+  let(:item) { create(:item, :published) }
+
   describe "#page_title" do
     context "when page title is empty" do
       it "returns only base title" do
@@ -17,17 +19,13 @@ RSpec.describe ApplicationHelper, type: :helper do
   end
 
   describe "#back_link_for_item" do
-    let(:item) { create(:item) }
-
     context "when from watches" do
       before do
         controller.params = { from: "watches" }
       end
 
       it "returns link to watches" do
-        result = helper.back_link_for_item(item)
-        expect(result).to include("Watch中一覧へ")
-        expect(result).to include(watches_path)
+        expect(helper.back_link_for_item(item)).to include("Watch中一覧へ", watches_path)
       end
     end
 
@@ -37,9 +35,7 @@ RSpec.describe ApplicationHelper, type: :helper do
       end
 
       it "returns link to entries" do
-        result = helper.back_link_for_item(item)
-        expect(result).to include("希望商品一覧へ")
-        expect(result).to include(entries_path)
+        expect(helper.back_link_for_item(item)).to include("希望商品一覧へ", entries_path)
       end
     end
 
@@ -49,9 +45,7 @@ RSpec.describe ApplicationHelper, type: :helper do
       end
 
       it "returns link to listings" do
-        result = helper.back_link_for_item(item)
-        expect(result).to include("自分の出品一覧へ")
-        expect(result).to include(listings_path)
+        expect(helper.back_link_for_item(item)).to include("自分の出品一覧へ", listings_path)
       end
     end
 
@@ -61,17 +55,13 @@ RSpec.describe ApplicationHelper, type: :helper do
       end
 
       it "returns link to messages" do
-        result = helper.back_link_for_item(item)
-        expect(result).to include("連絡ページへ")
-        expect(result).to include(conversation_messages_path(item))
+        expect(helper.back_link_for_item(item)).to include("連絡ページへ", conversation_messages_path(item))
       end
     end
 
     context "when from notifications" do
       it "returns link to items" do
-        result = helper.back_link_for_item(item)
-        expect(result).to include("販売中一覧へ")
-        expect(result).to include(items_path)
+        expect(helper.back_link_for_item(item)).to include("販売中一覧へ", items_path)
       end
     end
   end
@@ -139,8 +129,6 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
 
     context "when current page is other path and fullpath does not include from param" do
-      let(:item) { create(:item) }
-
       before do
         allow(helper).to receive(:current_page?) { |path| path == item_path(item) }
       end
@@ -173,8 +161,6 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
 
     context "when current page is other path and fullpath does not include from=entries" do
-      let(:item) { create(:item) }
-
       before do
         allow(helper).to receive(:current_page?) { |path| path == item_path(item) }
       end
@@ -207,8 +193,6 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
 
     context "when current page is edit item path" do
-      let(:item) { create(:item) }
-
       before do
         allow(controller.request).to receive(:path).and_return("/item/#{item.id}/edit")
       end
@@ -229,8 +213,6 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
 
     context "when current page is other path and fullpath does not include from=listings" do
-      let(:item) { create(:item) }
-
       before do
         allow(helper).to receive(:current_page?) { |path| path == item_path(item) }
       end
@@ -263,8 +245,6 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
 
     context "when current page is other path and fullpath does not include from=messages" do
-      let(:item) { create(:item) }
-
       before do
         allow(controller.request).to receive(:path).and_return("/item/#{item.id}")
       end

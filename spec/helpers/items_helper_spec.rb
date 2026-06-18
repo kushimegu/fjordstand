@@ -4,13 +4,13 @@ RSpec.describe ItemsHelper, type: :helper do
   describe "#shipping_fee_class" do
     context "when seller" do
       it "returns css" do
-        expect(shipping_fee_class("seller")).to include("text-red-400")
+        expect(shipping_fee_class("seller")).to eq("text-red-400")
       end
     end
 
     context "when buyer" do
       it "returns css" do
-        expect(shipping_fee_class("buyer")).to include("text-gray-600")
+        expect(shipping_fee_class("buyer")).to eq("text-gray-600")
       end
     end
   end
@@ -20,7 +20,7 @@ RSpec.describe ItemsHelper, type: :helper do
       let(:item) { create(:item) }
 
       it "returns text and css" do
-        expect(helper.item_status_badge(item)).to include({ text: "下書き", css: "bg-gray-400" })
+        expect(helper.item_status_badge(item)).to eq({ text: "下書き", css: "bg-gray-400" })
       end
     end
 
@@ -28,7 +28,7 @@ RSpec.describe ItemsHelper, type: :helper do
       let(:item) { create(:item, :published) }
 
       it "returns text and css" do
-        expect(helper.item_status_badge(item)).to include({ text: "出品中", css: "bg-cyan-500" })
+        expect(helper.item_status_badge(item)).to eq({ text: "出品中", css: "bg-cyan-500" })
       end
     end
 
@@ -36,7 +36,7 @@ RSpec.describe ItemsHelper, type: :helper do
       let(:item) { create(:item, :sold) }
 
       it "returns text and css" do
-        expect(helper.item_status_badge(item)).to include({ text: "購入者決定", css: "bg-red-500" })
+        expect(helper.item_status_badge(item)).to eq({ text: "購入者決定", css: "bg-red-500" })
       end
     end
 
@@ -44,7 +44,7 @@ RSpec.describe ItemsHelper, type: :helper do
       let(:item) { create(:item, :closed) }
 
       it "returns text and css" do
-        expect(helper.item_status_badge(item)).to include({ text: "公開終了", css: "bg-gray-400" })
+        expect(helper.item_status_badge(item)).to eq({ text: "公開終了", css: "bg-gray-400" })
       end
     end
   end
@@ -56,7 +56,7 @@ RSpec.describe ItemsHelper, type: :helper do
       let(:entry) { create(:entry) }
 
       it "returns text and css" do
-        expect(helper.entry_status_badge(entry)).to include({ text: "購入希望", css: "bg-cyan-500" })
+        expect(helper.entry_status_badge(entry)).to eq({ text: "購入希望", css: "bg-cyan-500" })
       end
     end
 
@@ -64,7 +64,7 @@ RSpec.describe ItemsHelper, type: :helper do
       let(:entry) { create(:entry, :won) }
 
       it "returns text and css" do
-        expect(helper.entry_status_badge(entry)).to include({ text: "購入確定", css: "bg-red-500" })
+        expect(helper.entry_status_badge(entry)).to eq({ text: "購入確定", css: "bg-red-500" })
       end
     end
 
@@ -72,7 +72,7 @@ RSpec.describe ItemsHelper, type: :helper do
       let(:entry) { create(:entry, :lost) }
 
       it "returns text and css" do
-        expect(helper.entry_status_badge(entry)).to include({ text: "落選", css: "bg-gray-400" })
+        expect(helper.entry_status_badge(entry)).to eq({ text: "落選", css: "bg-gray-400" })
       end
     end
   end
