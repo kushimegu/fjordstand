@@ -10,12 +10,12 @@ RSpec.describe Entry, type: :model do
       let(:item) { create(:item, :published, user: seller) }
       let(:applier) { create(:user) }
 
+      before { create(:entry, item: item, user: applier) }
+
       it "validates applying twice" do
-        create(:entry, item: item, user: applier)
         second_entry = build(:entry, item: item, user: applier)
 
-        is_valid = second_entry.valid?
-        expect(is_valid).to be false
+        expect(second_entry.valid?).to be false
         expect(second_entry.errors.full_messages).to include("ユーザーはこの商品にすでに応募しています")
       end
     end
@@ -23,60 +23,31 @@ RSpec.describe Entry, type: :model do
 
   describe ".by_target" do
     let(:applier) { create(:user) }
-    let(:published_item) { create(:item, :published) }
-    let(:sold_item_where_applier_won) { create(:item, :sold) }
-    let(:sold_item_where_applier_lost) { create(:item, :sold) }
+    let!(:applied_entry) { create(:entry, user: applier) }
+    let!(:won_entry) { create(:entry, :won, user: applier) }
+    let!(:lost_entry) { create(:entry, :lost, user: applier) }
 
     context "when target is applied" do
       it "returns applied entries" do
-        applied_entry = create(:entry, item: published_item, user: applier)
-        won_entry = create(:entry, :won, item: sold_item_where_applier_won, user: applier)
-        lost_entry = create(:entry, :lost, item: sold_item_where_applier_lost, user: applier)
-
-        result = described_class.by_target("applied")
-
-        expect(result).to include(applied_entry)
-        expect(result).not_to include(won_entry)
-        expect(result).not_to include(lost_entry)
+        expect(applier.entries.by_target("applied")).to contain_exactly(applied_entry)
       end
     end
 
     context "when target is won" do
       it "returns won entries" do
-        applied_entry = create(:entry, item: published_item, user: applier)
-        won_entry = create(:entry, :won, item: sold_item_where_applier_won, user: applier)
-        lost_entry = create(:entry, :lost, item: sold_item_where_applier_lost, user: applier)
-        result = described_class.by_target("won")
-
-        expect(result).to include(won_entry)
-        expect(result).not_to include(applied_entry)
-        expect(result).not_to include(lost_entry)
+        expect(applier.entries.by_target("won")).to contain_exactly(won_entry)
       end
     end
 
     context "when target is lost" do
       it "returns lost entries" do
-        applied_entry = create(:entry, item: published_item, user: applier)
-        won_entry = create(:entry, :won, item: sold_item_where_applier_won, user: applier)
-        lost_entry = create(:entry, :lost, item: sold_item_where_applier_lost, user: applier)
-        result = described_class.by_target("lost")
-
-        expect(result).to include(lost_entry)
-        expect(result).not_to include(applied_entry)
-        expect(result).not_to include(won_entry)
+        expect(applier.entries.by_target("lost")).to contain_exactly(lost_entry)
       end
     end
 
     context "when target is invalid" do
       it "returns all entries" do
-        applied_entry = create(:entry, item: published_item, user: applier)
-        won_entry = create(:entry, :won, item: sold_item_where_applier_won, user: applier)
-        lost_entry = create(:entry, :lost, item: sold_item_where_applier_lost, user: applier)
-        result = described_class.by_target("invalid_status")
-
-        expect(result).to include(applied_entry)
-        expect(result).to include(won_entry)
-        expect(result).to include(lost_entry)
+        expect(applier.entries.by_target("invalid_status")).to contain_exactly(applied_entry, won_entry, lost_entry)
       end
     end
   end
@@ -86,8 +57,7 @@ RSpec.describe Entry, type: :model do
     let(:entry) { build(:entry, item: item, user: seller) }
 
     it "validates applying for own item" do
-      is_valid = entry.valid?
-      expect(is_valid).to be false
+      expect(entry.valid?).to be false
       expect(entry.errors.full_messages).to include("自分の出品物には応募できません")
     end
   end
@@ -101,8 +71,7 @@ RSpec.describe Entry, type: :model do
       let(:entry) { build(:entry, item: item, user: applier) }
 
       it "validates applying for expired item" do
-        is_valid = entry.valid?
-        expect(is_valid).to be false
+        expect(entry.valid?).to be false
         expect(entry.errors.full_messages).to include("締切の過ぎた商品には応募できません")
       end
     end
@@ -112,8 +81,7 @@ RSpec.describe Entry, type: :model do
       let(:entry) { build(:entry, item: item, user: applier) }
 
       it "can apply for unexpired item" do
-        is_valid = entry.valid?
-        expect(is_valid).to be true
+        expect(entry.valid?).to be true
         expect(entry.errors.full_messages).to be_empty
       end
     end
@@ -125,8 +93,7 @@ RSpec.describe Entry, type: :model do
     let(:entry) { build(:entry, item: item, user: applier) }
 
     it "validates applying for closed item" do
-      is_valid = entry.valid?
-      expect(is_valid).to be false
+      expect(entry.valid?).to be false
       expect(entry.errors.full_messages).to include("公開終了した商品には応募できません")
     end
   end

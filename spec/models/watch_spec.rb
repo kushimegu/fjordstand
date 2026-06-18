@@ -12,8 +12,7 @@ RSpec.describe Watch, type: :model do
         create(:watch, item: item, user: user)
         second_registration = build(:watch, item: item, user: user)
 
-        is_valid = second_registration.valid?
-        expect(is_valid).to be false
+        expect(second_registration.valid?).to be false
         expect(second_registration.errors.full_messages).to include("ユーザーはこの商品をすでにWatchしています")
       end
     end

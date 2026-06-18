@@ -10,12 +10,12 @@ RSpec.describe NotifyItemPublishedJob, type: :job do
 
   describe '#perform_later' do
     it 'enqueues the job' do
-      described_class.perform_later(item.id)
-      expect(described_class).to have_been_enqueued.with(item.id)
+      NotifyItemPublishedJob.perform_later(item.id)
+      expect(NotifyItemPublishedJob).to have_been_enqueued.with(item.id)
     end
 
     it "sends webhook notification" do
-      described_class.perform_now(item.id)
+      NotifyItemPublishedJob.perform_now(item.id)
       expect(webhook).to have_received(:notify_item_published).with(item)
     end
   end

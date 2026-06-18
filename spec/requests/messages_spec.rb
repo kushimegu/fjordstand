@@ -1,12 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe "/messages", type: :request do
-  let(:seller) { create(:user) }
+  let(:user) { create(:user) }
   let(:buyer) { create(:user) }
-  let(:item) { create(:item, :with_item_image, :sold, user: seller) }
+  let(:item) { create(:item, :sold, user: user) }
+  let(:message) { create(:message, user: buyer, item: item) }
+
+  before do
+    create(:entry, :won, item: item, user: buyer)
+    message
+    create_list(:notification, 2, notifiable: message, user: user)
+  end
 
   describe "GET /index" do
-    context "when other user login" do
+    context "when other user tries to access" do
       it "redirects to items" do
         other_user = create(:user)
         login(other_user)
@@ -16,58 +23,36 @@ RSpec.describe "/messages", type: :request do
     end
 
     context "when buyer login" do
-      it "renders a successful response" do
-        login(buyer)
-        create(:entry, :won, item: item, user: buyer)
-        create(:message, user: buyer, item: item)
-        get conversation_messages_path(item)
-        expect(response).to be_successful
-      end
+      before { login(user) }
 
-      it "makes all messages read" do
-        create(:entry, :won, item: item, user: buyer)
-        create_list(:message, 2, user: seller, item: item)
-        login(buyer)
-        expect(buyer.notifications.pluck(:read)).to all(be false)
-        get conversation_messages_path(item)
-        expect(buyer.notifications.reload.pluck(:read)).to all(be true)
+      it "renders a successful response and marks all messages as read" do
+        expect { get conversation_messages_path(item) }.to change { user.notifications.reload.map(&:read) }.from(all(be false)).to(all(be true))
+        expect(response).to be_successful
       end
     end
   end
 
   describe "POST /create" do
-    before { login(buyer) }
+    before { login(user) }
 
     context "with valid parameters" do
-      let(:valid_attributes) { attributes_for(:message, item: item, user: buyer) }
+      let(:valid_attributes) { attributes_for(:message, item: item, user: user) }
 
       it "creates a new Message" do
-        create(:entry, :won, item: item, user: buyer)
         expect {
           post conversation_messages_path(item), params: { message: valid_attributes }
         }.to change(Message, :count).by(1)
-      end
-
-      it "redirects to the message index" do
-        create(:entry, :won, item: item, user: buyer)
-        post conversation_messages_path(item), params: { message: valid_attributes }
         expect(response).to redirect_to(conversation_messages_path(item))
       end
     end
 
     context "with invalid parameters" do
-      let(:invalid_attributes) { attributes_for(:message, item: item, user: buyer, body: "") }
+      let(:invalid_attributes) { attributes_for(:message, item: item, user: user, body: "") }
 
       it "does not create a new Message" do
-        create(:entry, :won, item: item, user: buyer)
         expect {
           post conversation_messages_path(item), params: { message: invalid_attributes }
         }.not_to change(Message, :count)
-      end
-
-      it "renders a response with 422 status (i.e. to display the 'new' template)" do
-        create(:entry, :won, item: item, user: buyer)
-        post conversation_messages_path(item), params: { message: invalid_attributes }
         expect(response).to have_http_status(:unprocessable_content)
       end
     end
@@ -76,9 +61,7 @@ RSpec.describe "/messages", type: :request do
   describe "DELETE /destroy" do
     context "when user tries to delete message" do
       it "redirects to messages" do
-        create(:entry, :won, item: item, user: buyer)
-        login(buyer)
-        message = create(:message, user: buyer, item: item)
+        login(user)
         expect {
           delete conversation_message_url(item, message)
         }.not_to change(Message, :count)
@@ -92,17 +75,9 @@ RSpec.describe "/messages", type: :request do
       before { login (admin) }
 
       it "destroys the requested message" do
-        message = create(:message, user: buyer, item: item)
-
         expect {
           delete conversation_message_url(item, message)
         }.to change(Message, :count).by(-1)
-      end
-
-      it "redirects to item" do
-        message = create(:message, user: buyer, item: item)
-
-        delete conversation_message_url(item, message)
         expect(response).to redirect_to(conversation_messages_url(item))
       end
     end

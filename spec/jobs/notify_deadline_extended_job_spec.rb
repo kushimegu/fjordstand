@@ -14,12 +14,12 @@ RSpec.describe NotifyDeadlineExtendedJob, type: :job do
 
   describe '#perform_later' do
     it 'enqueues the job' do
-      described_class.perform_later(item.id)
-      expect(described_class).to have_been_enqueued.with(item.id)
+      NotifyDeadlineExtendedJob.perform_later(item.id)
+      expect(NotifyDeadlineExtendedJob).to have_been_enqueued.with(item.id)
     end
 
     it "sends webhook notification" do
-      described_class.perform_now(item.id)
+      NotifyDeadlineExtendedJob.perform_now(item.id)
       expect(webhook).to have_received(:notify_item_deadline_extended).with([ applicant ], item)
     end
   end

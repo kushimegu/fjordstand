@@ -77,8 +77,6 @@ RSpec.describe ApplicationHelper, type: :helper do
   end
 
   describe "#active_items_tab?" do
-  let(:item) { create(:item) }
-
     context "when current page is conversations path and includes from=notifications" do
       before do
         allow(controller.request).to receive(:path).and_return("/conversations")
@@ -141,6 +139,8 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
 
     context "when current page is other path and fullpath does not include from param" do
+      let(:item) { create(:item) }
+
       before do
         allow(helper).to receive(:current_page?) { |path| path == item_path(item) }
       end

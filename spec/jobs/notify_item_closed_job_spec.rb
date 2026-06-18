@@ -17,12 +17,12 @@ RSpec.describe NotifyItemClosedJob, type: :job do
       end
 
       it 'enqueues the job' do
-        described_class.perform_later(item.id, reason: :user_action)
-        expect(described_class).to have_been_enqueued.with(item.id, reason: :user_action)
+        NotifyItemClosedJob.perform_later(item.id, reason: :user_action)
+        expect(NotifyItemClosedJob).to have_been_enqueued.with(item.id, reason: :user_action)
       end
 
       it "sends notifications" do
-        expect { described_class.perform_now(item.id, reason: :user_action) }.to have_enqueued_job(DestroyEntriesJob).with(item.id)
+        expect { NotifyItemClosedJob.perform_now(item.id, reason: :user_action) }.to have_enqueued_job(DestroyEntriesJob).with(item.id)
         expect(webhook).to have_received(:notify_item_closed).with([ applicant ], item)
         expect(Notification.where(user: applicant, notifiable: item)).to exist
       end
@@ -30,12 +30,12 @@ RSpec.describe NotifyItemClosedJob, type: :job do
 
     context 'when reason is :no_applicants' do
       it 'enqueues the job' do
-        described_class.perform_later(item.id, reason: :no_applicants)
-        expect(described_class).to have_been_enqueued.with(item.id, reason: :no_applicants)
+        NotifyItemClosedJob.perform_later(item.id, reason: :no_applicants)
+        expect(NotifyItemClosedJob).to have_been_enqueued.with(item.id, reason: :no_applicants)
       end
 
       it "sends notifications" do
-        described_class.perform_now(item.id, reason: :no_applicants)
+        NotifyItemClosedJob.perform_now(item.id, reason: :no_applicants)
         expect(webhook).to have_received(:notify_lottery_skipped).with(seller, item)
         expect(Notification.where(user: seller, notifiable: item)).to exist
       end

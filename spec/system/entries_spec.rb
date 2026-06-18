@@ -2,9 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Entries", type: :system do
   let(:user) { create(:user) }
-  let(:published_item) { create(:item, :published) }
-  let(:sold_item_where_user_won) { create(:item, :sold) }
-  let(:sold_item_where_user_lost) { create(:item, :sold) }
+  let(:item) { create(:item, :published) }
 
   before do
     driven_by(:selenium_chrome_headless)
@@ -16,8 +14,9 @@ RSpec.describe "Entries", type: :system do
     it "can make entry when button is clicked" do
       expect(page).to have_current_path(items_path)
 
-      visit item_path(published_item)
+      visit item_path(item)
       click_on "購入希望を申請する"
+
       expect(page).to have_content("購入希望を申請しました")
       expect(page).to have_content("購入希望を出しています")
       expect(page).to have_content("応募人数\n1人")
@@ -27,10 +26,10 @@ RSpec.describe "Entries", type: :system do
 
   describe "cancel entry for item" do
     it "can cancel entry when button is clicked" do
-      create(:entry, user: user, item: published_item)
+      create(:entry, user: user, item: item)
       expect(page).to have_current_path(items_path)
 
-      visit item_path(published_item)
+      visit item_path(item)
       click_on "購入希望を取り消す"
 
       expect(page).to have_content("購入希望を取り消しました")
@@ -40,10 +39,11 @@ RSpec.describe "Entries", type: :system do
   end
 
   describe "entries tab switching" do
+    let!(:applied_entry) { create(:entry, user: user) }
+    let!(:won_entry) { create(:entry, :won, user: user) }
+    let!(:lost_entry) { create(:entry, :lost, user: user) }
+
     it "shows applied entries when applied tab is clicked" do
-      applied_entry = create(:entry, item: published_item, user: user)
-      won_entry = create(:entry, :won, item: sold_item_where_user_won, user: user)
-      lost_entry = create(:entry, :lost, item: sold_item_where_user_lost, user: user)
       expect(page).to have_current_path(items_path)
 
       visit entries_path
@@ -55,9 +55,6 @@ RSpec.describe "Entries", type: :system do
     end
 
     it "shows won entries when won tab is clicked" do
-      applied_entry = create(:entry, item: published_item, user: user)
-      won_entry = create(:entry, :won, item: sold_item_where_user_won, user: user)
-      lost_entry = create(:entry, :lost, item: sold_item_where_user_lost, user: user)
       expect(page).to have_current_path(items_path)
 
       visit entries_path
@@ -69,9 +66,6 @@ RSpec.describe "Entries", type: :system do
     end
 
     it "shows lost entries when lost tab is clicked" do
-      applied_entry = create(:entry, item: published_item, user: user)
-      won_entry = create(:entry, :won, item: sold_item_where_user_won, user: user)
-      lost_entry = create(:entry, :lost, item: sold_item_where_user_lost, user: user)
       expect(page).to have_current_path(items_path)
 
       visit entries_path
@@ -83,9 +77,6 @@ RSpec.describe "Entries", type: :system do
     end
 
     it "shows all notifications when all tab is clicked" do
-      applied_entry = create(:entry, item: published_item, user: user)
-      won_entry = create(:entry, :won, item: sold_item_where_user_won, user: user)
-      lost_entry = create(:entry, :lost, item: sold_item_where_user_lost, user: user)
       expect(page).to have_current_path(items_path)
 
       visit entries_path

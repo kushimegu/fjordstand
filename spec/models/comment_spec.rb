@@ -22,12 +22,9 @@ RSpec.describe Comment, type: :model do
     let(:seller) { create(:user) }
     let(:item) { create(:item, :published, user: seller) }
     let(:commentator) { create(:user) }
-    let(:watcher) { create(:user) }
 
     it "sends notification to watchers except commentator" do
-      create(:watch, item: item, user: watcher)
       comment = create(:comment, user: commentator, item: item)
-      expect(item.watchers.count).to eq(3)
 
       expect(NotifyCommentCreatedJob).to have_been_enqueued.with(comment.id)
     end

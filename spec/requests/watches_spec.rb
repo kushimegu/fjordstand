@@ -12,8 +12,8 @@ RSpec.describe "/watches", type: :request do
         watch = create(:watch, item: item, user: user)
 
         get watches_path
-        expect(response).to have_http_status(:success)
 
+        expect(response).to have_http_status(:success)
         expect(response.body).to include(watch.item.title)
       end
     end
@@ -21,8 +21,8 @@ RSpec.describe "/watches", type: :request do
     context "when no watches exist" do
       it "returns empty array with http success" do
         get entries_path
-        expect(response).to have_http_status(:success)
 
+        expect(response).to have_http_status(:success)
         expect(response.body).to include("該当する商品はありません")
       end
     end
@@ -34,10 +34,6 @@ RSpec.describe "/watches", type: :request do
         expect {
           post item_watches_path(item)
         }.to change { item.watches.where(user: user).count }.by(1)
-      end
-
-      it "redirects to the item" do
-        post item_watches_path(item)
         expect(response).to redirect_to(item)
       end
     end
@@ -48,11 +44,6 @@ RSpec.describe "/watches", type: :request do
         expect {
           post item_watches_path(item)
         }.not_to change(Watch, :count)
-      end
-
-      it "renders a response with 422 status" do
-        create(:watch, item: item, user: user)
-        post item_watches_path(item)
         expect(response).to have_http_status(:unprocessable_content)
       end
     end
@@ -64,11 +55,6 @@ RSpec.describe "/watches", type: :request do
       expect {
         delete item_watches_path(item)
       }.to change(Watch, :count).by(-1)
-    end
-
-    it "redirects to the item" do
-      watch = item.watches.create!(user: user)
-      delete item_watches_path(item)
       expect(response).to redirect_to(item)
     end
   end

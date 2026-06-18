@@ -14,12 +14,12 @@ RSpec.describe NotifyLotteryResultsJob, type: :job do
 
   describe '#perform_later' do
     it 'enqueues the job' do
-      described_class.perform_later(item.id)
-      expect(described_class).to have_been_enqueued.with(item.id)
+      NotifyLotteryResultsJob.perform_later(item.id)
+      expect(NotifyLotteryResultsJob).to have_been_enqueued.with(item.id)
     end
 
     it "sends webhook notification" do
-      described_class.perform_now(item.id)
+      NotifyLotteryResultsJob.perform_now(item.id)
       expect(webhook).to have_received(:notify_lottery_completed).with([ winner, seller ], item)
     end
   end

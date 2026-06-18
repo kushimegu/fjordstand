@@ -6,14 +6,14 @@ RSpec.describe "Items", type: :system do
   before { driven_by(:selenium_chrome_headless) }
 
   describe "listings tab switching" do
+    let!(:draft_item) { create(:item, user: user) }
+    let!(:published_item) { create(:item, :published, user: user) }
+    let!(:closed_item) { create(:item, :closed, user: user) }
+    let!(:sold_item) { create(:item, :sold, user: user) }
+
     before { login(user) }
 
     it "shows draft items when draft tab is clicked" do
-      draft_item = create(:item, user: user)
-      published_item = create(:item, :published, user: user)
-      closed_item = create(:item, :closed, user: user)
-      sold_item = create(:item, :sold, user: user)
-
       expect(page).to have_current_path(items_path)
 
       visit listings_path
@@ -27,10 +27,6 @@ RSpec.describe "Items", type: :system do
     end
 
     it "shows published items when published tab is clicked" do
-      draft_item = create(:item, user: user)
-      published_item = create(:item, :published, user: user)
-      closed_item = create(:item, :closed, user: user)
-      sold_item = create(:item, :sold, user: user)
       expect(page).to have_current_path(items_path)
 
       visit listings_path
@@ -44,10 +40,6 @@ RSpec.describe "Items", type: :system do
     end
 
     it "shows sold items when sold tab is clicked" do
-      draft_item = create(:item, user: user)
-      published_item = create(:item, :published, user: user)
-      closed_item = create(:item, :closed, user: user)
-      sold_item = create(:item, :sold, user: user)
       expect(page).to have_current_path(items_path)
 
       visit listings_path
@@ -61,10 +53,6 @@ RSpec.describe "Items", type: :system do
     end
 
     it "shows closed items when closed tab is clicked" do
-      draft_item = create(:item, user: user)
-      published_item = create(:item, :published, user: user)
-      closed_item = create(:item, :closed, user: user)
-      sold_item = create(:item, :sold, user: user)
       expect(page).to have_current_path(items_path)
 
       visit listings_path
@@ -78,10 +66,6 @@ RSpec.describe "Items", type: :system do
     end
 
     it "shows all items when all tab is clicked" do
-      draft_item = create(:item, user: user)
-      published_item = create(:item, :published, user: user)
-      closed_item = create(:item, :closed, user: user)
-      sold_item = create(:item, :sold, user: user)
       expect(page).to have_current_path(items_path)
 
       visit listings_path

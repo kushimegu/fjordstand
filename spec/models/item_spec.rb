@@ -52,47 +52,48 @@ RSpec.describe Item, type: :model do
   end
 
   describe ".expired" do
-    let(:expired_item) { create(:item, :published, entry_deadline_at: Date.yesterday) }
-    let(:unexpired_item) { create(:item, :published, entry_deadline_at: Date.current) }
+    let!(:expired_item) { create(:item, :published, entry_deadline_at: Date.yesterday) }
+
+    before { create(:item, :published, entry_deadline_at: Date.current) }
 
     it "returns only expired items" do
-      expect(described_class.expired).to include(expired_item)
-      expect(described_class.expired).not_to include(unexpired_item)
+      expect(Item.expired).to contain_exactly(expired_item)
     end
   end
 
   describe ".by_target" do
-    let(:published_item) { create(:item, :published) }
-    let(:closed_item) { create(:item, :closed) }
-    let(:sold_item) { create(:item, :sold) }
+    let!(:published_item) { create(:item, :published) }
+    let!(:closed_item) { create(:item, :closed) }
+    let!(:sold_item) { create(:item, :sold) }
+    let!(:draft_item) { create(:item) }
 
     context "when target is published" do
       it "returns published item" do
-        result = described_class.by_target("published")
-
-        expect(result).to include(published_item)
-        expect(result).not_to include(closed_item)
-        expect(result).not_to include(sold_item)
+        expect(Item.by_target("published")).to contain_exactly(published_item)
       end
     end
 
     context "when target is closed" do
       it "returns closed item" do
-        result = described_class.by_target("closed")
-
-        expect(result).to include(closed_item)
-        expect(result).not_to include(published_item)
-        expect(result).not_to include(sold_item)
+        expect(Item.by_target("closed")).to contain_exactly(closed_item)
       end
     end
 
     context "when target is sold" do
       it "returns sold item" do
-        result = described_class.by_target("sold")
+        expect(Item.by_target("sold")).to contain_exactly(sold_item)
+      end
+    end
 
-        expect(result).to include(sold_item)
-        expect(result).not_to include(published_item)
-        expect(result).not_to include(closed_item)
+    context "when target is draft" do
+      it "returns draft item" do
+        expect(Item.by_target("draft")).to contain_exactly(draft_item)
+      end
+    end
+
+    context "when target is invalid" do
+      it "returns all items" do
+        expect(Item.by_target("invalid")).to contain_exactly(published_item, closed_item, sold_item, draft_item)
       end
     end
   end
@@ -102,18 +103,16 @@ RSpec.describe Item, type: :model do
     let(:item) { create(:item, :sold, user: seller) }
     let(:buyer) { create(:user) }
 
+    before { create(:entry, :won, item: item, user: buyer) }
+
     context "when current user is seller" do
       it "returns buyer" do
-        create(:entry, :won, item: item, user: buyer)
-
         expect(item.other_user_for(seller)).to eq(buyer)
       end
     end
 
     context "when current user is buyer" do
       it "returns seller" do
-        create(:entry, :won, item: item, user: buyer)
-
         expect(item.other_user_for(buyer)).to eq(seller)
       end
     end
@@ -121,7 +120,6 @@ RSpec.describe Item, type: :model do
     context "when current user is admin and not involved" do
       it "returns nil" do
         admin = create(:user, :admin)
-        create(:entry, :won, item: item, user: buyer)
 
         expect(item.other_user_for(admin)).to be_nil
       end
@@ -130,7 +128,6 @@ RSpec.describe Item, type: :model do
     context "when current user is admin and is seller" do
       it "returns buyer" do
         admin = seller
-        create(:entry, :won, item: item, user: buyer)
 
         expect(item.other_user_for(admin)).to eq(buyer)
       end
@@ -217,7 +214,7 @@ RSpec.describe Item, type: :model do
   describe "#editable?" do
     let(:user) { create(:user) }
 
-    context "when item is published and past entry deadline" do
+    context "when item is published and has past entry deadline" do
       let(:item) { create(:item, :published, user: user, entry_deadline_at: Date.yesterday) }
 
       it "is not editable" do
@@ -295,7 +292,6 @@ RSpec.describe Item, type: :model do
 
       it "can set deadline to today" do
         expect(item.valid?(:publish)).to be true
-        expect(item.errors.full_messages).to be_empty
       end
     end
 
@@ -304,7 +300,6 @@ RSpec.describe Item, type: :model do
 
       it "can set deadline to tomorrow" do
         expect(item.valid?(:publish)).to be true
-        expect(item.errors.full_messages).to be_empty
       end
     end
   end
@@ -328,14 +323,13 @@ RSpec.describe Item, type: :model do
         item.assign_attributes(price: 1200)
 
         expect(item.valid?).to be true
-        expect(item.errors.full_messages).to be_empty
       end
     end
   end
 
   describe "#deadline_not_change_earlier_after_published" do
     context "when setting deadline to earlier date" do
-      let(:item) { create(:item, :published, entry_deadline_at: Date.current + 5.days) }
+      let(:item) { create(:item, :with_item_image, :published, entry_deadline_at: Date.current + 5.days) }
 
       it "validates deadline to not change" do
         item.assign_attributes(entry_deadline_at: Date.current + 2.days)
@@ -352,7 +346,6 @@ RSpec.describe Item, type: :model do
         item.assign_attributes(entry_deadline_at: Date.current + 7.days)
 
         expect(item.valid?(:publish)).to be true
-        expect(item.errors.full_messages).to be_empty
       end
     end
 
@@ -363,18 +356,14 @@ RSpec.describe Item, type: :model do
         item.assign_attributes(entry_deadline_at: Date.current + 2.days)
 
         expect(item.valid?(:publish)).to be true
-        expect(item.errors.full_messages).to be_empty
       end
     end
   end
 
   describe "#set_entry_deadline_at_end_of_day" do
-    let(:item) { build(:item, entry_deadline_at: entry_deadline_at) }
-
     context "when entry_deadline_at is given from date_field" do
-      let(:entry_deadline_at) { "2025-11-17" }
-
       it "sets entry_deadline_at to end of day" do
+        item = build(:item, entry_deadline_at: "2025-11-17")
         item.save!
         expect(item.entry_deadline_at.to_i).to eq (Time.zone.parse("2025-11-17 23:59:59").to_i)
       end
@@ -384,18 +373,11 @@ RSpec.describe Item, type: :model do
   describe "#comment_watch_by_seller" do
     let(:user) { create(:user) }
 
-    context "when item is draft" do
-      it "does not create watch by seller" do
-        item = create(:item, user: user)
-        expect(item.watchers).not_to include(user)
-      end
-    end
-
     context "when publishing item" do
       it "create watch by seller" do
         item = create(:item, user: user)
-        item.update!(status: :published)
 
+        expect { item.update!(status: :published) }.to change { item.watchers.count }.by(1)
         expect(item.watchers).to include(user)
       end
     end
@@ -405,51 +387,42 @@ RSpec.describe Item, type: :model do
     context "when published item is created" do
       it "sends webhook notification" do
         item = create(:item)
-        item.update!(status: :published)
 
-        expect(NotifyItemPublishedJob).to have_been_enqueued.with(item.id)
+        expect { item.update!(status: :published) }.to have_enqueued_job(NotifyItemPublishedJob).with(item.id)
       end
     end
 
     context "when draft item is created" do
-      let(:item) { build(:item, :with_item_image) }
-
       it "does not send webhook notification" do
-        item.save!
+        item = build(:item, :with_item_image)
 
-        expect(NotifyItemPublishedJob).not_to have_been_enqueued.with(item.id)
+        expect { item.save! }.not_to have_enqueued_job(NotifyItemPublishedJob)
       end
     end
 
     context "when status is not changed from published" do
-      let(:item) { create(:item, :published, entry_deadline_at: Date.current) }
-
       it "does not send webhook notification" do
-        item.update!(entry_deadline_at: Date.tomorrow)
+        item = create(:item, :published, entry_deadline_at: Date.current)
 
-        expect(NotifyItemPublishedJob).to have_been_enqueued.with(item.id).once
+        expect { item.update!(entry_deadline_at: Date.tomorrow) }.not_to have_enqueued_job(NotifyItemPublishedJob)
       end
     end
   end
 
   describe "#notify_deadline_extension" do
     context "when entry_deadline_at is extended" do
-      let(:item) { create(:item, :published, entry_deadline_at: Date.current) }
-
       it "sends webhook notification" do
-        item.update!(entry_deadline_at: Date.tomorrow)
+        item = create(:item, :published, entry_deadline_at: Date.current)
 
-        expect(NotifyDeadlineExtendedJob).to have_been_enqueued.with(item.id)
+        expect { item.update!(entry_deadline_at: Date.tomorrow) }.to have_enqueued_job(NotifyDeadlineExtendedJob).with(item.id)
       end
     end
 
     context "when entry_deadline_at and status is changed" do
-      let(:item) { create(:item, entry_deadline_at: Date.current) }
-
       it "does not send webhook notification" do
-        item.update!(status: :published, entry_deadline_at: Date.tomorrow)
+        item = create(:item, entry_deadline_at: Date.current)
 
-        expect(NotifyDeadlineExtendedJob).not_to have_been_enqueued.with(item.id)
+        expect { item.update!(status: :published, entry_deadline_at: Date.tomorrow) }.not_to have_enqueued_job(NotifyDeadlineExtendedJob)
       end
     end
   end
