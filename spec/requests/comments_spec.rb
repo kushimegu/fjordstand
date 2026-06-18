@@ -3,31 +3,25 @@ require 'rails_helper'
 RSpec.describe "/comments", type: :request do
   let(:user) { create(:user) }
   let(:item) { create(:item, :published, user: user) }
+  let(:valid_attributes) { attributes_for(:comment) }
 
   describe "POST /create" do
     before { login(user) }
 
-    context "when item is not coommentable" do
-      let(:item) { create(:item, user: user) }
-      let(:valid_attributes) { attributes_for(:comment) }
-
+    context "when item is not commentable" do
       it "redirects to item" do
-        post item_comments_path(item), params: { comment: valid_attributes }
-        expect(response).to redirect_to(item_path(item))
+        draft_item = create(:item, user: user)
+
+        post item_comments_path(draft_item), params: { comment: valid_attributes }
+        expect(response).to redirect_to(item_path(draft_item))
       end
     end
 
     context "with valid parameters" do
-      let(:valid_attributes) { attributes_for(:comment) }
-
       it "creates a new Comment" do
         expect {
           post item_comments_path(item), params: { comment: valid_attributes }
         }.to change(Comment, :count).by(1)
-      end
-
-      it "redirects to the item" do
-        post item_comments_path(item), params: { comment: valid_attributes }
         expect(response).to redirect_to(item_path(item))
       end
     end
@@ -39,10 +33,6 @@ RSpec.describe "/comments", type: :request do
         expect {
           post item_comments_path(item), params: { comment: invalid_attributes }
         }.not_to change(Comment, :count)
-      end
-
-      it "renders a response with 422 status (i.e. to display the 'new' template)" do
-        post item_comments_path(item), params: { comment: invalid_attributes }
         expect(response).to have_http_status(:unprocessable_content)
       end
     end
@@ -54,6 +44,7 @@ RSpec.describe "/comments", type: :request do
 
       it "redirects to item" do
         comment = create(:comment, user: user, item: item)
+
         expect {
           delete item_comment_url(item, comment)
         }.not_to change(Comment, :count)
@@ -72,12 +63,6 @@ RSpec.describe "/comments", type: :request do
         expect {
           delete item_comment_url(item, comment)
         }.to change(Comment, :count).by(-1)
-      end
-
-      it "redirects to item" do
-        comment = create(:comment, user: user, item: item)
-
-        delete item_comment_url(item, comment)
         expect(response).to redirect_to(item_url(item))
       end
     end

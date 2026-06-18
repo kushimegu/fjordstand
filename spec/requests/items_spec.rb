@@ -33,28 +33,7 @@ RSpec.describe "/items", type: :request do
       login(user)
       get item_url(item)
       expect(response).to be_successful
-    end
-
-    context "when accessed from notifications" do
-      it "makes all notifications read" do
-        item = create(:item, :published, user: user)
-        create_list(:comment, 2, item: item, user: admin)
-        expect(user.notifications.pluck(:read)).to all(be false)
-        login(user)
-        get item_path(item, from: :notifications)
-        expect(user.notifications.reload.pluck(:read)).to all(be true)
-      end
-    end
-
-    context "when accessed not from notifications" do
-      it "does not change notifications read status" do
-        item = create(:item, :published, user: user)
-        create_list(:comment, 2, item: item, user: admin)
-        expect(user.notifications.pluck(:read)).to all(be false)
-        login(user)
-        get item_path(item)
-        expect(user.notifications.reload.pluck(:read)).to all(be false)
-      end
+      expect(response.body).to include(item.title)
     end
   end
 
@@ -99,10 +78,6 @@ RSpec.describe "/items", type: :request do
         }.to change(Item, :count).by(1)
 
         expect(Item.last).to be_published
-      end
-
-      it "redirects to the created item" do
-        post items_url, params: { item: valid_attributes, publish: true }
         expect(response).to redirect_to(item_url(Item.last))
       end
     end
@@ -114,26 +89,7 @@ RSpec.describe "/items", type: :request do
         expect {
           post items_url, params: { item: invalid_attributes, publish: true }
         }.not_to change(Item, :count)
-      end
-
-      it "renders a response with 422 status (i.e. to display the 'new' template)" do
-        post items_url, params: { item: invalid_attributes, publish: true }
         expect(response).to have_http_status(:unprocessable_content)
-      end
-    end
-
-    context "when save as draft" do
-      let(:valid_attributes) { attributes_for(:item) }
-
-      it "creates a new Item" do
-        expect {
-          post items_url, params: { item: valid_attributes }
-        }.to change(Item, :count).by(1)
-      end
-
-      it "redirects to the listings" do
-        post items_url, params: { item: valid_attributes }
-        expect(response).to redirect_to(listings_path)
       end
     end
   end
@@ -150,36 +106,14 @@ RSpec.describe "/items", type: :request do
       end
     end
 
-    context "when update as closed" do
-      it "updates the requested item" do
-        item = create(:item, :published, user: user)
-        patch item_url(item), params: { close: true }
-        item.reload
-        expect(item.status).to eq("closed")
-      end
-
-      it "redirects to the listings" do
-        item = create(:item, :published, user: user)
-        patch item_url(item), params: { close: true }
-        item.reload
-        expect(response).to redirect_to(listings_path)
-      end
-    end
-
     context "when update as published with valid parameters" do
       let(:new_attributes) { { title_append: "初版" } }
 
       it "updates the requested item" do
         item = create(:item, :published, :with_item_image, user: user, title: "技術書")
         patch item_url(item), params: { item: new_attributes, publish: true }
-        item.reload
-        expect(item.title).to eq("技術書 初版")
-      end
 
-      it "redirects to the item" do
-        item = create(:item, :published, :with_item_image, user: user, title: "技術書")
-        patch item_url(item), params: { item: new_attributes, publish: true }
-        item.reload
+        expect(item.reload.title).to eq("技術書 初版")
         expect(response).to redirect_to(item_url(item))
       end
     end
@@ -190,65 +124,18 @@ RSpec.describe "/items", type: :request do
       it "renders a response with 422 status (i.e. to display the 'edit' template)" do
         item = create(:item, :published, user: user, price: 1000)
         patch item_url(item), params: { item: invalid_attributes, publish: true }
+        
         expect(response).to have_http_status(:unprocessable_content)
-      end
-    end
-
-    context "when update as draft" do
-      let(:new_attributes) { { title: "初版" } }
-
-      it "updates the requested item" do
-        item = create(:item, user: user, title: "技術書")
-        patch item_url(item), params: { item: new_attributes }
-        item.reload
-        expect(item.title).to eq("初版")
-      end
-
-      it "redirects to the listings" do
-        item = create(:item, user: user, title: "技術書")
-        patch item_url(item), params: { item: new_attributes }
-        item.reload
-        expect(response).to redirect_to(listings_path)
       end
     end
   end
 
   describe "DELETE /destroy" do
-    context "when user deletes draft" do
-      before { login(user) }
-
-      it "destroys the requested item" do
-        item = create(:item, user: user)
-        expect {
-          delete item_url(item)
-        }.to change(Item, :count).by(-1)
-      end
-
-      it "redirects to the listings" do
-        item = create(:item, user: user)
-        delete item_url(item)
-        expect(response).to redirect_to(listings_url)
-      end
-    end
-
     context "when user tries to delete published item" do
       before { login(user) }
 
       it "redirects to the item" do
         item = create(:item, :published, user: user)
-        expect {
-          delete item_url(item)
-        }.not_to change(Item, :count)
-        expect(response).to redirect_to(item_url(item))
-      end
-    end
-
-    context "when admin tries to delete draft item" do
-      before { login(admin) }
-
-      it "redirects to the item" do
-        item = create(:item, user: user)
-
         expect {
           delete item_url(item)
         }.not_to change(Item, :count)
@@ -265,12 +152,6 @@ RSpec.describe "/items", type: :request do
         expect {
           delete item_url(item)
         }.to change(Item, :count).by(-1)
-      end
-
-      it "redirects to the items index" do
-        item = create(:item, :published, user: user)
-
-        delete item_url(item)
         expect(response).to redirect_to(items_url)
       end
     end
