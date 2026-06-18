@@ -14,6 +14,16 @@ RSpec.describe DiscordWebhook, discord_stub: false do
     allow(client).to receive(:execute).and_yield(builder)
   end
 
+  describe "#notify_job_failure" do
+    it "sends webhook notification" do
+      webhook = DiscordWebhook.new
+      webhook.notify_job_failure("Job", "Error")
+
+      expect(builder).to have_received(:content=)
+        .with("❌ジョブ実行に失敗しました")
+    end
+  end
+
   describe "#notify_item_published" do
     let(:item) { create(:item, user: seller) }
 
