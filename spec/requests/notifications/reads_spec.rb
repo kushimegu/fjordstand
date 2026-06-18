@@ -9,7 +9,7 @@ RSpec.describe "Notifications::Reads", type: :request do
 
   describe "PATCH /mark_as_read" do
     it "updates read status to true and redirect to notification link" do
-      patch notification_read_path(notification)
+      patch mark_as_read_notification_path(notification)
 
       expect { notification.reload }.to change(notification, :read).from(false).to(true)
       expect(other_notification.reload.read).to be false
@@ -19,7 +19,7 @@ RSpec.describe "Notifications::Reads", type: :request do
 
   describe "PATCH /mark_all_as_read" do
     it "updates all notifications status to read and redirect to notifications path" do
-      patch read_all_notifications_path
+      patch mark_all_as_read_notifications_path
 
       expect { notification.reload }.to change(notification, :read).from(false).to(true)
       expect { other_notification.reload }.to change(other_notification, :read).from(false).to(true)

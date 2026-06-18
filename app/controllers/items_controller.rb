@@ -86,6 +86,6 @@ class ItemsController < ApplicationController
   end
 
   def require_admin
-    redirect_to @item, alert: "削除する権限がありません" unless current_user.admin?
+    redirect_to items_path, alert: "削除する権限がありません" unless current_user.admin?
   end
 end
