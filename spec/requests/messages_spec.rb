@@ -18,7 +18,7 @@ RSpec.describe "/messages", type: :request do
         other_user = create(:user)
         login(other_user)
         get conversation_messages_path(item)
-        expect(response).to redirect_to(items_path)
+        expect(response).to redirect_to(item_path(item))
       end
     end
 
@@ -60,8 +60,9 @@ RSpec.describe "/messages", type: :request do
 
   describe "DELETE /destroy" do
     context "when user tries to delete message" do
+      before { login(user) }
+
       it "redirects to messages" do
-        login(user)
         expect {
           delete conversation_message_url(item, message)
         }.not_to change(Message, :count)

@@ -3,10 +3,12 @@ require 'rails_helper'
 RSpec.describe "Messages", type: :system do
   let(:seller) { create(:user) }
   let(:buyer) { create(:user) }
-  let(:item) { create(:item, :published, :with_item_image, user: seller) }
+  let(:item) { create(:item, :sold, :with_item_image, user: seller) }
+
 
   before do
     driven_by(:selenium_chrome_headless)
+
     create(:entry, :won, item: item, user: buyer)
   end
 
@@ -34,7 +36,7 @@ RSpec.describe "Messages", type: :system do
 
         visit conversation_messages_path(item)
 
-        expect(page).to have_current_path(items_path)
+        expect(page).to have_current_path(item_path(item))
         expect(page).to have_content("この連絡ページを閲覧する権限がありません")
       end
     end

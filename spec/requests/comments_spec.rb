@@ -9,11 +9,11 @@ RSpec.describe "/comments", type: :request do
     before { login(user) }
 
     context "when item is not commentable" do
-      it "redirects to item" do
+      it "returns status 404" do
         draft_item = create(:item, user: user)
 
         post item_comments_path(draft_item), params: { comment: valid_attributes }
-        expect(response).to redirect_to(item_path(draft_item))
+        expect(response).to have_http_status(:not_found)
       end
     end
 

@@ -224,11 +224,12 @@ article.item-show.mt-2.flex.flex-col.md:grid.md:grid-cols-2.md:gap-10.md:items-s
     / コメント（右カラム）
     section.comments.mt-4.border-t.border-gray-300.pt-6
       h2.text-lg.font-semibold.text-gray-700.mb-6 コメント
-      - if @comments.empty?
+      - comments = @item.comments.includes(:user).order(created_at: :asc)
+      - if comments.empty?
         p.text-center.text-gray-700.text-base.py-8 まだコメントはありません
       - else
         .flex.flex-col.gap-4
-          - @comments.each do |comment|
+          - comments.each do |comment|
             article.comment
               .flex.gap-3 class=(comment.user == @item.user ? "" : "flex-row-reverse")
                 = image_tag (comment.user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-9 h-9 rounded-full flex-shrink-0"
@@ -244,14 +245,14 @@ article.item-show.mt-2.flex.flex-col.md:grid.md:grid-cols-2.md:gap-10.md:items-s
                     class: "cursor-pointer text-xs text-gray-700 underline hover:text-red-400"
     - if @item.commentable?
         .comment-form.mt-6
-          = form_with(model: [ @item, @comment ]) do |form|
+          = form_with(model: [ @item, @comment || Comment.new ]) do |form|
             .flex.items-start.gap-3 class=(current_user == @item.user ? "" : "flex-row-reverse")
               = image_tag (current_user.avatar_url.presence || "default-avatar.png"), alt: "", class: "w-9 h-9 rounded-full flex-shrink-0"
               .flex-1
                 = form.textarea :body,
                   class: "w-full rounded-xl p-3 min-h-24 border border-gray-300 focus:outline-none focus:border-cyan-400 field-sizing-content text-base",
                   placeholder: "コメントを入力...", required: true
-                = render "shared/error_messages", model: @comment, attribute: :body
+                = render "shared/error_messages", model: form.object, attribute: :body
                 .flex.justify-end.mt-2
                   = form.submit "投稿する",
                   class: "cursor-pointer border border-cyan-600 text-cyan-600 font-semibold px-5 py-2 rounded-lg hover:bg-cyan-50 text-base transition-colors"

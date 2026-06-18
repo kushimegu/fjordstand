@@ -1,32 +1,39 @@
 class WatchesController < ApplicationController
+  before_action :set_item, only: %i[create destroy]
+
   # GET /watches
   def index
     @watches = current_user.watches
-                            .includes(item: [ :user, :winner, first_image_attachment: :blob ])
                             .order("items.entry_deadline_at DESC, watches.created_at DESC")
+                            .includes(item: [ :user, :winner, first_image_attachment: { blob: :variant_records } ])
                             .page(params[:page])
                             .per(16)
   end
 
   # POST /watches
   def create
-    @item = Item.find(params[:item_id])
     @watch = current_user.watches.build(item_id: @item.id)
 
     if @watch.save
       redirect_to @item, notice: "コメント欄をWatchしました"
     else
-      @comment = Comment.new
-      @comments = @item.comments.includes(:user).order(created_at: :asc)
       render "items/show", status: :unprocessable_content
     end
   end
 
   # DELETE /watches/1
   def destroy
-    item = Item.find(params[:item_id])
-    watch = current_user.watches.find_by(item_id: item.id)
-    watch.destroy!
-    redirect_to item, notice: "コメント欄のWatchを外しました", status: :see_other
+    watch = current_user.watches.find_by(item_id: @item.id)
+
+    if watch&.destroy!
+      flash[:notice] = "コメント欄のWatchを外しました"
+    end
+    redirect_to @item, status: :see_other
+  end
+
+  private
+
+  def set_item
+    @item = Item.find(params[:item_id])
   end
 end

@@ -1,10 +1,9 @@
 class ConversationsController < ApplicationController
   def index
-    @items = Item.includes(:user, :winner, first_image_attachment: :blob, notifications: :notifiable)
-                  .where(user_id: current_user.id, status: :sold)
-                  .or(Item.where(id: Entry.where(user_id: current_user.id, status: :won).select(:item_id)))
-                  .order(updated_at: :desc)
-                  .page(params[:page])
-                  .per(10)
+    @items = current_user.dealing_items
+                          .order(updated_at: :desc)
+                          .includes(:user, :winner, first_image_attachment: { blob: :variant_records }, messages: :notifications, notifications: :notifiable)
+                          .page(params[:page])
+                          .per(10)
   end
 end

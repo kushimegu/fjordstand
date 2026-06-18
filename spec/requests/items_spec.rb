@@ -136,10 +136,11 @@ RSpec.describe "/items", type: :request do
 
       it "redirects to the item" do
         item = create(:item, :published, user: user)
+
         expect {
           delete item_url(item)
         }.not_to change(Item, :count)
-        expect(response).to redirect_to(item_url(item))
+        expect(response).to redirect_to(items_url)
       end
     end
 

@@ -1,40 +1,32 @@
 class CommentsController < ApplicationController
   before_action :set_item
-  before_action :set_comment, only: [ :destroy ]
-  before_action :require_admin, only: [ :destroy ]
+  before_action :require_admin, only: %i[destroy]
 
   # POST /comments
   def create
-    unless @item.commentable?
-      redirect_to @item, alert: "下書きにはコメントできません"
-      return
-    end
-
-    @comment = current_user.comments.new(comment_params)
-    @comment.item_id = @item.id
+    @comment = @item.comments.build(comment_params)
+    @comment.user = current_user
 
     if @comment.save
       redirect_to @item, notice: "コメントを投稿しました"
     else
-      @comments = @item.comments.includes(:user).order(created_at: :asc)
       render "items/show", status: :unprocessable_content
     end
   end
 
   # DELETE /comments/1
   def destroy
-    @comment.destroy!
+    comment = @item.comments.find(params[:id])
+
+    comment.destroy!
     redirect_to @item, notice: "コメントを削除しました", status: :see_other
   end
 
   private
+
   # Use callbacks to share common setup or constraints between actions.
   def set_item
-    @item = Item.find(params[:item_id])
-  end
-
-  def set_comment
-    @comment = @item.comments.find(params[:id])
+    @item = Item.commentable.find(params[:item_id])
   end
 
   # Only allow a list of trusted parameters through.
@@ -43,8 +35,6 @@ class CommentsController < ApplicationController
   end
 
   def require_admin
-    unless current_user.admin?
-      redirect_to @item, alert: "削除する権限がありません"
-    end
+    redirect_to @item, alert: "削除する権限がありません" unless current_user.admin?
   end
 end

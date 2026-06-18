@@ -16,7 +16,7 @@ class Lottery
         @item.update!(status: :sold)
       end
     else
-      @item.close(reason: :no_applicants)
+      @item.close!(reason: :no_applicants)
     end
   end
 end

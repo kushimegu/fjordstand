@@ -1,13 +1,18 @@
 class Notifications::ReadsController < ApplicationController
-  def update
-    notification = current_user.notifications.find(params[:notification_id])
-    notification.update(read: true)
+  def mark_as_read
+    notification = current_user.notifications.find(params[:id])
+
+    if notification.notifiable_type == "Comment"
+      comment = notification.notifiable
+      current_user.mark_notifications_as_read!("Comment", comment.item.comment_ids)
+    else
+      notification.update!(read: true)
+    end
     redirect_to url_for("#{notification.link}?from=notifications"), status: :see_other
   end
 
-  def update_all
-    notifications = current_user.notifications.unread
-    notifications.update_all(read: true)
+  def mark_all_as_read
+    current_user.notifications.unread.update_all(read: true)
     redirect_to notifications_path, notice: "全て既読にしました", status: :see_other
   end
 end
