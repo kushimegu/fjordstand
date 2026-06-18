@@ -4,15 +4,15 @@ RSpec.describe "Messages", type: :system do
   let(:seller) { create(:user) }
   let(:buyer) { create(:user) }
   let(:item) { create(:item, :published, :with_item_image, user: seller) }
-  let(:admin) { create(:user, :admin, uid: "123") }
 
-  before { driven_by(:selenium_chrome_headless) }
+  before do
+    driven_by(:selenium_chrome_headless)
+    create(:entry, :won, item: item, user: buyer)
+  end
 
   describe "send messages" do
     context "when authorized user is logged in" do
       it "can send message" do
-        create(:entry, :won, item: item, user: buyer)
-
         login(buyer)
         expect(page).to have_current_path(items_path)
 
@@ -41,8 +41,6 @@ RSpec.describe "Messages", type: :system do
 
     context "when message contains only whitespace" do
       it "is invalid" do
-        create(:entry, :won, item: item, user: buyer)
-
         login(seller)
         expect(page).to have_current_path(items_path)
 
@@ -57,12 +55,15 @@ RSpec.describe "Messages", type: :system do
   end
 
   describe "delete message" do
-    before { login(admin) }
+    let(:admin) { create(:user, :admin, uid: "123") }
 
-    it "destroys message and redirects to items index" do
-      create(:entry, :won, item: item, user: buyer)
+    before do
       create(:message, user: buyer, item: item, body: "支払いはPayPayで良いですか？")
       create(:message, user: seller, item: item, body: "大丈夫です")
+      login(admin)
+    end
+
+    it "destroys message and redirects to items index" do
       expect(page).to have_current_path(items_path)
 
       visit conversation_messages_path(item)

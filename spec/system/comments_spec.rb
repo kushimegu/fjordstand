@@ -47,11 +47,13 @@ RSpec.describe "Items", type: :system do
   end
 
   describe "delete comment" do
-    before { login(admin) }
-
-    it "destroys comment and redirects to items index" do
+    before do
       create(:comment, user: admin, item: item, body: "初版ですか？")
       create(:comment, user: user, item: item, body: "そうです")
+      login(admin)
+    end
+
+    it "destroys comment and redirects to items index" do
       expect(page).to have_current_path(items_path)
 
       visit item_path(item)
