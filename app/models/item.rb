@@ -7,7 +7,7 @@ class Item < ApplicationRecord
   has_one :first_image, through: :first_image_attachment, source: :blob
   has_many :entries, dependent: :destroy
   has_many :applicants, through: :entries, source: :user
-  has_one :won_entry, -> { where(status: :won) }, class_name: "Entry"
+  has_one :won_entry, -> { where(status: :won) }, class_name: "Entry", inverse_of: false
   has_one :winner, through: :won_entry, source: :user
   has_many :messages, dependent: :destroy
   has_many :comments, dependent: :destroy
