@@ -26,6 +26,7 @@ module ApplicationHelper
 
   def active_items_tab?
     return false if request.path.start_with?("/conversations")
+    return false if @item&.user == current_user
 
     [ items_path, watches_path ].any? { |path| current_page?(path) } || params[:from].in?(%w[watches items notifications])
   end
@@ -35,7 +36,11 @@ module ApplicationHelper
   end
 
   def active_listings_tab?
-    [ new_item_path, listings_path ].any? { |path| current_page?(path) } || request.path.end_with?("edit") || params[:from] == "listings"
+    if controller_name == "items" && action_name.in?(%w[show edit]) && params[:from] != "messages"
+      return @item&.user == current_user
+    end
+
+    [ new_item_path, listings_path ].any? { |path| current_page?(path) } || params[:from] == "listings"
   end
 
   def active_conversations_tab?
