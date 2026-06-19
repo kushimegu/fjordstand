@@ -74,9 +74,10 @@ RSpec.describe Item, type: :model do
     let!(:published_item) { create(:item, :published) }
     let!(:closed_item) { create(:item, :closed) }
     let!(:sold_item) { create(:item, :sold) }
-    let!(:draft_item) { create(:item) }
 
     it "returns items except draft" do
+      create(:item)
+
       expect(Item.commentable).to contain_exactly(published_item, closed_item, sold_item)
     end
   end
