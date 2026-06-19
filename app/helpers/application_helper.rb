@@ -36,7 +36,7 @@ module ApplicationHelper
   end
 
   def active_listings_tab?
-    if controller_name == 'items' && action_name.in?(%w[show edit]) && params[:from] != "messages"
+    if controller_name == "items" && action_name.in?(%w[show edit]) && params[:from] != "messages"
       return @item&.user == current_user
     end
 

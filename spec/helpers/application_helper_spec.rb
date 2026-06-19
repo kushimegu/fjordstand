@@ -157,8 +157,7 @@ RSpec.describe ApplicationHelper, type: :helper do
 
     context "when page is items show and is not from messages" do
       before do
-        allow(helper).to receive(:controller_name).and_return("items")
-        allow(helper).to receive(:action_name).and_return("show")
+        allow(helper).to receive_messages(controller_name: "items", action_name: "show")
         controller.params = { from: "watches" }
         assign(:item, item)
       end
@@ -170,8 +169,7 @@ RSpec.describe ApplicationHelper, type: :helper do
 
     context "when page is items edit" do
       before do
-        allow(helper).to receive(:controller_name).and_return("items")
-        allow(helper).to receive(:action_name).and_return("edit")
+        allow(helper).to receive_messages(controller_name: "items", action_name: "edit")
         assign(:item, item)
       end
 
