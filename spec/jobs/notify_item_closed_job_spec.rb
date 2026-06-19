@@ -22,9 +22,9 @@ RSpec.describe NotifyItemClosedJob, type: :job do
       end
 
       it "sends notifications" do
-        expect { NotifyItemClosedJob.perform_now(item.id, reason: :user_action) }.to have_enqueued_job(DestroyEntriesJob).with(item.id)
+        expect { NotifyItemClosedJob.perform_now(item.id, reason: :user_action) }.to change { applicant.notifications.count }.from(0).to(1)
         expect(webhook).to have_received(:notify_item_closed).with([ applicant ], item)
-        expect(Notification.where(user: applicant, notifiable: item)).to exist
+        expect(DestroyEntriesJob).to have_been_enqueued.with(item.id)
       end
     end
 
@@ -35,9 +35,8 @@ RSpec.describe NotifyItemClosedJob, type: :job do
       end
 
       it "sends notifications" do
-        NotifyItemClosedJob.perform_now(item.id, reason: :no_applicants)
+        expect { NotifyItemClosedJob.perform_now(item.id, reason: :no_applicants) }.to change { seller.notifications.count }.from(0).to(1)
         expect(webhook).to have_received(:notify_lottery_skipped).with(seller, item)
-        expect(Notification.where(user: seller, notifiable: item)).to exist
       end
     end
   end

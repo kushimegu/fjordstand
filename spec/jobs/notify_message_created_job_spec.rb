@@ -10,7 +10,9 @@ RSpec.describe NotifyMessageCreatedJob, type: :job do
 
   before do
     ActiveJob::Base.queue_adapter = :test
+
     create(:entry, :won, item: item, user: buyer)
+    message
   end
 
   describe '#perform_later' do
@@ -18,8 +20,8 @@ RSpec.describe NotifyMessageCreatedJob, type: :job do
       expect(NotifyMessageCreatedJob).to have_been_enqueued.with(message.id)
     end
 
-    it "sends webhook notification" do
-      NotifyMessageCreatedJob.perform_now(message.id)
+    it "creates notifications" do
+      expect { NotifyMessageCreatedJob.perform_now(message.id) }.to change { seller.notifications.count }.from(0).to(1)
       expect(webhook).to have_received(:notify_new_message).with(seller, item)
     end
   end

@@ -9,6 +9,7 @@ RSpec.describe NotifyDeadlineExtendedJob, type: :job do
 
   before do
     ActiveJob::Base.queue_adapter = :test
+
     create(:entry, item: item, user: applicant)
   end
 

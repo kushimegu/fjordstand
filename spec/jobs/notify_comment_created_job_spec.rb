@@ -5,11 +5,14 @@ RSpec.describe NotifyCommentCreatedJob, type: :job do
 
   let(:seller) { create(:user) }
   let(:item) { create(:item, :published, user: seller) }
-  let(:commenter) { create(:user) }
-  let(:comment) { create(:comment, item: item, user: commenter) }
+  let(:watcher) { create(:user) }
+  let(:comment) { create(:comment, item: item) }
 
   before do
     ActiveJob::Base.queue_adapter = :test
+
+    create(:watch, user: watcher, item: item)
+    comment
   end
 
   describe '#perform_later' do
@@ -17,9 +20,9 @@ RSpec.describe NotifyCommentCreatedJob, type: :job do
       expect(NotifyCommentCreatedJob).to have_been_enqueued.with(comment.id)
     end
 
-    it "sends webhook notification" do
-      NotifyCommentCreatedJob.perform_now(comment.id)
-      expect(webhook).to have_received(:notify_new_comment).with([ seller ], item)
+    it "creates notifications" do
+      expect { NotifyCommentCreatedJob.perform_now(comment.id) }.to change(Notification, :count).by(2)
+      expect(webhook).to have_received(:notify_new_comment).with(contain_exactly(watcher, seller), item)
     end
   end
 end

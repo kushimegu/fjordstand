@@ -2,7 +2,8 @@ require 'rails_helper'
 
 RSpec.describe ScheduleLotteryJob, type: :job do
   let(:seller) { create(:user) }
-  let(:item) { create(:item, :published, user: seller, entry_deadline_at: Date.yesterday) }
+  let!(:expired_item) { create(:item, :published, user: seller, entry_deadline_at: Date.yesterday) }
+  let!(:unexpired_item) { create(:item, :published, user: seller, entry_deadline_at: Date.tomorrow) }
 
   before do
     ActiveJob::Base.queue_adapter = :test
@@ -14,9 +15,10 @@ RSpec.describe ScheduleLotteryJob, type: :job do
       expect(ScheduleLotteryJob).to have_been_enqueued
     end
 
-    it "sends webhook notification" do
+    it "enqueue RunLotteryJob for expired item" do
       ScheduleLotteryJob.perform_now
-      expect { ScheduleLotteryJob.perform_now }.to have_enqueued_job(RunLotteryJob).with(item.id)
+      expect(RunLotteryJob).to have_been_enqueued.with(expired_item.id)
+      expect(RunLotteryJob).not_to have_been_enqueued.with(unexpired_item.id)
     end
   end
 end
