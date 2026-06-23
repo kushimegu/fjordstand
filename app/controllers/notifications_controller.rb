@@ -1,5 +1,4 @@
 class NotificationsController < ApplicationController
-
   PER_PAGE = 20
 
   def index

@@ -1,5 +1,4 @@
 class Items::ListingsController < ApplicationController
-
   PER_PAGE = 16
 
   def index

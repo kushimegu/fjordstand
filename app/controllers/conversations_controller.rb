@@ -1,5 +1,4 @@
 class ConversationsController < ApplicationController
-
   PER_PAGE = 10
 
   def index
