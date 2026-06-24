@@ -119,42 +119,6 @@ RSpec.describe Item, type: :model do
     end
   end
 
-  describe "#other_user_for" do
-    let(:seller) { create(:user) }
-    let(:item) { create(:item, :sold, user: seller) }
-    let(:buyer) { create(:user) }
-
-    before { create(:entry, :won, item: item, user: buyer) }
-
-    context "when current user is seller" do
-      it "returns buyer" do
-        expect(item.other_user_for(seller)).to eq(buyer)
-      end
-    end
-
-    context "when current user is buyer" do
-      it "returns seller" do
-        expect(item.other_user_for(buyer)).to eq(seller)
-      end
-    end
-
-    context "when current user is admin and not involved" do
-      it "returns nil" do
-        admin = create(:user, :admin)
-
-        expect(item.other_user_for(admin)).to be_nil
-      end
-    end
-
-    context "when current user is admin and is seller" do
-      it "returns buyer" do
-        admin = seller
-
-        expect(item.other_user_for(admin)).to eq(buyer)
-      end
-    end
-  end
-
   describe "#close!" do
     let(:user) { create(:user) }
     let(:item) { create(:item, :published, user: user) }
