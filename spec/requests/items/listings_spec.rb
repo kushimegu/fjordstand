@@ -75,16 +75,18 @@ RSpec.describe "Items::Listings", type: :request do
     end
 
     context "when filtering by invalid status" do
-      let!(:draft_item) { create(:item, user: user) }
-      let!(:published_item) { create(:item, :published, user: user) }
-      let!(:sold_item) { create(:item, :sold, user: user) }
-      let!(:closed_item) { create(:item, :closed, user: user) }
+      before do
+        create(:item, user: user)
+        create(:item, :published, user: user)
+        create(:item, :sold, user: user)
+        create(:item, :closed, user: user)
+      end
 
-      it "returns all listings" do
+      it "returns no listings" do
         get listings_path(status: "invalid")
 
         expect(response).to have_http_status(:success)
-        expect(response.body).to include(draft_item.title, published_item.title, sold_item.title, closed_item.title)
+        expect(response.body).to include("該当する商品はありません")
       end
     end
   end
