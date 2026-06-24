@@ -7,7 +7,7 @@ class Items::DraftsController < ApplicationController
     if @item.save
       redirect_to listings_path, notice: "下書きとして保存しました"
     else
-      render :new, status: :unprocessable_content
+      render "items/new", status: :unprocessable_content
     end
   end
 
