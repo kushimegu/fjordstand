@@ -238,7 +238,7 @@ RSpec.describe Item, type: :model do
     end
   end
 
-  describe "#deadline_today_or_later" do
+  describe "#deadline_must_be_today_or_later" do
     let(:item) { build(:item, :with_item_image, entry_deadline_at: entry_deadline_at) }
 
     context "when setting deadline to yesterday" do
@@ -267,7 +267,7 @@ RSpec.describe Item, type: :model do
     end
   end
 
-  describe "#price_not_change_after_published" do
+  describe "#price_cannot_be_changed_after_published" do
     context "when item is already published" do
       let(:item) { create(:item, :published, price: 1000) }
 
@@ -290,7 +290,7 @@ RSpec.describe Item, type: :model do
     end
   end
 
-  describe "#deadline_not_change_earlier_after_published" do
+  describe "#deadline_cannot_be_changed_earlier_after_published" do
     context "when setting deadline to earlier date" do
       let(:item) { create(:item, :with_item_image, :published, entry_deadline_at: Date.current + 5.days) }
 
