@@ -3,6 +3,9 @@ import { Controller } from '@hotwired/stimulus';
 // Connects to data-controller="image-preview"
 export default class extends Controller {
   static targets = ['input', 'preview', 'savedPreview', 'extraContainer', 'labelText', 'multipleContainer'];
+  static values = {
+    maxSize: Number,
+  };
 
   connect() {
     this.updateExtraSlots();
@@ -62,10 +65,10 @@ export default class extends Controller {
       return;
     }
 
-    const MAX_SIZE = 5 * 1024 * 1024;
+    const MAX_SIZE = this.maxSizeValue * 1024 * 1024;
     if (files.some((file) => file.size > MAX_SIZE)) {
-      e.stopImmediatePropagation;
-      alert('5MBまでのファイルのみアップロードできます');
+      e.stopImmediatePropagation();
+      alert(`${this.maxSizeValue}MBまでのファイルのみアップロードできます`);
       e.target.value = '';
       return;
     }
@@ -126,10 +129,10 @@ export default class extends Controller {
       return;
     }
 
-    const MAX_SIZE = 5 * 1024 * 1024;
+    const MAX_SIZE = this.maxSizeValue * 1024 * 1024;
     if (file && file.size > MAX_SIZE) {
-      e.stopImmediatePropagation;
-      alert('5MBまでのファイルのみアップロードできます');
+      e.stopImmediatePropagation();
+      alert(`${this.maxSizeValue}MBまでのファイルのみアップロードできます`);
       e.target.value = '';
       return;
     }
