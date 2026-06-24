@@ -44,14 +44,16 @@ RSpec.describe "Notifications", type: :request do
     end
 
     context "when filtering by invalid status" do
-      let!(:unread_notification) { create(:notification, :for_item, user: user) }
-      let!(:read_notification) { create(:notification, :for_item, :read, user: user) }
+      before do
+        create(:notification, :for_item, user: user)
+        create(:notification, :for_item, :read, user: user)
+      end
 
-      it "returns all notifications" do
+      it "returns no notifications" do
         get notifications_path(status: "invalid_status")
 
         expect(response).to have_http_status(:success)
-        expect(response.body).to include(unread_notification.message, read_notification.message)
+        expect(response.body).to include("通知はありません")
       end
     end
   end

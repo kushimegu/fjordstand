@@ -71,15 +71,17 @@ RSpec.describe "/entries", type: :request do
     end
 
     context "when filtering by invalid status" do
-      let!(:applied_entry) { create(:entry, user: user) }
-      let!(:won_entry) { create(:entry, :won, user: user) }
-      let!(:lost_entry) { create(:entry, :lost, user: user) }
+      before do
+        create(:entry, user: user)
+        create(:entry, :won, user: user)
+        create(:entry, :lost, user: user)
+      end
 
-      it "returns all entries" do
+      it "returns no entries" do
         get entries_path(status: "invalid_status")
 
         expect(response).to have_http_status(:success)
-        expect(response.body).to include(applied_entry.item.title, won_entry.item.title, lost_entry.item.title)
+        expect(response.body).to include("該当する商品はありません")
       end
     end
   end
