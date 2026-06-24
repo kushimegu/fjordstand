@@ -15,7 +15,10 @@
       = form.text_field :title_append,
       class: "w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
 
-  div data-controller="image-preview" data-image-preview-max-size-value="#{Item::MAX_SIZE}"
+  div[data-controller="image-preview"
+  data={ "image-preview-max-count-value": Item::MAX_COUNT,
+          "image-preview-allowed-types-value": Item::ALLOWED_TYPES.to_json,
+          "image-preview-max-size-value": Item::MAX_SIZE }]
     .flex.items-center.gap-x-2.mb-1
       h2.font-semibold.text-sm.text-gray-700.block 商品画像
       span.text-xs.text-gray-500 最大5枚

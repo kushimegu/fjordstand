@@ -4,6 +4,8 @@ import { Controller } from '@hotwired/stimulus';
 export default class extends Controller {
   static targets = ['input', 'preview', 'savedPreview', 'extraContainer', 'labelText', 'multipleContainer'];
   static values = {
+    maxCount: Number,
+    allowedTypes: Array,
     maxSize: Number,
   };
 
@@ -53,25 +55,12 @@ export default class extends Controller {
   }
 
   previewMultipleImages(e) {
-    if (!this.checkTotalFiles(e)) return;
+    if (!this.validateTotalFiles(e)) return;
 
     const files = Array.from(e.target.files);
 
-    const ALLOWED_TYPES = ['image/png', 'image/jpeg'];
-    if (files.some((file) => !ALLOWED_TYPES.includes(file.type))) {
-      e.stopImmediatePropagation();
-      alert('PNGまたはJPEG形式のみアップロード可能です');
-      e.target.value = '';
-      return;
-    }
-
-    const MAX_SIZE = this.maxSizeValue * 1024 * 1024;
-    if (files.some((file) => file.size > MAX_SIZE)) {
-      e.stopImmediatePropagation();
-      alert(`${this.maxSizeValue}MBまでのファイルのみアップロードできます`);
-      e.target.value = '';
-      return;
-    }
+    if (!this.validateFileTypes(files, e)) return;
+    if (!this.validateMaxSize(files, e)) return;
 
     this.element.querySelectorAll('.js-multiple-preview').forEach((element) => element.remove());
 
@@ -117,25 +106,12 @@ export default class extends Controller {
   }
 
   previewSingleImage(e) {
-    if (!this.checkTotalFiles(e)) return;
+    if (!this.validateTotalFiles(e)) return;
 
     const file = e.target.files[0];
 
-    const ALLOWED_TYPES = ['image/png', 'image/jpeg'];
-    if (file && !ALLOWED_TYPES.includes(file.type)) {
-      e.stopImmediatePropagation();
-      alert('PNGまたはJPEG形式のみアップロード可能です');
-      e.target.value = '';
-      return;
-    }
-
-    const MAX_SIZE = this.maxSizeValue * 1024 * 1024;
-    if (file && file.size > MAX_SIZE) {
-      e.stopImmediatePropagation();
-      alert(`${this.maxSizeValue}MBまでのファイルのみアップロードできます`);
-      e.target.value = '';
-      return;
-    }
+    if (!this.validateFileTypes(file, e)) return;
+    if (!this.validateMaxSize(file, e)) return;
 
     const label = e.target.closest('label');
     const container = label.querySelector('[data-image-preview-target="container"]');
@@ -192,15 +168,41 @@ export default class extends Controller {
     });
   }
 
-  checkTotalFiles(e) {
-    const MAX_FILES = 5;
-
+  validateTotalFiles(e) {
     const existingCount = this.savedPreviewTargets.length;
     const newFilesCount = e.target.files.length;
+    const maxCount = this.maxCountValue;
 
-    if (existingCount + newFilesCount > MAX_FILES) {
+    if (existingCount + newFilesCount > maxCount) {
       e.stopImmediatePropagation();
-      alert(`画像は${MAX_FILES}枚までしか登録できません`);
+      alert(`画像は${maxCount}枚までしか登録できません`);
+      e.target.value = '';
+      return false;
+    }
+    return true;
+  }
+
+  validateFileTypes(filesOrFile, e) {
+    const files = Array.isArray(filesOrFile) ? filesOrFile : [filesOrFile];
+    const typeNames = this.allowedTypesValue.map((type) => type.split('/')[1].toUpperCase());
+    const joinedTypes = typeNames.join('または');
+
+    if (files.some((file) => !this.allowedTypesValue.includes(file.type))) {
+      e.stopImmediatePropagation();
+      alert(`${joinedTypes}形式のみアップロード可能です`);
+      e.target.value = '';
+      return false;
+    }
+    return true;
+  }
+
+  validateMaxSize(filesOrFile, e) {
+    const files = Array.isArray(filesOrFile) ? filesOrFile : [filesOrFile];
+    const maxSizeBytes = this.maxSizeValue * 1024 * 1024;
+
+    if (files.some((file) => file.size > maxSizeBytes)) {
+      e.stopImmediatePropagation();
+      alert(`${this.maxSizeValue}MBまでのファイルのみアップロードできます`);
       e.target.value = '';
       return false;
     }
