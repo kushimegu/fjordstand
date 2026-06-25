@@ -15,12 +15,15 @@ ja:
     attributes:
       item:
         title: 商品名
+        title_append: 商品名の追記
         images: 商品画像
         image: 商品画像
         description: 商品説明
+        description_append: 商品説明の追記
         price: 価格
         shipping_fee_payer: 送料負担
         payment_method: お支払い方法
+        payment_method_append: お支払い方法の追記
         entry_deadline_at: 購入希望申請締切
       comment:
         body: コメント

@@ -44,14 +44,7 @@ class ItemsController < ApplicationController
 
   # PATCH/PUT /items/1
   def update
-    @item.assign_attributes(item_params)
-    title_append = params[:item][:title_append]
-    description_append = params[:item][:description_append]
-    payment_method_append = params[:item][:payment_method_append]
-
-    @item.title = [ @item.title, title_append ].join(" ") if title_append.present?
-    @item.description = [ @item.description.presence, description_append ].compact.join("\n") if description_append.present?
-    @item.payment_method = [ @item.payment_method, payment_method_append ].join(" ") if payment_method_append.present?
+    @item.assign_attributes(item_update_params)
 
     if @item.valid?(:publish)
       @item.status = :published
@@ -80,7 +73,15 @@ class ItemsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def item_params
-    params.expect(item: [ :title_append, :description_append, :payment_method_append, *Item::EDITABLE_FIELDS ])
+    params.expect(item: [ *Item::EDITABLE_FIELDS ])
+  end
+
+  def item_update_params
+    if @item.draft?
+      params.expect(item: [ *Item::EDITABLE_FIELDS ])
+    else
+      params.expect(item: [ :title_append, :description_append, :payment_method_append, *Item::UPDATABLE_FIELDS ])
+    end
   end
 
   def ensure_item_editable
