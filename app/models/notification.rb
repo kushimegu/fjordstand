@@ -10,46 +10,4 @@ class Notification < ApplicationRecord
     all
   end
   }
-
-  def message
-    case notifiable
-    when Comment
-      "#{notifiable.user.name}さんが「#{notifiable.item.title}」についてコメントしました。"
-    when Entry
-      if notifiable.won?
-        "「#{notifiable.item.title}」の購入が確定しました！連絡ページから出品者へご連絡ください。"
-      else
-        "「#{notifiable.item.title}」の抽選に落選しました。"
-      end
-    when Item
-      if notifiable.sold?
-        "「#{notifiable.title}」の購入者が決まりました。連絡ページから購入者へご連絡ください。"
-      else
-        "「#{notifiable.title}」は当選者なしで公開終了しました。"
-      end
-    when Message
-      "#{notifiable.item.other_user_for(user).name}さんから「#{notifiable.item.title}」についてメッセージが届きました。"
-    end
-  end
-
-  def link
-    case notifiable
-    when Comment
-      Rails.application.routes.url_helpers.item_path(notifiable.item)
-    when Entry
-      if notifiable.won?
-        Rails.application.routes.url_helpers.conversation_messages_path(notifiable.item)
-      else
-        Rails.application.routes.url_helpers.item_path(notifiable.item)
-      end
-    when Item
-      if notifiable.sold?
-        Rails.application.routes.url_helpers.conversation_messages_path(notifiable)
-      else
-        Rails.application.routes.url_helpers.item_path(notifiable)
-      end
-    when Message
-      Rails.application.routes.url_helpers.conversation_messages_path(notifiable.item)
-    end
-  end
 end
