@@ -13,7 +13,9 @@ RSpec.describe "Notifications::Reads", type: :request do
 
       expect { notification.reload }.to change(notification, :read).from(false).to(true)
       expect(other_notification.reload.read).to be false
-      expect(response).to redirect_to("#{notification.link}?from=notifications")
+
+      strategy = NotificationsHelper::Strategy.build_strategy(notification)
+      expect(response).to redirect_to("#{strategy.redirect_path}?from=notifications")
     end
   end
 
