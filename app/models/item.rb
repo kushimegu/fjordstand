@@ -73,6 +73,12 @@ class Item < ApplicationRecord
     !draft?
   end
 
+  def add_watcher(user)
+    unless watchers.include?(user)
+      watchers << user
+    end
+  end
+
   private
 
   def deadline_today_or_later
@@ -109,9 +115,7 @@ class Item < ApplicationRecord
   end
 
   def watch_on_publish
-    unless watchers.exists?(user.id)
-      watchers << user
-    end
+    add_watcher(user)
   end
 
   def notify_publishing
