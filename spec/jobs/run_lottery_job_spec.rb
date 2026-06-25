@@ -6,26 +6,36 @@ RSpec.describe RunLotteryJob, type: :job do
 
   before { ActiveJob::Base.queue_adapter = :test }
 
-  describe '#perform_later' do
+  describe '#perform' do
     it 'enqueues the job' do
       RunLotteryJob.perform_later(item.id)
       expect(RunLotteryJob).to have_been_enqueued.with(item.id)
     end
 
-    it "calls Lottery#run" do
-      lottery_double = instance_double(Lottery)
-      allow(Lottery).to receive(:new).with(item).and_return(lottery_double)
-      allow(lottery_double).to receive(:run)
+    context "when entry exists" do
+      it "calls Item#finish_sale! and enqueues NotifyLotteryResultsJob" do
+        create(:entry, item: item, user: create(:user))
 
-      RunLotteryJob.perform_now(item.id)
-      expect(Lottery).to have_received(:new).with(instance_of(Item))
-      expect(lottery_double).to have_received(:run)
+        allow(Item).to receive(:lock).and_return(Item)
+        allow(Item).to receive(:find).with(item.id).and_return(item)
+        allow(item).to receive(:finish_sale!)
+        allow(item).to receive(:saved_change_to_status?).with(to: "sold").and_return(true)
+
+        expect { RunLotteryJob.perform_now(item.id) }.to have_enqueued_job(NotifyLotteryResultsJob).with(item.id)
+        expect(item).to have_received(:finish_sale!).once
+      end
     end
 
-    it 'enqueues NotifyLotteryResultsJob' do
-      create(:entry, item: item, user: create(:user))
+    context "when no entry exists" do
+      it "calls Item#finish_sale! and do not enqueue NotifyLotteryResultsJob" do
+        allow(Item).to receive(:lock).and_return(Item)
+        allow(Item).to receive(:find).with(item.id).and_return(item)
+        allow(item).to receive(:finish_sale!)
+        allow(item).to receive(:saved_change_to_status?).with(to: "sold").and_return(false)
 
-      expect { RunLotteryJob.perform_now(item.id) }.to have_enqueued_job(NotifyLotteryResultsJob).with(item.id)
+        expect { RunLotteryJob.perform_now(item.id) }.not_to have_enqueued_job(NotifyLotteryResultsJob).with(item.id)
+        expect(item).to have_received(:finish_sale!).once
+      end
     end
   end
 end
