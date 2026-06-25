@@ -51,6 +51,21 @@ class Item < ApplicationRecord
   FIELDS_FOR_DRAFT = [ :title, :description, :price, :shipping_fee_payer, :payment_method, :entry_deadline_at, images: [] ].freeze
   FIELDS_FOR_PUBLISHED = (FIELDS_FOR_DRAFT - [ :price, :shipping_fee_payer ]).freeze
 
+  def finish_sale!
+    return if won_entry.present?
+
+    if entries.any?
+      won_entry = entries.sample
+      ActiveRecord::Base.transaction do
+        entries.where.not(id: won_entry.id).update_all(status: :lost)
+        won_entry.update!(status: :won)
+        update!(status: :sold)
+      end
+    else
+      close!(reason: :no_applicants)
+    end
+  end
+
   def close!(reason: :user_action)
     update!(status: :closed)
     NotifyItemClosedJob.perform_later(id, reason: reason)
