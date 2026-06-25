@@ -82,6 +82,28 @@ RSpec.describe Item, type: :model do
     end
   end
 
+  describe "#finish_sale!" do
+    let(:item) { create(:item, :published) }
+
+    context "when entry exists" do
+      it "changes status to sold and selects won entry" do
+        entry = create(:entry, item: item, user: create(:user))
+        item.finish_sale!
+
+        expect(item.status).to eq("sold")
+        expect(entry.reload.status).to eq("won")
+      end
+    end
+
+    context "when no entry exists" do
+      it "changes status to closed" do
+        item.finish_sale!
+
+        expect(item.status).to eq("closed")
+      end
+    end
+  end
+
   describe "#close!" do
     let(:user) { create(:user) }
     let(:item) { create(:item, :published, user: user) }
