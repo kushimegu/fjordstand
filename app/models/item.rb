@@ -36,6 +36,7 @@ class Item < ApplicationRecord
   validate :price_cannot_be_changed_after_published, on: :publish
   validate :deadline_cannot_be_changed_earlier_after_published, on: :publish
 
+  before_validation :append_additional_contents
   before_save :set_entry_deadline_at_end_of_day, if: :will_save_change_to_entry_deadline_at?
 
   after_save_commit :comment_watch_by_seller, if: -> { saved_change_to_attribute?(:status, to: "published") }
@@ -47,6 +48,7 @@ class Item < ApplicationRecord
   scope :commentable, -> { where.not(status: :draft) }
 
   EDITABLE_FIELDS = [ :title, :description, :price, :shipping_fee_payer, :payment_method, :entry_deadline_at, images: [] ].freeze
+  UPDATABLE_FIELDS = (EDITABLE_FIELDS - [ :title, :description, :payment_method ]).freeze
 
   def close!(reason: :user_action)
     update!(status: :closed)
@@ -89,6 +91,20 @@ class Item < ApplicationRecord
       if new_deadline < old_deadline
         errors.add(:entry_deadline_at, "は元の締切日以降に設定してください")
       end
+    end
+  end
+
+  def append_additional_contents
+    if title_append.present? && !title&.include?(title_append)
+      self.title = [ title, title_append ].join(" ")
+    end
+
+    if description_append.present? && !description&.include?(description_append)
+      self.description = [ description, description_append ].compact.join("\n")
+    end
+
+    if payment_method_append.present? && !payment_method&.include?(payment_method_append)
+      self.payment_method = [ payment_method, payment_method_append ].join(" ")
     end
   end
 
