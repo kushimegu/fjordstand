@@ -3,16 +3,18 @@ module NotificationsHelper
     include Rails.application.routes.url_helpers
 
     def self.build_strategy(notification)
-      case notification.notifiable
-      when Comment
-        CommentStrategy.new(notification)
-      when Entry
-        EntryStrategy.new(notification)
-      when Item
-        ItemStrategy.new(notification)
-      when Message
-        MessageStrategy.new(notification)
-      end
+      klass =
+        case notification.notifiable
+        when Comment
+          CommentStrategy
+        when Entry
+          EntryStrategy
+        when Item
+          ItemStrategy
+        when Message
+          MessageStrategy
+        end
+      klass.new(notification)
     end
 
     def initialize(notification)
