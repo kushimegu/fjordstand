@@ -16,8 +16,13 @@ RSpec.describe "Notifications", type: :request do
         get notifications_path
 
         expect(response).to have_http_status(:success)
-        expect(response.body).to include(unread_notification.message, read_notification.message)
-        expect(response.body).not_to include(others_notification.message)
+
+        unread_message = NotificationsHelper::Strategy.build_strategy(unread_notification).message
+        read_message = NotificationsHelper::Strategy.build_strategy(read_notification).message
+        others_message = NotificationsHelper::Strategy.build_strategy(others_notification).message
+
+        expect(response.body).to include(unread_message, read_message)
+        expect(response.body).not_to include(others_message)
       end
     end
 
@@ -38,8 +43,12 @@ RSpec.describe "Notifications", type: :request do
         get notifications_path(status: "unread")
 
         expect(response).to have_http_status(:success)
-        expect(response.body).to include(unread_notification.message)
-        expect(response.body).not_to include(read_notification.message)
+
+        unread_message = NotificationsHelper::Strategy.build_strategy(unread_notification).message
+        read_message = NotificationsHelper::Strategy.build_strategy(read_notification).message
+
+        expect(response.body).to include(unread_message)
+        expect(response.body).not_to include(read_message)
       end
     end
 
@@ -51,7 +60,11 @@ RSpec.describe "Notifications", type: :request do
         get notifications_path(status: "invalid_status")
 
         expect(response).to have_http_status(:success)
-        expect(response.body).to include(unread_notification.message, read_notification.message)
+
+        unread_message = NotificationsHelper::Strategy.build_strategy(unread_notification).message
+        read_message = NotificationsHelper::Strategy.build_strategy(read_notification).message
+
+        expect(response.body).to include(unread_message, read_message)
       end
     end
   end
