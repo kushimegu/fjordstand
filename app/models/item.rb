@@ -120,8 +120,6 @@ class Item < ApplicationRecord
   end
 
   def saved_only_change_deadline?
-    return false if saved_change_to_status?
-
-    saved_change_to_entry_deadline_at?
+    !saved_change_to_status? && saved_change_to_entry_deadline_at?
   end
 end
