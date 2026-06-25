@@ -34,8 +34,8 @@ class Item < ApplicationRecord
 
   before_save :set_entry_deadline_at_end_of_day, if: :will_save_change_to_entry_deadline_at?
 
-  after_save_commit :comment_watch_by_seller, if: -> { saved_change_to_attribute?(:status, to: :published) }
-  after_save_commit :notify_publishing, if: -> { saved_change_to_attribute?(:status, to: :published) }
+  after_save_commit :comment_watch_by_seller, if: -> { saved_change_to_attribute?(:status, to: "published") }
+  after_save_commit :notify_publishing, if: -> { saved_change_to_attribute?(:status, to: "published") }
   after_update_commit :notify_deadline_extension, if: :saved_only_change_deadline?
 
   scope :not_expired, -> { where(entry_deadline_at: Time.current.beginning_of_day..) }
