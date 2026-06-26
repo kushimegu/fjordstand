@@ -1,13 +1,15 @@
 class WatchesController < ApplicationController
   before_action :set_item, only: %i[create destroy]
 
+  PER_PAGE = 16
+
   # GET /watches
   def index
     @watches = current_user.watches
                             .order("items.entry_deadline_at DESC, watches.created_at DESC")
                             .includes(item: [ :user, :winner, first_image_attachment: { blob: :variant_records } ])
                             .page(params[:page])
-                            .per(16)
+                            .per(PER_PAGE)
   end
 
   # POST /watches

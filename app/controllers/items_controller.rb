@@ -3,6 +3,8 @@ class ItemsController < ApplicationController
   before_action :ensure_item_editable, only: %i[edit update]
   before_action :require_admin, only: %i[destroy]
 
+  PER_PAGE = 20
+
   # GET /items
   def index
     @items = Item.published
@@ -10,7 +12,7 @@ class ItemsController < ApplicationController
                   .order(entry_deadline_at: :asc, created_at: :asc)
                   .includes(:user, :winner, first_image_attachment: { blob: :variant_records })
                   .page(params[:page])
-                  .per(20)
+                  .per(PER_PAGE)
   end
 
   # GET /items/1
