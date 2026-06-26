@@ -12,7 +12,7 @@ class NotifyMessageCreatedJob < ApplicationJob
     ).find(message_id)
     recipient = message.recipient
     return if recipient.nil?
-    Notification.create!(user: recipient, notifiable: message)
+    recipient.notifications.create!(notifiable: message)
     DiscordWebhook.new.notify_new_message(recipient, message.item)
   end
 end
