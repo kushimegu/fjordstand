@@ -3,11 +3,7 @@ class NotificationsController < ApplicationController
 
   def index
     notification_scope = current_user.notifications
-    if params[:status] == "unread"
-      notification_scope = notification_scope.unread
-    elsif params[:status].present?
-      notification_scope = notification_scope.none
-    end
+    notification_scope = notification_scope.unread if params[:status] == "unread"
     @notifications = notification_scope.order(created_at: :desc)
                                         .preload(notifiable: [ :user, { item: [ :user, :winner ] } ])
                                         .page(params[:page])
