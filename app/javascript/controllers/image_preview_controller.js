@@ -184,11 +184,11 @@ export default class extends Controller {
 
   validateFileTypes(filesOrFile, e) {
     const files = Array.isArray(filesOrFile) ? filesOrFile : [filesOrFile];
-    const typeNames = this.allowedTypesValue.map((type) => type.split('/')[1].toUpperCase());
-    const joinedTypes = typeNames.join('または');
 
     if (files.some((file) => !this.allowedTypesValue.includes(file.type))) {
       e.stopImmediatePropagation();
+      const typeNames = this.allowedTypesValue.map((type) => type.split('/')[1].toUpperCase());
+      const joinedTypes = typeNames.join('または');
       alert(`${joinedTypes}形式のみアップロード可能です`);
       e.target.value = '';
       return false;
