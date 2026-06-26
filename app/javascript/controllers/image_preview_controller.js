@@ -6,7 +6,7 @@ export default class extends Controller {
   static values = {
     maxCount: Number,
     allowedTypes: Array,
-    maxSize: Number,
+    maxSizeMegabytes: Number,
   };
 
   connect() {
@@ -198,11 +198,11 @@ export default class extends Controller {
 
   validateMaxSize(filesOrFile, e) {
     const files = Array.isArray(filesOrFile) ? filesOrFile : [filesOrFile];
-    const maxSizeBytes = this.maxSizeValue * 1024 * 1024;
+    const maxSizeMegabytes = this.maxSizeMegabytesValue * 1024 * 1024;
 
-    if (files.some((file) => file.size > maxSizeBytes)) {
+    if (files.some((file) => file.size > maxSizeMegabytes)) {
       e.stopImmediatePropagation();
-      alert(`${this.maxSizeValue}MBまでのファイルのみアップロードできます`);
+      alert(`${this.maxSizeMegabytesValue}MBまでのファイルのみアップロードできます`);
       e.target.value = '';
       return false;
     }
