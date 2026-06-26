@@ -22,9 +22,9 @@ class Item < ApplicationRecord
 
   MAX_COUNT = 5
   ALLOWED_TYPES = %w[ image/png image/jpeg ].freeze
-  MAX_SIZE = 5
+  MAX_SIZE_MB = 5
 
-  validates :images, limit: { max: MAX_COUNT }, content_type: ALLOWED_TYPES, size: { less_than: MAX_SIZE.megabytes }
+  validates :images, limit: { max: MAX_COUNT }, content_type: ALLOWED_TYPES, size: { less_than: MAX_SIZE_MB.megabytes }
 
   validates :title, length: { maximum: 255 }, presence: true, on: :publish
   validates :price, presence: true, on: :publish
