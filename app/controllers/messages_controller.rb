@@ -5,8 +5,7 @@ class MessagesController < ApplicationController
 
   # GET /messages
   def index
-    @messages = @item.messages.includes(:user).order(:created_at)
-    @message = @item.messages.build
+    load_messages
     current_user.mark_notifications_as_read!("Message", @item.message_ids)
   end
 
@@ -18,7 +17,7 @@ class MessagesController < ApplicationController
     if @message.save
       redirect_to conversation_messages_path(@item), notice: "メッセージを送信しました"
     else
-      @messages = @item.messages.includes(:user).order(:created_at)
+      load_messages
       render :index, status: :unprocessable_content
     end
   end
@@ -35,6 +34,10 @@ class MessagesController < ApplicationController
 
   def set_item
     @item = Item.sold.find(params[:conversation_id])
+  end
+
+  def load_messages
+    @messages = @item.messages.includes(:user).order(:created_at)
   end
 
   # Only allow a list of trusted parameters through.
