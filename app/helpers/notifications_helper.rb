@@ -2,27 +2,39 @@ module NotificationsHelper
   class Strategy
     include Rails.application.routes.url_helpers
 
-    def self.build_strategy(notification)
-      klass =
-        case notification.notifiable
-        when Comment
-          CommentStrategy
-        when Entry
-          EntryStrategy
-        when Item
-          ItemStrategy
-        when Message
-          MessageStrategy
-        end
-      klass.new(notification)
-    end
-
     def initialize(notification)
       @notification = notification
     end
 
     def notifiable
       @notification.notifiable
+    end
+
+    def self.resolve_redirect_path(notification)
+      build_strategy(notification).redirect_path
+    end
+
+    def self.resolve_message(notification)
+      build_strategy(notification).message
+    end
+
+    class << self
+      private
+
+      def build_strategy(notification)
+        klass =
+          case notification.notifiable
+          in Comment
+            CommentStrategy
+          in Entry
+            EntryStrategy
+          in Item
+            ItemStrategy
+          in Message
+            MessageStrategy
+          end
+        klass.new(notification)
+      end
     end
 
     class CommentStrategy < Strategy
@@ -73,7 +85,7 @@ module NotificationsHelper
 
     class MessageStrategy < Strategy
       def message
-        "#{notifiable.item.user.name}さんから「#{notifiable.item.title}」についてメッセージが届きました。"
+        "#{notifiable.user.name}さんから「#{notifiable.item.title}」についてメッセージが届きました。"
       end
 
       def redirect_path
