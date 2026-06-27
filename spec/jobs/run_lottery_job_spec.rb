@@ -13,20 +13,10 @@ RSpec.describe RunLotteryJob, type: :job do
       expect(RunLotteryJob).to have_been_enqueued.with(item.id)
     end
 
-    context "when entry exists" do
-      it "creates notifications to applicants and item user then enqueues NotifyLotteryResultsJob" do
-        create(:entry, item: item, user: applicant)
-
-        expect { RunLotteryJob.perform_now(item.id) }.to change { [ applicant.notifications.count, seller.notifications.count ] }.from([ 0, 0 ]).to([ 1, 1 ])
-        expect(NotifyLotteryResultsJob).to have_been_enqueued.with(item.id)
-      end
-    end
-
-    context "when no entry exists" do
-      it "creates notification to item user and enqueues NotifyLotterySkippedJob" do
-        expect { RunLotteryJob.perform_now(item.id) }.to change { seller.notifications.count }.from(0).to (1)
-        expect(NotifyLotterySkippedJob).to have_been_enqueued.with(item.id)
-      end
+    it "calls Item#finish_sale!" do
+      allow(Item).to receive(:finish_sale!)
+      RunLotteryJob.perform_now(item.id)
+      expect(Item).to have_received(:finish_sale!).with(item.id).once
     end
   end
 end
