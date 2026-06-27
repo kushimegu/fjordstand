@@ -11,14 +11,6 @@ class Entry < ApplicationRecord
   validate :cannot_apply_for_expired_item, on: :create
   validate :cannot_apply_for_closed_item, on: :create
 
-  scope :by_target, ->(target) {
-  if target.present? && statuses.key?(target)
-    where(status: target)
-  else
-    all
-  end
-  }
-
   private
 
   def cannot_apply_for_own_item
