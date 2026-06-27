@@ -50,8 +50,8 @@ class Item < ApplicationRecord
   end
   }
 
-  EDITABLE_FIELDS = [ :title, :description, :price, :shipping_fee_payer, :payment_method, :entry_deadline_at, images: [] ].freeze
-  UPDATABLE_FIELDS = (EDITABLE_FIELDS - [ :title, :description, :payment_method ]).freeze
+  FIELDS_FOR_DRAFT = [ :title, :description, :price, :shipping_fee_payer, :payment_method, :entry_deadline_at, images: [] ].freeze
+  FIELDS_FOR_PUBLISHED = (FIELDS_FOR_DRAFT - [ :title, :description, :payment_method ]).freeze
 
   def other_user_for(current_user)
     if current_user.admin? && [ user, winner ].exclude?(current_user)
