@@ -6,25 +6,9 @@ class NotifyLotteryResultsJob < ApplicationJob
       :user,
       :winner,
       :applicants,
-      { entries: :user },
       :first_image
     ).find(item_id)
 
-    now = Time.current
-    notifications = item.entries.map do |entry|
-      {
-        user_id: entry.user_id,
-        notifiable_id: entry.id,
-        notifiable_type: "Entry",
-        read: false,
-        created_at: now,
-        updated_at: now
-      }
-    end
-    ActiveRecord::Base.transaction do
-      Notification.insert_all!(notifications) if notifications.any?
-      Notification.create!(user: item.user, notifiable: item)
-    end
     DiscordWebhook.new.notify_lottery_completed(item.applicants + [ item.user ], item)
   end
 end
