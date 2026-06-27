@@ -1,7 +1,7 @@
 class NotifyCommentCreatedJob < ApplicationJob
   queue_as :default
 
-  def perform(comment_id)
+  def perform(comment_id, recipient_ids)
     comment = Comment.includes(
       item: [
         :user,

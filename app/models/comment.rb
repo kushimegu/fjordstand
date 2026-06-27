@@ -17,7 +17,7 @@ class Comment < ApplicationRecord
   end
 
   def notify_watchers
-    recipient_ids = item.watchers.where.not(id: comment.user_id).pluck(:id)
+    recipient_ids = item.watchers.where.not(id: user_id).pluck(:id)
     return if recipient_ids.empty?
 
     now = Time.current
