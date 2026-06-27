@@ -8,21 +8,19 @@ RSpec.describe "Notifications", type: :request do
 
   describe "GET /index" do
     context "when notifications exists" do
-      let!(:unread_notification) { create(:notification, :for_item, user: user) }
-      let!(:read_notification) { create(:notification, :for_item, :read, user: user) }
-      let!(:others_notification) { create(:notification, :for_item, user: buyer) }
+      let(:users_item) { create(:item, :closed, title: "小説") }
+      let(:buyers_item) { create(:item, :closed, title: "参考書") }
 
       it "returns current users notifications with http success" do
+        users_notification = create(:notification, :for_item, notifiable: users_item, user: user)
+        others_notification = create(:notification, :for_item, notifiable: buyers_item, user: buyer)
+
         get notifications_path
 
         expect(response).to have_http_status(:success)
 
-        unread_message = NotificationsHelper::Strategy.build_strategy(unread_notification).message
-        read_message = NotificationsHelper::Strategy.build_strategy(read_notification).message
-        others_message = NotificationsHelper::Strategy.build_strategy(others_notification).message
-
-        expect(response.body).to include(unread_message, read_message)
-        expect(response.body).not_to include(others_message)
+        expect(response.body).to include("「小説」は当選者なしで公開終了しました。")
+        expect(response.body).not_to include("「参考書」は当選者なしで公開終了しました。")
       end
     end
 
@@ -36,35 +34,35 @@ RSpec.describe "Notifications", type: :request do
     end
 
     context "when filtering by unread status" do
-      let!(:unread_notification) { create(:notification, :for_item, user: user) }
-      let!(:read_notification) { create(:notification, :for_item, :read, user: user) }
+      let(:book) { create(:item, :closed, title: "本") }
+      let(:shoes) { create(:item, :closed, title: "靴") }
 
       it "returns unread notifications" do
+        unread_notification = create(:notification, :for_item, notifiable: book, user: user)
+        read_notification = create(:notification, :read, :for_item, notifiable: shoes, user: user)
+
         get notifications_path(status: "unread")
 
         expect(response).to have_http_status(:success)
 
-        unread_message = NotificationsHelper::Strategy.build_strategy(unread_notification).message
-        read_message = NotificationsHelper::Strategy.build_strategy(read_notification).message
-
-        expect(response.body).to include(unread_message)
-        expect(response.body).not_to include(read_message)
+        expect(response.body).to include("「本」は当選者なしで公開終了しました。")
+        expect(response.body).not_to include("「靴」は当選者なしで公開終了しました。")
       end
     end
 
     context "when filtering by invalid status" do
-      let!(:unread_notification) { create(:notification, :for_item, user: user) }
-      let!(:read_notification) { create(:notification, :for_item, :read, user: user) }
+      let(:book) { create(:item, :closed, title: "本") }
+      let(:shoes) { create(:item, :closed, title: "靴") }
 
       it "returns all notifications" do
+        unread_notification = create(:notification, :for_item, notifiable: book, user: user)
+        read_notification = create(:notification, :read, :for_item, notifiable: shoes, user: user)
+
         get notifications_path(status: "invalid_status")
 
         expect(response).to have_http_status(:success)
 
-        unread_message = NotificationsHelper::Strategy.build_strategy(unread_notification).message
-        read_message = NotificationsHelper::Strategy.build_strategy(read_notification).message
-
-        expect(response.body).to include(unread_message, read_message)
+        expect(response.body).to include("「本」は当選者なしで公開終了しました。", "「靴」は当選者なしで公開終了しました。")
       end
     end
   end
