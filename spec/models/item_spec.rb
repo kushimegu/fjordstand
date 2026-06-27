@@ -238,6 +238,39 @@ RSpec.describe Item, type: :model do
     end
   end
 
+  describe "#combined_title_must_be_within_limit" do
+    let(:item) { build(:item, :published, title: "Alice's Adventures in Wonderland") }
+
+    it "validates title to be within limit" do
+      item.title_append = "a" * 250
+      item.send(:append_additional_contents)
+      expect(item.valid?(:publish)).to be false
+      expect(item.errors[:title]).to include("は合わせて255文字以内で入力してください")
+    end
+  end
+
+  describe "#combined_description_must_be_within_limit" do
+    let(:item) { build(:item, :published, description: "Alice wonders in Wonderland") }
+
+    it "validates title to be within limit" do
+      item.description_append = "a" * 999
+      item.send(:append_additional_contents)
+      expect(item.valid?(:publish)).to be false
+      expect(item.errors[:description]).to include("は合わせて1000文字以内で入力してください")
+    end
+  end
+
+  describe "#combined_payment_method_must_be_within_limit" do
+    let(:item) { build(:item, :published, payment_method: "PayPay") }
+
+    it "validates title to be within limit" do
+      item.payment_method_append = "a" * 250
+      item.send(:append_additional_contents)
+      expect(item.valid?(:publish)).to be false
+      expect(item.errors[:payment_method]).to include("は合わせて255文字以内で入力してください")
+    end
+  end
+
   describe "#deadline_must_be_today_or_later" do
     let(:item) { build(:item, :with_item_image, entry_deadline_at: entry_deadline_at) }
 
@@ -246,7 +279,7 @@ RSpec.describe Item, type: :model do
 
       it "validates deadline to not be earlier than today" do
         expect(item.valid?(:publish)).to be false
-        expect(item.errors[:entry_deadline_at]).to include ("は本日以降に設定してください")
+        expect(item.errors[:entry_deadline_at]).to include("は本日以降に設定してください")
       end
     end
 
@@ -319,6 +352,28 @@ RSpec.describe Item, type: :model do
         item.assign_attributes(entry_deadline_at: Date.current + 2.days)
 
         expect(item.valid?(:publish)).to be true
+      end
+    end
+  end
+
+  describe "#append_additional_contents" do
+    context "when title_append exists" do
+      let(:item) { create(:item, :published, title: "Alice's Adventures in Wonderland")}
+
+      it "adds to original title" do
+        item.title_append = "by Lewis Carroll"
+        item.send(:append_additional_contents)
+        expect(item.title).to eq("Alice's Adventures in Wonderland by Lewis Carroll")
+      end
+    end
+
+    context "when title_append is already joined" do
+      let(:item) { create(:item, :published, title: "Alice's Adventures in Wonderland by Lewis Carroll")}
+
+      it "does not joins twice" do
+        item.title_append = "by Lewis Carroll"
+        item.send(:append_additional_contents)
+        expect(item.title).to eq("Alice's Adventures in Wonderland by Lewis Carroll")
       end
     end
   end

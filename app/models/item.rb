@@ -89,7 +89,7 @@ class Item < ApplicationRecord
 
   def combined_description_must_be_within_limit
     if description_append.present? && [ description, description_append ].compact.join("\n").length > 255
-      errors.add(:title, "は合わせて1000文字以内で入力してください")
+      errors.add(:description, "は合わせて1000文字以内で入力してください")
     end
   end
 
