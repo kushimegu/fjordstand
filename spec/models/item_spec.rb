@@ -82,24 +82,27 @@ RSpec.describe Item, type: :model do
     end
   end
 
-  describe "#finish_sale!" do
-    let(:item) { create(:item, :published) }
+  describe ".finish_sale!" do
+    let(:seller) { create(:user) }
+    let(:item) { create(:item, :published, user: seller) }
 
     context "when entry exists" do
-      it "changes status to sold and selects won entry" do
-        entry = create(:entry, item: item, user: create(:user))
-        Item.finish_sale!(item.id)
+      let(:applicant) { create(:user) }
+      let!(:entry) { create(:entry, item: item, user: applicant) }
 
+      it "changes status to sold and calls notify_lottery_results" do
+        expect { Item.finish_sale!(item.id) }.to change { [ seller.notifications.count, applicant.notifications.count ] }.from([ 0, 0 ]).to([ 1, 1 ])
         expect(item.reload.status).to eq("sold")
         expect(entry.reload.status).to eq("won")
+        expect(NotifyLotteryResultsJob).to have_been_enqueued.with(item.id)
       end
     end
 
     context "when no entry exists" do
-      it "changes status to closed" do
-        Item.finish_sale!(item.id)
-
+      it "changes status to closed and calls notify_lottery_skipped" do
+        expect { Item.finish_sale!(item.id) }.to change { seller.notifications.count }.from(0).to(1)
         expect(item.reload.status).to eq("closed")
+        expect(NotifyLotterySkippedJob).to have_been_enqueued.with(item.id)
       end
     end
   end
@@ -109,12 +112,11 @@ RSpec.describe Item, type: :model do
     let(:item) { create(:item, :published, user: user) }
     let(:applicant) { create(:user) }
 
-    context "when closed by user action" do
-      it "changes status and queues job" do
-        create(:entry, item: item, user: applicant)
-        expect { item.close! }.to have_enqueued_job(NotifyItemClosedJob).with(item.id, [ applicant.id ])
-        expect(item.status).to eq("closed")
-      end
+    it "changes status to closed and create notifications" do
+      create(:entry, item: item, user: applicant)
+      expect { item.close! }.to change { applicant.notifications.count }.from(0).to(1)
+      expect(NotifyItemClosedJob).to have_been_enqueued.with(item.id, [ applicant.id ])
+      expect(item.status).to eq("closed")
     end
   end
 
