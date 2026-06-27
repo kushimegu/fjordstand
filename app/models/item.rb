@@ -23,16 +23,20 @@ class Item < ApplicationRecord
   validates :images, limit: { max: 5 }, content_type: [ "image/png", "image/jpeg" ], size: { less_than: 5.megabytes }
 
   validates :title, length: { maximum: 255 }, presence: true, on: :publish
+  validates :description, length: { maximum: 1000 }, on: :publish
   validates :price, presence: true, on: :publish
   validates :shipping_fee_payer, presence: { message: "を選択してください" }, on: :publish
-  validates :payment_method, presence: { message: "を選択してください" }, on: :publish
+  validates :payment_method, length: { maximum: 255 }, presence: { message: "を選択してください" }, on: :publish
   validates :entry_deadline_at, presence: true, on: :publish
   validates :images, attached: { message: "を1枚以上選択してください" }, on: :publish
+  validate :combined_title_must_be_within_limit, on: :publish
+  validate :combined_description_must_be_within_limit, on: :publish
+  validate :combined_payment_method_must_be_within_limit, on: :publish
   validate :deadline_must_be_today_or_later, on: :publish
   validate :price_cannot_be_changed_after_published, on: :publish
   validate :deadline_cannot_be_changed_earlier_after_published, on: :publish
 
-  before_validation :append_additional_contents
+  before_save :append_additional_contents
   before_save :set_entry_deadline_at_end_of_day, if: :will_save_change_to_entry_deadline_at?
 
   after_save_commit :comment_watch_by_seller, if: -> { saved_change_to_attribute?(:status, to: "published") }
@@ -76,6 +80,24 @@ class Item < ApplicationRecord
   end
 
   private
+
+  def combined_title_must_be_within_limit
+    if title_append.present? && [ title, title_append ].join(" ").length > 255
+      errors.add(:title, "は合わせて255文字以内で入力してください")
+    end
+  end
+
+  def combined_description_must_be_within_limit
+    if description_append.present? && [ description, description_append ].compact.join("\n").length > 255
+      errors.add(:title, "は合わせて1000文字以内で入力してください")
+    end
+  end
+
+  def combined_payment_method_must_be_within_limit
+    if payment_method_append.present? && [ payment_method, payment_method_append ].join(" ").length > 255
+      errors.add(:payment_method, "は合わせて255文字以内で入力してください")
+    end
+  end
 
   def deadline_must_be_today_or_later
     return if entry_deadline_at.nil? || entry_deadline_at.to_date >= Date.current
