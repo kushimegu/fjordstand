@@ -51,6 +51,54 @@ class Item < ApplicationRecord
 
   EDITABLE_FIELDS = [ :title, :description, :price, :shipping_fee_payer, :payment_method, :entry_deadline_at, images: [] ].freeze
 
+  def self.finish_sale!(item_id)
+    item = find(item_id)
+    item.with_lock do
+      item.save_lottery_result!
+    end
+
+    item.sold? ? item.notify_lottery_results : item.notify_lottery_skipped
+  end
+
+  def save_lottery_result!
+    return unless published?
+
+    if entries.any?
+      picked_entry = entries.sample
+      entries.where.not(id: picked_entry.id).update_all(status: :lost)
+      picked_entry.update!(status: :won)
+      update!(status: :sold)
+    else
+      update!(status: :closed)
+    end
+  end
+
+  def notify_lottery_results
+    return if self.notifications.exists?(user_id: self.user_id)
+    now = Time.current
+    unless Notification.exists?(notifiable_id: entries.pluck(:id), notifiable_type: "Entry")
+      entry_notifications = entries.map do |entry|
+        {
+          user_id: entry.user_id,
+          notifiable_id: entry.id,
+          notifiable_type: "Entry",
+          read: false,
+          created_at: now,
+          updated_at: now
+        }
+      end
+      Notification.insert_all!(entry_notifications) if entry_notifications.any?
+    end
+    self.notifications.create!(user: self.user)
+    NotifyLotteryResultsJob.perform_later(id)
+  end
+
+  def notify_lottery_skipped
+    return if self.notifications.exists?(user_id: self.user_id)
+    self.notifications.create!(user: self.user)
+    NotifyLotterySkippedJob.perform_later(id)
+  end
+
   def other_user_for(current_user)
     if current_user.admin? && [ user, winner ].exclude?(current_user)
       return nil
@@ -58,9 +106,28 @@ class Item < ApplicationRecord
     user == current_user ? winner : user
   end
 
-  def close!(reason: :user_action)
-    update!(status: :closed)
-    NotifyItemClosedJob.perform_later(id, reason: reason)
+  def close!
+    return if closed?
+    applicant_ids = []
+    transaction do
+      update!(status: :closed)
+      applicant_ids = applicants.pluck(:id)
+      entries.destroy_all
+    end
+    return if applicant_ids.empty?
+    now = Time.current
+    applicant_notifications = applicant_ids.map do |applicant_id|
+      {
+        user_id: applicant_id,
+        notifiable_id: id,
+        notifiable_type: self.class.name,
+        read: false,
+        created_at: now,
+        updated_at: now
+      }
+    end
+    Notification.insert_all!(applicant_notifications)
+    NotifyItemClosedJob.perform_later(id, applicant_ids)
   end
 
   def editable?
@@ -103,7 +170,6 @@ class Item < ApplicationRecord
 
     self.entry_deadline_at = entry_deadline_at.in_time_zone.end_of_day
   end
-
 
   def comment_watch_by_seller
     return if watchers.exists?(user.id)

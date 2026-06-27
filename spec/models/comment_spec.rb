@@ -21,12 +21,12 @@ RSpec.describe Comment, type: :model do
   describe "#notify_watchers" do
     let(:seller) { create(:user) }
     let(:item) { create(:item, :published, user: seller) }
-    let(:commentator) { create(:user) }
+    let(:commenter) { create(:user) }
 
-    it "sends notification to watchers except commentator" do
-      comment = create(:comment, user: commentator, item: item)
-
-      expect(NotifyCommentCreatedJob).to have_been_enqueued.with(comment.id)
+    it "sends notification to watchers except commenter" do
+      expect { create(:comment, user: commenter, item: item) }.to change { seller.notifications.count }.by(1)
+      comment = Comment.last
+      expect(NotifyCommentCreatedJob).to have_been_enqueued.with(comment.id, [ seller.id ])
     end
   end
 end

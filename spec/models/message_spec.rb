@@ -13,9 +13,10 @@ RSpec.describe Message, type: :model do
 
     before { create(:entry, :won, item: item, user: buyer) }
 
-    it "creates notification job" do
-      message = create(:message, item: item, user: buyer)
-      expect(NotifyMessageCreatedJob).to have_been_enqueued.with(message.id)
+    it "creates notifications and enqueues NotifyMessageCreatedJob" do
+      expect { create(:message, item: item, user: buyer) }.to change { seller.notifications.count }.from(0).to(1)
+      message = Message.last
+      expect(NotifyMessageCreatedJob).to have_been_enqueued.with(message.id, seller.id)
     end
   end
 end

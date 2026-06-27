@@ -1,4 +1,4 @@
-class NotifyItemPublishedJob < ApplicationJob
+class NotifyLotterySkippedJob < ApplicationJob
   queue_as :default
 
   def perform(item_id)
@@ -7,6 +7,6 @@ class NotifyItemPublishedJob < ApplicationJob
       :first_image
     ).find(item_id)
 
-    DiscordWebhook.new.notify_item_published(item)
+    DiscordWebhook.new.notify_lottery_skipped(item.user, item)
   end
 end
