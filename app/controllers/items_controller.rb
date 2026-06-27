@@ -31,7 +31,7 @@ class ItemsController < ApplicationController
 
   # POST /items
   def create
-    @item = current_user.items.build(item_params)
+    @item = current_user.items.build(item_create_params)
 
     if @item.valid?(:publish)
       @item.status = :published
@@ -72,15 +72,15 @@ class ItemsController < ApplicationController
   end
 
   # Only allow a list of trusted parameters through.
-  def item_params
-    params.expect(item: [ *Item::EDITABLE_FIELDS ])
+  def item_create_params
+    params.expect(item: [ *Item::FIELDS_FOR_DRAFT ])
   end
 
   def item_update_params
     if @item.draft?
-      params.expect(item: [ *Item::EDITABLE_FIELDS ])
+      params.expect(item: [ *Item::FIELDS_FOR_DRAFT ])
     else
-      params.expect(item: [ :title_append, :description_append, :payment_method_append, *Item::UPDATABLE_FIELDS ])
+      params.expect(item: [ :title_append, :description_append, :payment_method_append, *Item::FIELDS_FOR_PUBLISHED ])
     end
   end
 

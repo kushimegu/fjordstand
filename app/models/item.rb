@@ -47,8 +47,8 @@ class Item < ApplicationRecord
   scope :expired, -> { where.not(id: not_expired).where(status: :published) }
   scope :commentable, -> { where.not(status: :draft) }
 
-  EDITABLE_FIELDS = [ :title, :description, :price, :shipping_fee_payer, :payment_method, :entry_deadline_at, images: [] ].freeze
-  UPDATABLE_FIELDS = (EDITABLE_FIELDS - [ :title, :description, :payment_method ]).freeze
+  FIELDS_FOR_DRAFT = [ :title, :description, :price, :shipping_fee_payer, :payment_method, :entry_deadline_at, images: [] ].freeze
+  FIELDS_FOR_PUBLISHED = (FIELDS_FOR_DRAFT - [ :title, :description, :payment_method ]).freeze
 
   def close!(reason: :user_action)
     update!(status: :closed)
