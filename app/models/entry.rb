@@ -22,13 +22,13 @@ class Entry < ApplicationRecord
   private
 
   def cannot_apply_for_own_item
-    if item.user_id == user_id
+    if item.owned_by?(user)
       errors.add(:base, "自分の出品物には応募できません")
     end
   end
 
   def cannot_apply_for_expired_item
-    if item.entry_deadline_at < Time.current
+    if item.expired?
       errors.add(:base, "締切の過ぎた商品には応募できません")
     end
   end

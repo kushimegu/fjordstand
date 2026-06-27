@@ -64,13 +64,21 @@ class Item < ApplicationRecord
   end
 
   def editable?
-    return false if published? && entry_deadline_at < Time.current
+    return false if published? && expired?
     return false if sold?
     true
   end
 
   def commentable?
     !draft?
+  end
+
+  def owned_by?(user)
+    user_id == user&.id
+  end
+
+  def expired?
+    entry_deadline_at.present? && entry_deadline_at < Time.current
   end
 
   private
