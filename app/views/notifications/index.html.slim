@@ -26,7 +26,7 @@ h1.font-bold.text-2xl.mb-6.text-gray-900.text-center 通知一覧
           .bg-white.rounded-xl.border.border-gray-200.shadow-sm.p-4.hover:shadow-md.transition-shadow.duration-200
             - if !notification.read?
               span.inline-block.px-2.mr-2.text-xs.font-semibold.text-red-600.bg-red-100.rounded-full class="py-0.5" 未読
-            span.text-gray-800 = notification.message
+            span.text-gray-800 = NotificationsHelper::Strategy.resolve_message(notification)
             .text-xs.text-gray-400.mt-1 = l notification.created_at
       .mt-4
         = paginate @notifications
