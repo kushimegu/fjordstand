@@ -33,10 +33,23 @@ RSpec.describe "/messages", type: :request do
   end
 
   describe "POST /create" do
-    before { login(user) }
+    context "when admin tries to message for unrelated item" do
+      let(:admin) { create(:user, :admin, uid: "123") }
+
+      before { login (admin) }
+
+      it "redirects to messages index" do
+        expect {
+          post conversation_messages_path(item), params: { message: attributes_for(:message, item: item, user: admin) }
+        }.not_to change(Message, :count)
+        expect(response).to redirect_to(conversation_messages_path(item))
+      end
+    end
 
     context "with valid parameters" do
       let(:valid_attributes) { attributes_for(:message, item: item, user: user) }
+
+      before { login(user) }
 
       it "creates a new Message" do
         expect {
@@ -48,6 +61,8 @@ RSpec.describe "/messages", type: :request do
 
     context "with invalid parameters" do
       let(:invalid_attributes) { attributes_for(:message, item: item, user: user, body: "") }
+
+      before { login(user) }
 
       it "does not create a new Message" do
         expect {

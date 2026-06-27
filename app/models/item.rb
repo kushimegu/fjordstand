@@ -66,6 +66,12 @@ class Item < ApplicationRecord
     !draft?
   end
 
+  def participant?(user)
+    return false if user.nil?
+
+    user.id == self.user_id || user.id == won_entry&.user_id
+  end
+
   private
 
   def deadline_must_be_today_or_later

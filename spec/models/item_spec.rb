@@ -202,6 +202,33 @@ RSpec.describe Item, type: :model do
     end
   end
 
+  describe "#participant?" do
+    let(:seller) { create(:user) }
+    let(:admin) { create(:user, uid: 123) }
+    let(:buyer) { create(:user) }
+    let(:item) { create(:item, :sold, user: seller) }
+
+    before { create(:entry, :won, user: buyer, item: item)}
+
+    context "when user is seller" do
+      it "returns true" do
+        expect(item.participant?(seller)).to be true
+      end
+    end
+
+    context "when user is buyer" do
+      it "returns true" do
+        expect(item.participant?(buyer)).to be true
+      end
+    end
+
+    context "when user is admin and is not participant" do
+      it "returns false" do
+        expect(item.participant?(admin)).to be false
+      end
+    end
+  end
+
   describe "#deadline_must_be_today_or_later" do
     let(:item) { build(:item, :with_item_image, entry_deadline_at: entry_deadline_at) }
 
