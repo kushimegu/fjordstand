@@ -88,18 +88,18 @@ RSpec.describe Item, type: :model do
     context "when entry exists" do
       it "changes status to sold and selects won entry" do
         entry = create(:entry, item: item, user: create(:user))
-        item.finish_sale!
+        Item.finish_sale!(item.id)
 
-        expect(item.status).to eq("sold")
+        expect(item.reload.status).to eq("sold")
         expect(entry.reload.status).to eq("won")
       end
     end
 
     context "when no entry exists" do
       it "changes status to closed" do
-        item.finish_sale!
+        Item.finish_sale!(item.id)
 
-        expect(item.status).to eq("closed")
+        expect(item.reload.status).to eq("closed")
       end
     end
   end
@@ -107,17 +107,12 @@ RSpec.describe Item, type: :model do
   describe "#close!" do
     let(:user) { create(:user) }
     let(:item) { create(:item, :published, user: user) }
+    let(:applicant) { create(:user) }
 
     context "when closed by user action" do
       it "changes status and queues job" do
-        expect { item.close!(reason: :user_action) }.to have_enqueued_job(NotifyItemClosedJob).with(item.id, { reason: :user_action })
-        expect(item.status).to eq("closed")
-      end
-    end
-
-    context "when closed by deadline" do
-      it "changes status and queues job" do
-        expect { item.close!(reason: :no_applicants) }.to have_enqueued_job(NotifyItemClosedJob).with(item.id, { reason: :no_applicants })
+        create(:entry, item: item, user: applicant)
+        expect { item.close! }.to have_enqueued_job(NotifyItemClosedJob).with(item.id, [ applicant.id ])
         expect(item.status).to eq("closed")
       end
     end
