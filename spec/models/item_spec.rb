@@ -171,7 +171,7 @@ RSpec.describe Item, type: :model do
     let(:buyer) { create(:user) }
     let(:item) { create(:item, :sold, user: seller) }
 
-    before { create(:entry, :won, user: buyer, item: item)}
+    before { create(:entry, :won, user: buyer, item: item) }
 
     context "when user is seller" do
       it "returns true" do

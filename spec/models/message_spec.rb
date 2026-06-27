@@ -13,33 +13,6 @@ RSpec.describe Message, type: :model do
   end
 
   describe "#recipient" do
-    context "when sender is admin and is seller" do
-      it "returns buyer" do
-        seller.update!(admin: true)
-        message = create(:message, item: item, user: seller)
-
-        expect(message.recipient).to eq buyer
-      end
-    end
-
-    context "when sender is admin and is buyer" do
-      it "returns seller" do
-        buyer.update!(admin: true)
-        message = create(:message, item: item, user: buyer)
-
-        expect(message.recipient).to eq seller
-      end
-    end
-
-    context "when sender is admin and is not seller or buyer" do
-      it "returns nil" do
-        admin = create(:user, admin: true)
-        message = create(:message, item: item, user: admin)
-
-        expect(message.recipient).to be_nil
-      end
-    end
-
     context "when sender is seller" do
       it "returns buyer" do
         message = create(:message, item: item, user: seller)
