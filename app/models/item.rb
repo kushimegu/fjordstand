@@ -54,24 +54,41 @@ class Item < ApplicationRecord
   def self.finish_sale!(item_id)
     transaction do
       item = lock.find(item_id)
-      return [item, item.sold?] unless item.published?
+      return [ item, item.sold? ] unless item.published?
 
       if item.entries.any?
         picked_entry = item.entries.sample
         item.entries.where.not(id: picked_entry.id).update_all(status: :lost)
         picked_entry.update!(status: :won)
         item.update!(status: :sold)
-        [item, true]
+        [ item, true ]
       else
         item.update!(status: :closed)
-        [item, false]
+        [ item, false ]
       end
     end
   end
 
-  def close!(reason: :user_action)
-    update!(status: :closed)
-    NotifyItemClosedJob.perform_later(id, reason: reason)
+  def close!
+    applicant_ids = []
+    transaction do
+      update!(status: :closed)
+      applicant_ids = applicants.pluck(:id)
+      now = Time.current
+      notifications = applicant_ids.map do |applicant_id|
+        {
+          user_id: applicant_id,
+          notifiable_id: id,
+          notifiable_type: self.class.name,
+          read: false,
+          created_at: now,
+          updated_at: now
+        }
+      end
+      Notification.insert_all!(notifications) if notifications.any?
+      entries.destroy_all
+    end
+    NotifyItemClosedJob.perform_later(id, applicant_ids)
   end
 
   def editable?

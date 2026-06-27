@@ -14,6 +14,9 @@ class Message < ApplicationRecord
   private
 
   def create_notifications
-    NotifyMessageCreatedJob.perform_later(id)
+    recipient_id = message.item.other_user_for(message.user).id
+    return if recipient_id.nil?
+    message.notifications.create!(user_id: recipient_id)
+    NotifyMessageCreatedJob.perform_later(id, recipient_id)
   end
 end

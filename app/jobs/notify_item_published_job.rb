@@ -6,6 +6,7 @@ class NotifyItemPublishedJob < ApplicationJob
       :user,
       :first_image
     ).find(item_id)
+
     DiscordWebhook.new.notify_item_published(item)
   end
 end
