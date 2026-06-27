@@ -58,18 +58,21 @@ class Item < ApplicationRecord
     user == current_user ? winner : user
   end
 
-  def finish_sale!
-    return if won_entry.present?
+  def self.finish_sale!(item_id)
+    transaction do
+      item = lock.find(item_id)
+      return [item, item.sold?] unless item.published?
 
-    if entries.any?
-      won_entry = entries.sample
-      ActiveRecord::Base.transaction do
-        entries.where.not(id: won_entry.id).update_all(status: :lost)
-        won_entry.update!(status: :won)
-        update!(status: :sold)
+      if item.entries.any?
+        picked_entry = item.entries.sample
+        item.entries.where.not(id: picked_entry.id).update_all(status: :lost)
+        picked_entry.update!(status: :won)
+        item.update!(status: :sold)
+        [item, true]
+      else
+        item.update!(status: :closed)
+        [item, false]
       end
-    else
-      close!(reason: :no_applicants)
     end
   end
 
