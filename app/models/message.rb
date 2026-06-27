@@ -8,7 +8,6 @@ class Message < ApplicationRecord
   after_create_commit :create_notifications
 
   def recipient
-    return if user.admin? && [ item.user, item.winner ].exclude?(user)
     user == item.user ? item.winner : item.user
   end
 
