@@ -8,8 +8,8 @@ class Notifications::ReadsController < ApplicationController
     else
       notification.update!(read: true)
     end
-    strategy = NotificationsHelper::Strategy.build_strategy(notification)
-    redirect_to url_for("#{strategy.redirect_path}?from=notifications"), status: :see_other
+    redirect_path = NotificationsHelper::Strategy.resolve_redirect_path(notification)
+    redirect_to url_for("#{redirect_path}?from=notifications"), status: :see_other
   end
 
   def mark_all_as_read
