@@ -358,7 +358,7 @@ RSpec.describe Item, type: :model do
 
   describe "#append_additional_contents" do
     context "when title_append exists" do
-      let(:item) { create(:item, :published, title: "Alice's Adventures in Wonderland")}
+      let(:item) { create(:item, :published, title: "Alice's Adventures in Wonderland") }
 
       it "adds to original title" do
         item.title_append = "by Lewis Carroll"
@@ -368,7 +368,7 @@ RSpec.describe Item, type: :model do
     end
 
     context "when title_append is already joined" do
-      let(:item) { create(:item, :published, title: "Alice's Adventures in Wonderland by Lewis Carroll")}
+      let(:item) { create(:item, :published, title: "Alice's Adventures in Wonderland by Lewis Carroll") }
 
       it "does not joins twice" do
         item.title_append = "by Lewis Carroll"
