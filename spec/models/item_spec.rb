@@ -2,7 +2,6 @@ require 'rails_helper'
 
 RSpec.describe Item, type: :model do
   before do
-    ActiveJob::Base.queue_adapter = :test
     webhook = stub_discord_webhook
   end
 

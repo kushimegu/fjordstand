@@ -6,7 +6,6 @@ RSpec.describe Message, type: :model do
   let!(:item) { create(:item, :sold, user: seller) }
 
   before do
-    ActiveJob::Base.queue_adapter = :test
     webhook = stub_discord_webhook
 
     create(:entry, :won, item: item, user: buyer)

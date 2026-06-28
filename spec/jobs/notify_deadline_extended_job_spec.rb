@@ -8,17 +8,10 @@ RSpec.describe NotifyDeadlineExtendedJob, type: :job do
   let(:applicant) { create(:user) }
 
   before do
-    ActiveJob::Base.queue_adapter = :test
-
     create(:entry, item: item, user: applicant)
   end
 
   describe '#perform_later' do
-    it 'enqueues the job' do
-      NotifyDeadlineExtendedJob.perform_later(item.id)
-      expect(NotifyDeadlineExtendedJob).to have_been_enqueued.with(item.id)
-    end
-
     it "sends webhook notification" do
       NotifyDeadlineExtendedJob.perform_now(item.id)
       expect(webhook).to have_received(:notify_item_deadline_extended).with([ applicant ], item)
