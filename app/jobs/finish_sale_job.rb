@@ -1,8 +1,8 @@
-class DestroyEntriesJob < ApplicationJob
+class FinishSaleJob < ApplicationJob
   queue_as :default
 
   def perform(item_id)
     item = Item.find(item_id)
-    item.entries.destroy_all
+    item.finish_sale!
   end
 end

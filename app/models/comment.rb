@@ -17,6 +17,21 @@ class Comment < ApplicationRecord
   end
 
   def notify_watchers
-    NotifyCommentCreatedJob.perform_later(id)
+    recipient_ids = item.watchers.where.not(id: user_id).pluck(:id)
+    return if recipient_ids.empty?
+
+    now = Time.current
+    notifications = recipient_ids.map do |recipient_id|
+      {
+        user_id: recipient_id,
+        notifiable_id: id,
+        notifiable_type: self.class.name,
+        read: false,
+        created_at: now,
+        updated_at: now
+      }
+    end
+    Notification.insert_all!(notifications)
+    NotifyCommentCreatedJob.perform_later(id, recipient_ids)
   end
 end

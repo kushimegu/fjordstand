@@ -51,9 +51,38 @@ class Item < ApplicationRecord
   FIELDS_FOR_DRAFT = [ :title, :description, :price, :shipping_fee_payer, :payment_method, :entry_deadline_at, images: [] ].freeze
   FIELDS_FOR_PUBLISHED = (FIELDS_FOR_DRAFT - [ :price, :shipping_fee_payer ]).freeze
 
-  def close!(reason: :user_action)
-    update!(status: :closed)
-    NotifyItemClosedJob.perform_later(id, reason: reason)
+  def finish_sale!
+    with_lock do
+      save_lottery_result!
+    end
+
+    sold? ? notify_lottery_results : notify_lottery_skipped
+  end
+
+  def close!
+    return if closed?
+
+    applicant_ids = nil
+    transaction do
+      update!(status: :closed)
+      applicant_ids = applicants.pluck(:id)
+      entries.destroy_all
+    end
+    return if applicant_ids.empty?
+
+    now = Time.current
+    applicant_notifications = applicant_ids.map do |applicant_id|
+      {
+        user_id: applicant_id,
+        notifiable_id: id,
+        notifiable_type: self.class.name,
+        read: false,
+        created_at: now,
+        updated_at: now
+      }
+    end
+    Notification.insert_all!(applicant_notifications)
+    NotifyItemClosedJob.perform_later(id, applicant_ids)
   end
 
   def editable?
@@ -101,7 +130,6 @@ class Item < ApplicationRecord
     self.entry_deadline_at = entry_deadline_at.in_time_zone.end_of_day
   end
 
-
   def comment_watch_by_seller
     return if watchers.exists?(user.id)
 
@@ -118,5 +146,46 @@ class Item < ApplicationRecord
 
   def saved_only_change_deadline?
     !saved_change_to_status? && saved_change_to_entry_deadline_at?
+  end
+
+  def save_lottery_result!
+    return unless published?
+
+    if entries.any?
+      picked_entry = entries.sample
+      entries.where.not(id: picked_entry.id).update_all(status: :lost)
+      picked_entry.update!(status: :won)
+      update!(status: :sold)
+    else
+      update!(status: :closed)
+    end
+  end
+
+  def notify_lottery_results
+    return if notifications.exists?(user_id: user_id)
+
+    now = Time.current
+    unless Notification.exists?(notifiable_id: entries.pluck(:id), notifiable_type: "Entry")
+      entry_notifications = entries.map do |entry|
+        {
+          user_id: entry.user_id,
+          notifiable_id: entry.id,
+          notifiable_type: "Entry",
+          read: false,
+          created_at: now,
+          updated_at: now
+        }
+      end
+      Notification.insert_all!(entry_notifications) if entry_notifications.any?
+    end
+    notifications.create!(user: user)
+    NotifyLotteryResultsJob.perform_later(id)
+  end
+
+  def notify_lottery_skipped
+    return if notifications.exists?(user_id: user_id)
+
+    notifications.create!(user: user)
+    NotifyLotterySkippedJob.perform_later(id)
   end
 end

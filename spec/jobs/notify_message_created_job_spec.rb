@@ -6,22 +6,21 @@ RSpec.describe NotifyMessageCreatedJob, type: :job do
   let(:seller) { create(:user) }
   let(:item) { create(:item, :sold, user: seller) }
   let(:buyer) { create(:user) }
-  let(:message) { create(:message, item: item, user: buyer) }
 
   before do
-    ActiveJob::Base.queue_adapter = :test
-
     create(:entry, :won, item: item, user: buyer)
-    message
   end
 
   describe '#perform_later' do
     it 'enqueues the job' do
-      expect(NotifyMessageCreatedJob).to have_been_enqueued.with(message.id)
+      message = build(:message, item: item, user: buyer)
+      message.save!
+      expect(NotifyMessageCreatedJob).to have_been_enqueued.with(message.id, seller.id)
     end
 
-    it "creates notifications" do
-      expect { NotifyMessageCreatedJob.perform_now(message.id) }.to change { seller.notifications.count }.from(0).to(1)
+    it "sends discord notification" do
+      message = create(:message, item: item, user: buyer)
+      NotifyMessageCreatedJob.perform_now(message.id, seller.id)
       expect(webhook).to have_received(:notify_new_message).with(seller, item)
     end
   end
