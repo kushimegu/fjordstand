@@ -80,9 +80,6 @@ RSpec.configure do |config|
   end
   config.include ActiveSupport::Testing::TimeHelpers
   config.include ActiveJob::TestHelper
-  config.before(:suite) do
-    ActiveJob::Base.queue_adapter = :test
-  end
 end
 
 OmniAuth.config.test_mode = true
