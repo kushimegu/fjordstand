@@ -197,7 +197,6 @@ RSpec.describe Item, type: :model do
 
     it "validates title to be within limit" do
       item.title_append = "a" * 250
-      item.send(:append_additional_contents)
       expect(item.valid?(:publish)).to be false
       expect(item.errors[:title]).to include("は合わせて255文字以内で入力してください")
     end
@@ -208,7 +207,6 @@ RSpec.describe Item, type: :model do
 
     it "validates title to be within limit" do
       item.description_append = "a" * 999
-      item.send(:append_additional_contents)
       expect(item.valid?(:publish)).to be false
       expect(item.errors[:description]).to include("は合わせて1000文字以内で入力してください")
     end
@@ -219,7 +217,6 @@ RSpec.describe Item, type: :model do
 
     it "validates title to be within limit" do
       item.payment_method_append = "a" * 250
-      item.send(:append_additional_contents)
       expect(item.valid?(:publish)).to be false
       expect(item.errors[:payment_method]).to include("は合わせて255文字以内で入力してください")
     end
@@ -311,23 +308,33 @@ RSpec.describe Item, type: :model do
   end
 
   describe "#append_additional_contents" do
-    context "when title_append exists" do
-      let(:item) { create(:item, :published, title: "Alice's Adventures in Wonderland") }
+    context "when append contents exists" do
+      let(:item) { build(:item, :published, title: "Alice's Adventures in Wonderland", description: "Alice wonders in Wonderland", payment_method: "PayPay") }
 
       it "adds to original title" do
         item.title_append = "by Lewis Carroll"
-        item.send(:append_additional_contents)
+        item.description_append = "It's a classic children's book."
+        item.payment_method_append = "PayPal"
+        item.save!
+
         expect(item.title).to eq("Alice's Adventures in Wonderland by Lewis Carroll")
+        expect(item.description).to eq("Alice wonders in Wonderland\nIt's a classic children's book.")
+        expect(item.payment_method).to eq("PayPay PayPal")
       end
     end
 
-    context "when title_append is already joined" do
-      let(:item) { create(:item, :published, title: "Alice's Adventures in Wonderland by Lewis Carroll") }
+    context "when append contents are already joined" do
+      let(:item) { build(:item, :published, title: "Alice's Adventures in Wonderland by Lewis Carroll", description: "Alice wonders in Wonderland\nIt's a classic children's book.", payment_method: "PayPay PayPal") }
 
       it "does not joins twice" do
         item.title_append = "by Lewis Carroll"
-        item.send(:append_additional_contents)
+        item.description_append = "It's a classic children's book."
+        item.payment_method_append = "PayPal"
+        item.save!
+
         expect(item.title).to eq("Alice's Adventures in Wonderland by Lewis Carroll")
+        expect(item.description).to eq("Alice wonders in Wonderland\nIt's a classic children's book.")
+        expect(item.payment_method).to eq("PayPay PayPal")
       end
     end
   end
