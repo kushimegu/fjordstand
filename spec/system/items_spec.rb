@@ -449,11 +449,11 @@ RSpec.describe "Items", type: :system do
         expect(page).to have_current_path(items_path)
         visit item_path(item)
         click_on '編集する'
-        fill_in "item[title_append]", with: '3冊'
+        fill_in '商品名', with: '技術書3冊セット'
         click_on '更新する'
 
         expect(page).to have_current_path(item_path(item))
-        expect(page).to have_content('技術書セット 3冊')
+        expect(page).to have_content('技術書3冊セット')
       end
     end
   end

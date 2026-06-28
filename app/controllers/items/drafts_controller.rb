@@ -28,6 +28,6 @@ class Items::DraftsController < ApplicationController
   end
 
   def item_params
-    params.expect(item: [ *Item::EDITABLE_FIELDS ])
+    params.expect(item: [ *Item::FIELDS_FOR_DRAFT ])
   end
 end

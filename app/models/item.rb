@@ -18,18 +18,20 @@ class Item < ApplicationRecord
   enum :shipping_fee_payer, { buyer: 0, seller: 1 }
   enum :status, { draft: 0, published: 1, sold: 2, closed: 3 }
 
-  attr_accessor :title_append, :description_append, :payment_method_append
-
   MAX_COUNT = 5
   ALLOWED_TYPES = %w[ image/png image/jpeg ].freeze
   MAX_SIZE_MB = 5
 
   validates :images, limit: { max: MAX_COUNT }, content_type: ALLOWED_TYPES, size: { less_than: MAX_SIZE_MB.megabytes }
 
-  validates :title, length: { maximum: 255 }, presence: true, on: :publish
+  MAX_STRING_LENGTH = 255
+  MAX_TEXT_LENGTH = 1000
+
+  validates :title, length: { maximum: MAX_STRING_LENGTH }, presence: true, on: :publish
+  validates :description, length: { maximum: MAX_TEXT_LENGTH }, on: :publish
   validates :price, presence: true, on: :publish
   validates :shipping_fee_payer, presence: { message: "を選択してください" }, on: :publish
-  validates :payment_method, presence: { message: "を選択してください" }, on: :publish
+  validates :payment_method, length: { maximum: MAX_STRING_LENGTH }, presence: true, on: :publish
   validates :entry_deadline_at, presence: true, on: :publish
   validates :images, attached: { message: "を1枚以上選択してください" }, on: :publish
   validate :deadline_must_be_today_or_later, on: :publish
@@ -46,7 +48,8 @@ class Item < ApplicationRecord
   scope :expired, -> { where.not(id: not_expired).where(status: :published) }
   scope :commentable, -> { where.not(status: :draft) }
 
-  EDITABLE_FIELDS = [ :title, :description, :price, :shipping_fee_payer, :payment_method, :entry_deadline_at, images: [] ].freeze
+  FIELDS_FOR_DRAFT = [ :title, :description, :price, :shipping_fee_payer, :payment_method, :entry_deadline_at, images: [] ].freeze
+  FIELDS_FOR_PUBLISHED = (FIELDS_FOR_DRAFT - [ :price, :shipping_fee_payer ]).freeze
 
   def close!(reason: :user_action)
     update!(status: :closed)

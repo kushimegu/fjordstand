@@ -200,7 +200,7 @@ RSpec.describe Item, type: :model do
 
       it "validates deadline to not be earlier than today" do
         expect(item.valid?(:publish)).to be false
-        expect(item.errors[:entry_deadline_at]).to include ("は本日以降に設定してください")
+        expect(item.errors[:entry_deadline_at]).to include("は本日以降に設定してください")
       end
     end
 
