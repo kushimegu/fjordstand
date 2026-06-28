@@ -64,9 +64,7 @@ class Item < ApplicationRecord
   end
 
   def participant?(user)
-    return false if user.nil?
-
-    user.id == self.user_id || user.id == won_entry&.user_id
+    user && user.id.in?([ user_id, won_entry&.user_id ])
   end
 
   private
