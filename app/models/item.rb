@@ -73,7 +73,8 @@ class Item < ApplicationRecord
   end
 
   def notify_lottery_results
-    return if self.notifications.exists?(user_id: self.user_id)
+    return if notifications.exists?(user_id: user_id)
+
     now = Time.current
     unless Notification.exists?(notifiable_id: entries.pluck(:id), notifiable_type: "Entry")
       entry_notifications = entries.map do |entry|
@@ -88,25 +89,28 @@ class Item < ApplicationRecord
       end
       Notification.insert_all!(entry_notifications) if entry_notifications.any?
     end
-    self.notifications.create!(user: self.user)
+    notifications.create!(user: user)
     NotifyLotteryResultsJob.perform_later(id)
   end
 
   def notify_lottery_skipped
-    return if self.notifications.exists?(user_id: self.user_id)
-    self.notifications.create!(user: self.user)
+    return if notifications.exists?(user_id: user_id)
+
+    notifications.create!(user: user)
     NotifyLotterySkippedJob.perform_later(id)
   end
 
   def close!
     return if closed?
-    applicant_ids = []
+
+    applicant_ids = nil
     transaction do
       update!(status: :closed)
       applicant_ids = applicants.pluck(:id)
       entries.destroy_all
     end
     return if applicant_ids.empty?
+
     now = Time.current
     applicant_notifications = applicant_ids.map do |applicant_id|
       {
