@@ -41,7 +41,7 @@ class Item < ApplicationRecord
   before_save :set_entry_deadline_at_end_of_day, if: :will_save_change_to_entry_deadline_at?
 
   after_save_commit :watch_on_publish, if: -> { saved_change_to_attribute?(:status, to: "published") }
-  after_save_commit :notify_publishing, if: -> { saved_change_to_attribute?(:status, to: "published" }
+  after_save_commit :notify_publishing, if: -> { saved_change_to_attribute?(:status, to: "published") }
 
   after_update_commit :notify_deadline_extension, if: :saved_only_change_deadline?
 
@@ -89,6 +89,7 @@ class Item < ApplicationRecord
   def editable?
     return false if published? && expired?
     return false if sold?
+
     true
   end
 
@@ -108,10 +109,8 @@ class Item < ApplicationRecord
     entry_deadline_at.present? && entry_deadline_at < Time.current
   end
 
-  def add_watcher(user)
-    unless watchers.include?(user)
-      watchers << user
-    end
+  def add_watcher(target_user)
+    watchers << target_user unless watchers.include?(target_user)
   end
 
   private

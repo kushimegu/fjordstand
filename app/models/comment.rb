@@ -11,7 +11,7 @@ class Comment < ApplicationRecord
   private
 
   def add_commenter_to_watchers
-    item.add_watcher(self.user)
+    item.add_watcher(user)
   end
 
   def notify_watchers
