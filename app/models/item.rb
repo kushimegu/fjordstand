@@ -51,13 +51,12 @@ class Item < ApplicationRecord
   FIELDS_FOR_DRAFT = [ :title, :description, :price, :shipping_fee_payer, :payment_method, :entry_deadline_at, images: [] ].freeze
   FIELDS_FOR_PUBLISHED = (FIELDS_FOR_DRAFT - [ :price, :shipping_fee_payer ]).freeze
 
-  def self.finish_sale!(item_id)
-    item = find(item_id)
-    item.with_lock do
-      item.save_lottery_result!
+  def finish_sale!
+    with_lock do
+      save_lottery_result!
     end
 
-    item.sold? ? item.notify_lottery_results : item.notify_lottery_skipped
+    sold? ? notify_lottery_results : notify_lottery_skipped
   end
 
   def save_lottery_result!

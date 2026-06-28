@@ -82,7 +82,7 @@ RSpec.describe Item, type: :model do
     end
   end
 
-  describe ".finish_sale!" do
+  describe "#finish_sale!" do
     let(:seller) { create(:user) }
     let(:item) { create(:item, :published, user: seller) }
 
@@ -91,7 +91,7 @@ RSpec.describe Item, type: :model do
       let!(:entry) { create(:entry, item: item, user: applicant) }
 
       it "changes status to sold and calls notify_lottery_results" do
-        expect { Item.finish_sale!(item.id) }.to change { [ seller.notifications.count, applicant.notifications.count ] }.from([ 0, 0 ]).to([ 1, 1 ])
+        expect { item.finish_sale! }.to change { [ seller.notifications.count, applicant.notifications.count ] }.from([ 0, 0 ]).to([ 1, 1 ])
         expect(item.reload.status).to eq("sold")
         expect(entry.reload.status).to eq("won")
         expect(NotifyLotteryResultsJob).to have_been_enqueued.with(item.id)
@@ -100,7 +100,7 @@ RSpec.describe Item, type: :model do
 
     context "when no entry exists" do
       it "changes status to closed and calls notify_lottery_skipped" do
-        expect { Item.finish_sale!(item.id) }.to change { seller.notifications.count }.from(0).to(1)
+        expect { item.finish_sale! }.to change { seller.notifications.count }.from(0).to(1)
         expect(item.reload.status).to eq("closed")
         expect(NotifyLotterySkippedJob).to have_been_enqueued.with(item.id)
       end

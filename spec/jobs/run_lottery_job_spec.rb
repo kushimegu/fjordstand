@@ -1,9 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe RunLotteryJob, type: :job do
-  let(:seller) { create(:user) }
-  let(:item) { create(:item, :published, user: seller) }
-  let(:applicant) { create(:user) }
+  let(:item) { create(:item, :published) }
 
   before { ActiveJob::Base.queue_adapter = :test }
 
@@ -14,9 +12,9 @@ RSpec.describe RunLotteryJob, type: :job do
     end
 
     it "calls Item#finish_sale!" do
-      allow(Item).to receive(:finish_sale!)
+      allow(Item).to receive(:find).with(item.id).and_return(item)
+      expect(item).to receive(:finish_sale!)
       RunLotteryJob.perform_now(item.id)
-      expect(Item).to have_received(:finish_sale!).with(item.id).once
     end
   end
 end
