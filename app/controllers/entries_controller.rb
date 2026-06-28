@@ -4,12 +4,12 @@ class EntriesController < ApplicationController
   PER_PAGE = 12
 
   def index
-    @entries = current_user.entries
-                            .by_target(params[:status])
-                            .order("items.entry_deadline_at DESC, entries.created_at DESC")
-                            .includes(item: [ :user, :winner, first_image_attachment: { blob: :variant_records } ])
-                            .page(params[:page])
-                            .per(PER_PAGE)
+    entry_scope = current_user.entries
+    entry_scope = entry_scope.where(status: params[:status]) if params[:status].present?
+    @entries = entry_scope.order("items.entry_deadline_at DESC, entries.created_at DESC")
+                          .includes(item: [ :user, :winner, first_image_attachment: { blob: :variant_records } ])
+                          .page(params[:page])
+                          .per(PER_PAGE)
   end
 
   # POST /entries

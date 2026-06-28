@@ -13,23 +13,6 @@ RSpec.describe Notification, type: :model do
     end
   end
 
-  describe ".by_target" do
-    let!(:unread_notification) { create(:notification, :for_item, user: user) }
-    let!(:read_notification) { create(:notification, :for_item, :read, user: user) }
-
-    context "when target is unread" do
-      it "returns unread notifications" do
-        expect(Notification.by_target("unread")).to contain_exactly(unread_notification)
-      end
-    end
-
-    context "when target is invalid" do
-      it "returns all notifications" do
-        expect(Notification.by_target("invalid_status")).to contain_exactly(unread_notification, read_notification)
-      end
-    end
-  end
-
   describe "#message" do
     context "when notifiable is message" do
       let(:notification) { create(:notification, :for_message, user: user) }

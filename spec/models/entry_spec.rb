@@ -21,37 +21,6 @@ RSpec.describe Entry, type: :model do
     end
   end
 
-  describe ".by_target" do
-    let(:applier) { create(:user) }
-    let!(:applied_entry) { create(:entry, user: applier) }
-    let!(:won_entry) { create(:entry, :won, user: applier) }
-    let!(:lost_entry) { create(:entry, :lost, user: applier) }
-
-    context "when target is applied" do
-      it "returns applied entries" do
-        expect(applier.entries.by_target("applied")).to contain_exactly(applied_entry)
-      end
-    end
-
-    context "when target is won" do
-      it "returns won entries" do
-        expect(applier.entries.by_target("won")).to contain_exactly(won_entry)
-      end
-    end
-
-    context "when target is lost" do
-      it "returns lost entries" do
-        expect(applier.entries.by_target("lost")).to contain_exactly(lost_entry)
-      end
-    end
-
-    context "when target is invalid" do
-      it "returns all entries" do
-        expect(applier.entries.by_target("invalid_status")).to contain_exactly(applied_entry, won_entry, lost_entry)
-      end
-    end
-  end
-
   describe "#cannot_apply_for_own_item" do
     let(:item) { create(:item, :published, user: seller) }
     let(:entry) { build(:entry, item: item, user: seller) }

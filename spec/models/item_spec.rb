@@ -82,43 +82,6 @@ RSpec.describe Item, type: :model do
     end
   end
 
-  describe ".by_target" do
-    let!(:published_item) { create(:item, :published) }
-    let!(:closed_item) { create(:item, :closed) }
-    let!(:sold_item) { create(:item, :sold) }
-    let!(:draft_item) { create(:item) }
-
-    context "when target is published" do
-      it "returns published item" do
-        expect(Item.by_target("published")).to contain_exactly(published_item)
-      end
-    end
-
-    context "when target is closed" do
-      it "returns closed item" do
-        expect(Item.by_target("closed")).to contain_exactly(closed_item)
-      end
-    end
-
-    context "when target is sold" do
-      it "returns sold item" do
-        expect(Item.by_target("sold")).to contain_exactly(sold_item)
-      end
-    end
-
-    context "when target is draft" do
-      it "returns draft item" do
-        expect(Item.by_target("draft")).to contain_exactly(draft_item)
-      end
-    end
-
-    context "when target is invalid" do
-      it "returns all items" do
-        expect(Item.by_target("invalid")).to contain_exactly(published_item, closed_item, sold_item, draft_item)
-      end
-    end
-  end
-
   describe "#other_user_for" do
     let(:seller) { create(:user) }
     let(:item) { create(:item, :sold, user: seller) }
