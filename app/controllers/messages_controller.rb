@@ -1,6 +1,7 @@
 class MessagesController < ApplicationController
   before_action :set_item
   before_action :authorize_user
+  before_action :validate_message_sender, only: %i[create]
   before_action :require_admin, only: %i[destroy]
 
   # GET /messages
@@ -46,11 +47,13 @@ class MessagesController < ApplicationController
   end
 
   def authorize_user
-    return if @item.user_id == current_user.id
-    return if @item.winner == current_user
-    return if current_user.admin?
+    return if @item.participant?(current_user) || current_user.admin?
 
     redirect_to @item, alert: "この連絡ページを閲覧する権限がありません"
+  end
+
+  def validate_message_sender
+    redirect_to conversation_messages_path(@item), alert: "出品者・購入者以外はメッセージを送信できません" unless @item.participant?(current_user)
   end
 
   def require_admin

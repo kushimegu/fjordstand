@@ -21,7 +21,7 @@ class Notification < ApplicationRecord
         "「#{notifiable.title}」は当選者なしで公開終了しました。"
       end
     when Message
-      "#{notifiable.item.other_user_for(user).name}さんから「#{notifiable.item.title}」についてメッセージが届きました。"
+      "#{notifiable.user.name}さんから「#{notifiable.item.title}」についてメッセージが届きました。"
     end
   end
 

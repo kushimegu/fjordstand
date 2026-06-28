@@ -48,13 +48,6 @@ class Item < ApplicationRecord
 
   EDITABLE_FIELDS = [ :title, :description, :price, :shipping_fee_payer, :payment_method, :entry_deadline_at, images: [] ].freeze
 
-  def other_user_for(current_user)
-    if current_user.admin? && [ user, winner ].exclude?(current_user)
-      return nil
-    end
-    user == current_user ? winner : user
-  end
-
   def close!(reason: :user_action)
     update!(status: :closed)
     NotifyItemClosedJob.perform_later(id, reason: reason)
@@ -68,6 +61,10 @@ class Item < ApplicationRecord
 
   def commentable?
     !draft?
+  end
+
+  def participant?(user)
+    user && user.id.in?([ user_id, won_entry&.user_id ])
   end
 
   private
