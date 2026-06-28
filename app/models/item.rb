@@ -97,6 +97,7 @@ class Item < ApplicationRecord
 
   def participant?(user)
     user && user.id.in?([ user_id, won_entry&.user_id ])
+  end
 
   def owned_by?(user)
     user_id == user&.id
