@@ -26,11 +26,14 @@ class Item < ApplicationRecord
 
   validates :images, limit: { max: MAX_COUNT }, content_type: ALLOWED_TYPES, size: { less_than: MAX_SIZE_MB.megabytes }
 
-  validates :title, length: { maximum: 255 }, presence: true, on: :publish
-  validates :description, length: { maximum: 1000 }, on: :publish
+  MAX_STRING_LENGTH = 255
+  MAX_TEXT_LENGTH = 1000
+
+  validates :title, length: { maximum: MAX_STRING_LENGTH }, presence: true, on: :publish
+  validates :description, length: { maximum: MAX_TEXT_LENGTH }, on: :publish
   validates :price, presence: true, on: :publish
   validates :shipping_fee_payer, presence: { message: "を選択してください" }, on: :publish
-  validates :payment_method, length: { maximum: 255 }, presence: { message: "を選択してください" }, on: :publish
+  validates :payment_method, length: { maximum: MAX_STRING_LENGTH }, presence: true, on: :publish
   validates :entry_deadline_at, presence: true, on: :publish
   validates :images, attached: { message: "を1枚以上選択してください" }, on: :publish
   validate :combined_title_must_be_within_limit, on: :publish
@@ -75,21 +78,35 @@ class Item < ApplicationRecord
 
   private
 
+  def combined_string_with_space(original, append)
+    return original if append.blank?
+    return original if original&.include?(append)
+
+    [ original, append ].join(" ")
+  end
+
+  def combined_text_with_indent(original, append)
+    return original if append.blank?
+    return original if original&.include?(append)
+
+    [ original, append ].compact_blank.join("\n")
+  end
+
   def combined_title_must_be_within_limit
-    if title_append.present? && [ title, title_append ].join(" ").length > 255
-      errors.add(:title, "は合わせて255文字以内で入力してください")
+    if combined_string_with_space(title, title_append).length > MAX_STRING_LENGTH
+      errors.add(:title, "は合わせて#{MAX_STRING_LENGTH}文字以内で入力してください")
     end
   end
 
   def combined_description_must_be_within_limit
-    if description_append.present? && [ description, description_append ].compact.join("\n").length > 255
-      errors.add(:description, "は合わせて1000文字以内で入力してください")
+    if combined_text_with_indent(description, description_append).length > MAX_TEXT_LENGTH
+      errors.add(:description, "は合わせて#{MAX_TEXT_LENGTH}文字以内で入力してください")
     end
   end
 
   def combined_payment_method_must_be_within_limit
-    if payment_method_append.present? && [ payment_method, payment_method_append ].join(" ").length > 255
-      errors.add(:payment_method, "は合わせて255文字以内で入力してください")
+    if combined_string_with_space(payment_method, payment_method_append).length > MAX_STRING_LENGTH
+      errors.add(:payment_method, "は合わせて#{MAX_STRING_LENGTH}文字以内で入力してください")
     end
   end
 
@@ -117,17 +134,9 @@ class Item < ApplicationRecord
   end
 
   def append_additional_contents
-    if title_append.present? && !title&.include?(title_append)
-      self.title = [ title, title_append ].join(" ")
-    end
-
-    if description_append.present? && !description&.include?(description_append)
-      self.description = [ description, description_append ].compact.join("\n")
-    end
-
-    if payment_method_append.present? && !payment_method&.include?(payment_method_append)
-      self.payment_method = [ payment_method, payment_method_append ].join(" ")
-    end
+    self.title = combined_string_with_space(title, title_append)
+    self.description = combined_text_with_indent(description, description_append)
+    self.payment_method = combined_string_with_space(payment_method, payment_method_append)
   end
 
   def set_entry_deadline_at_end_of_day
