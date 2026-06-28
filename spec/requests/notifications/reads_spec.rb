@@ -2,7 +2,8 @@ require 'rails_helper'
 
 RSpec.describe "Notifications::Reads", type: :request do
   let(:user) { create(:user) }
-  let!(:notification) { create(:notification, :for_item, user: user) }
+  let(:item) { create(:item, :closed, user: user) }
+  let!(:notification) { create(:notification, :for_item, notifiable: item, user: user) }
   let!(:other_notification) { create(:notification, :for_item, user: user) }
 
   before { login(user) }
@@ -13,7 +14,9 @@ RSpec.describe "Notifications::Reads", type: :request do
 
       expect { notification.reload }.to change(notification, :read).from(false).to(true)
       expect(other_notification.reload.read).to be false
-      expect(response).to redirect_to("#{notification.link}?from=notifications")
+
+      redirect_path = item_path(notification.notifiable)
+      expect(response).to redirect_to("#{redirect_path}?from=notifications")
     end
   end
 
