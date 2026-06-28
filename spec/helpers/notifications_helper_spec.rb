@@ -8,8 +8,8 @@ RSpec.describe NotificationsHelper, type: :helper do
       let(:notification) { create(:notification, :for_comment, notifiable: comment) }
 
       it "returns new comment notification message" do
-        expect(NotificationsHelper::Strategy.resolve_message(notification)).to include("についてコメントしました。")
-        expect(NotificationsHelper::Strategy.resolve_redirect_path(notification)).to eq(item_path(item))
+        expect(resolve_message(notification)).to include("についてコメントしました。")
+        expect(resolve_redirect_path(notification)).to eq(item_path(item))
       end
     end
 
@@ -19,8 +19,8 @@ RSpec.describe NotificationsHelper, type: :helper do
       let(:notification) { create(:notification, :for_entry, notifiable: won_entry) }
 
       it "returns won notification message" do
-        expect(NotificationsHelper::Strategy.resolve_message(notification)).to include("購入が確定しました")
-        expect(NotificationsHelper::Strategy.resolve_redirect_path(notification)).to eq(conversation_messages_path(item))
+        expect(resolve_message(notification)).to include("購入が確定しました")
+        expect(resolve_redirect_path(notification)).to eq(conversation_messages_path(item))
       end
     end
 
@@ -30,8 +30,8 @@ RSpec.describe NotificationsHelper, type: :helper do
       let(:notification) { create(:notification, :for_entry, notifiable: lost_entry) }
 
       it "returns lost notification message" do
-        expect(NotificationsHelper::Strategy.resolve_message(notification)).to include("落選しました")
-        expect(NotificationsHelper::Strategy.resolve_redirect_path(notification)).to eq(item_path(item))
+        expect(resolve_message(notification)).to include("落選しました")
+        expect(resolve_redirect_path(notification)).to eq(item_path(item))
       end
     end
 
@@ -40,8 +40,8 @@ RSpec.describe NotificationsHelper, type: :helper do
       let(:notification) { create(:notification, :for_item, notifiable: item) }
 
       it "returns sold notification message" do
-        expect(NotificationsHelper::Strategy.resolve_message(notification)).to include("購入者が決まりました")
-        expect(NotificationsHelper::Strategy.resolve_redirect_path(notification)).to eq(conversation_messages_path(item))
+        expect(resolve_message(notification)).to include("購入者が決まりました")
+        expect(resolve_redirect_path(notification)).to eq(conversation_messages_path(item))
       end
     end
 
@@ -50,8 +50,8 @@ RSpec.describe NotificationsHelper, type: :helper do
       let(:notification) { create(:notification, :for_item, notifiable: item) }
 
       it "returns closed notification message" do
-        expect(NotificationsHelper::Strategy.resolve_message(notification)).to include("公開終了しました")
-        expect(NotificationsHelper::Strategy.resolve_redirect_path(notification)).to eq(item_path(item))
+        expect(resolve_message(notification)).to include("公開終了しました")
+        expect(resolve_redirect_path(notification)).to eq(item_path(item))
       end
     end
 
@@ -61,8 +61,8 @@ RSpec.describe NotificationsHelper, type: :helper do
       let(:notification) { create(:notification, :for_message, notifiable: message) }
 
       it "returns notification message" do
-        expect(NotificationsHelper::Strategy.resolve_message(notification)).to include("メッセージが届きました")
-        expect(NotificationsHelper::Strategy.resolve_redirect_path(notification)).to eq(conversation_messages_path(item))
+        expect(resolve_message(notification)).to include("メッセージが届きました")
+        expect(resolve_redirect_path(notification)).to eq(conversation_messages_path(item))
       end
     end
   end

@@ -8,7 +8,7 @@ class Notifications::ReadsController < ApplicationController
     else
       notification.update!(read: true)
     end
-    redirect_path = NotificationsHelper::Strategy.resolve_redirect_path(notification)
+    redirect_path = helpers.resolve_redirect_path(notification)
     redirect_to url_for("#{redirect_path}?from=notifications"), status: :see_other
   end
 
