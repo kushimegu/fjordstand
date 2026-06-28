@@ -117,7 +117,7 @@ article.item-show.mt-2.flex.flex-col.md:grid.md:grid-cols-2.md:gap-10.md:items-s
             span.text-base.font-medium.text-gray-800 = l @item.entry_deadline_at.to_date
             - if @item.closed?
               span.text-sm.text-red-500.font-medium 公開終了
-            - elsif @item.entry_deadline_at < Time.current
+            - elsif @item.expired?
               span.text-sm.text-red-500.font-medium 締切済み
         - else
           span.text-base.text-gray-700 未設定
@@ -136,7 +136,7 @@ article.item-show.mt-2.flex.flex-col.md:grid.md:grid-cols-2.md:gap-10.md:items-s
           | #{@item.applicants.count}人
 
     / 出品者向け：抽選完了
-    - if @item.user == current_user && @item.sold?
+    - if @item.owned_by?(current_user) && @item.sold?
       .bg-cyan-50.border.border-cyan-300.rounded-xl.p-5
         .flex.items-center.gap-2.mb-2
           svg.text-cyan-600 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5"
@@ -157,9 +157,9 @@ article.item-show.mt-2.flex.flex-col.md:grid.md:grid-cols-2.md:gap-10.md:items-s
           | 当選者と連絡をとる
 
     / 購入者向けアクション
-    - if @item.user != current_user
+    - unless @item.owned_by?(current_user)
       .item-actions.flex.flex-col.gap-3
-        - if @item.published? && @item.entry_deadline_at.presence && @item.entry_deadline_at >= Time.current
+        - if @item.published? && !@item.expired?
           - if current_user.entry_for(@item)&.applied?
             .flex.flex-col.items-center.gap-3
               .flex.items-center.gap-1.5.text-base.text-cyan-700.font-medium
