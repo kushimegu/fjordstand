@@ -40,7 +40,7 @@ module ApplicationHelper
       return @item&.user == current_user
     end
 
-    [ new_item_path, listings_path ].any? { |path| current_page?(path) } || params[:from] == "listings"
+    (controller_name == "items" && action_name.in?(%w[new create])) ||  current_page?(listings_path) || params[:from] == "listings"
   end
 
   def active_conversations_tab?

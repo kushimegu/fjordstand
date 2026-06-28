@@ -190,7 +190,7 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
 
     context "when current page is new_item_path" do
-      before { allow(helper).to receive(:current_page?) { |path| path == new_item_path } }
+      before { allow(helper).to receive_messages(controller_name: "items", action_name: "new") }
 
       it "returns true" do
         expect(helper.active_listings_tab?).to be true
