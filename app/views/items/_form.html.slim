@@ -7,13 +7,8 @@
   div
     = form.label :title, class: "text-sm font-semibold text-gray-700 block mb-1"
     = form.text_field :title, maxlength: Item::MAX_STRING_LENGTH,
-      class: "w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent \
-      read-only:bg-gray-100 read-only:focus:ring-0 read-only:focus:border-gray-300", readonly: item.published?
-    = render "shared/error_messages", model: item, attribute: :title
-    - if item.published?
-      = form.label :title_append, class: "text-sm  text-gray-600 block mt-2 mb-1"
-      = form.text_field :title_append, maxlength: Item::MAX_STRING_LENGTH,
       class: "w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+    = render "shared/error_messages", model: item, attribute: :title
 
   div[data-controller="image-preview"
   data={ "image-preview-max-count-value": Item::MAX_COUNT,
@@ -61,17 +56,11 @@
       = form.label :description, style: "display: block", class: "font-semibold text-sm block text-gray-700"
       span.text-xs.text-gray-500 任意
     = form.textarea :description,
-      placeholder: (item.published? ? nil : "商品の特徴や状態などを1000字以内でご入力ください\n\n入力例）カバーに傷みがありますが、中は書き込みや破れなどはなく綺麗な状態です"),
+      placeholder: "商品の特徴や状態などをご入力ください\n\n入力例）カバーに傷みがありますが、中は書き込みや破れなどはなく綺麗な状態です",
       class: "w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent \
-      min-h-32 field-sizing-content placeholder-gray-400 read-only:bg-gray-100 read-only:focus:ring-0 read-only:min-h-[46px] read-only:field-sizing-content",
-      readonly: item.published?,
+      min-h-32 field-sizing-content placeholder-gray-400",
       maxlength: Item::MAX_TEXT_LENGTH
     = render "shared/error_messages", model: item, attribute: :description
-    - if item.published?
-      = form.label :description_append, class: "text-sm text-gray-600 block mt-2 mb-1"
-      = form.textarea :description_append, class: "w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm \
-      focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent min-h-32 field-sizing-content",
-      maxlength: Item::MAX_TEXT_LENGTH
 
   div
     .flex.items-center.gap-x-2.mb-1
@@ -103,12 +92,7 @@
     = form.text_field :payment_method, maxlength: Item::MAX_STRING_LENGTH,
       placeholder: "入力例）PayPayまたは口座振り込み",
       class: "w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 \
-      focus:border-transparent placeholder-gray-400 read-only:bg-gray-100 read-only:focus:ring-0", readonly: item.published?
-    - if item.published?
-      = form.label :payment_method_append, class: "text-sm text-gray-600 block mt-2 mb-1"
-      = form.text_field :payment_method_append, maxlength: Item::MAX_STRING_LENGTH,
-        class: "w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 \
-        focus:border-transparent"
+      focus:border-transparent placeholder-gray-400"
     = render "shared/error_messages", model: item, attribute: :payment_method
 
   div
@@ -125,7 +109,7 @@
   .pt-2
     - if item.draft?
       p.text-red-400.text-sm.text-sm.mb-3
-        | 出品後はご入力いただいた内容の削除はできず、商品情報（商品名・商品説明・お支払い方法）の追加と締切の延長のみ行うことができます。出品前に内容をお確かめください。
+        | 出品後は商品名・商品説明・お支払い方法の編集と締切の延長のみ行うことができます。画像の削除や価格・配送料の負担の変更はできませんので出品前に内容をお確かめください。
     = form.submit I18n.t("helpers.submit.item.publish.#{item.status}"), name: "publish",
     class: "cursor-pointer w-full block px-4 py-2.5 rounded-lg bg-cyan-600 text-white text-sm font-semibold hover:bg-cyan-700 transition-colors text-center"
 

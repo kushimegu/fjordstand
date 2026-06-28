@@ -18,8 +18,6 @@ class Item < ApplicationRecord
   enum :shipping_fee_payer, { buyer: 0, seller: 1 }
   enum :status, { draft: 0, published: 1, sold: 2, closed: 3 }
 
-  attr_accessor :title_append, :description_append, :payment_method_append
-
   MAX_COUNT = 5
   ALLOWED_TYPES = %w[ image/png image/jpeg ].freeze
   MAX_SIZE_MB = 5
@@ -36,14 +34,10 @@ class Item < ApplicationRecord
   validates :payment_method, length: { maximum: MAX_STRING_LENGTH }, presence: true, on: :publish
   validates :entry_deadline_at, presence: true, on: :publish
   validates :images, attached: { message: "を1枚以上選択してください" }, on: :publish
-  validate :combined_title_must_be_within_limit, on: :publish
-  validate :combined_description_must_be_within_limit, on: :publish
-  validate :combined_payment_method_must_be_within_limit, on: :publish
   validate :deadline_must_be_today_or_later, on: :publish
   validate :price_cannot_be_changed_after_published, on: :publish
   validate :deadline_cannot_be_changed_earlier_after_published, on: :publish
 
-  before_save :append_additional_contents
   before_save :set_entry_deadline_at_end_of_day, if: :will_save_change_to_entry_deadline_at?
 
   after_save_commit :comment_watch_by_seller, if: -> { saved_change_to_attribute?(:status, to: "published") }
@@ -55,7 +49,7 @@ class Item < ApplicationRecord
   scope :commentable, -> { where.not(status: :draft) }
 
   FIELDS_FOR_DRAFT = [ :title, :description, :price, :shipping_fee_payer, :payment_method, :entry_deadline_at, images: [] ].freeze
-  FIELDS_FOR_PUBLISHED = (FIELDS_FOR_DRAFT - [ :title, :description, :payment_method ]).freeze
+  FIELDS_FOR_PUBLISHED = (FIELDS_FOR_DRAFT - [ :price, :shipping_fee_payer ]).freeze
 
   def close!(reason: :user_action)
     update!(status: :closed)
@@ -78,38 +72,6 @@ class Item < ApplicationRecord
 
   private
 
-  def combined_string_with_space(original, append)
-    return original if append.blank?
-    return original if original&.include?(append)
-
-    [ original, append ].join(" ")
-  end
-
-  def combined_text_with_indent(original, append)
-    return original if append.blank?
-    return original if original&.include?(append)
-
-    [ original, append ].compact_blank.join("\n")
-  end
-
-  def combined_title_must_be_within_limit
-    if combined_string_with_space(title, title_append).length > MAX_STRING_LENGTH
-      errors.add(:title, "は合わせて#{MAX_STRING_LENGTH}文字以内で入力してください")
-    end
-  end
-
-  def combined_description_must_be_within_limit
-    if combined_text_with_indent(description, description_append).length > MAX_TEXT_LENGTH
-      errors.add(:description, "は合わせて#{MAX_TEXT_LENGTH}文字以内で入力してください")
-    end
-  end
-
-  def combined_payment_method_must_be_within_limit
-    if combined_string_with_space(payment_method, payment_method_append).length > MAX_STRING_LENGTH
-      errors.add(:payment_method, "は合わせて#{MAX_STRING_LENGTH}文字以内で入力してください")
-    end
-  end
-
   def deadline_must_be_today_or_later
     return if entry_deadline_at.nil? || entry_deadline_at.to_date >= Date.current
 
@@ -131,12 +93,6 @@ class Item < ApplicationRecord
         errors.add(:entry_deadline_at, "は元の締切日以降に設定してください")
       end
     end
-  end
-
-  def append_additional_contents
-    self.title = combined_string_with_space(title, title_append)
-    self.description = combined_text_with_indent(description, description_append)
-    self.payment_method = combined_string_with_space(payment_method, payment_method_append)
   end
 
   def set_entry_deadline_at_end_of_day

@@ -100,20 +100,20 @@ RSpec.describe "/items", type: :request do
     context "when item is not editable" do
       it "redirects to the item page" do
         item = create(:item, :sold, user: user, title: "技術書")
-        patch item_url(item), params: { item: { title_append: "初版" } }
+        patch item_url(item), params: { item: { title: "初版" } }
         expect(response).to redirect_to(item_url(item))
         expect(item.reload.title).to eq("技術書")
       end
     end
 
     context "when update as published with valid parameters" do
-      let(:new_attributes) { { title_append: "初版" } }
+      let(:new_attributes) { { title: "初版" } }
 
       it "updates the requested item" do
         item = create(:item, :published, :with_item_image, user: user, title: "技術書")
         patch item_url(item), params: { item: new_attributes, publish: true }
 
-        expect(item.reload.title).to eq("技術書 初版")
+        expect(item.reload.title).to eq("初版")
         expect(response).to redirect_to(item_url(item))
       end
     end
@@ -121,11 +121,11 @@ RSpec.describe "/items", type: :request do
     context "when update as published with invalid parameters" do
       let(:invalid_attributes) { { price: 1200 } }
 
-      it "renders a response with 422 status (i.e. to display the 'edit' template)" do
+      it "renders a response with 400 status)" do
         item = create(:item, :published, user: user, price: 1000)
         patch item_url(item), params: { item: invalid_attributes, publish: true }
 
-        expect(response).to have_http_status(:unprocessable_content)
+        expect(response).to have_http_status(:bad_request)
       end
     end
   end

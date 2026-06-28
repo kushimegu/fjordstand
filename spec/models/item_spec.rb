@@ -192,36 +192,6 @@ RSpec.describe Item, type: :model do
     end
   end
 
-  describe "#combined_title_must_be_within_limit" do
-    let(:item) { build(:item, :published, title: "Alice's Adventures in Wonderland") }
-
-    it "validates title to be within limit" do
-      item.title_append = "a" * 250
-      expect(item.valid?(:publish)).to be false
-      expect(item.errors[:title]).to include("は合わせて255文字以内で入力してください")
-    end
-  end
-
-  describe "#combined_description_must_be_within_limit" do
-    let(:item) { build(:item, :published, description: "Alice wonders in Wonderland") }
-
-    it "validates title to be within limit" do
-      item.description_append = "a" * 999
-      expect(item.valid?(:publish)).to be false
-      expect(item.errors[:description]).to include("は合わせて1000文字以内で入力してください")
-    end
-  end
-
-  describe "#combined_payment_method_must_be_within_limit" do
-    let(:item) { build(:item, :published, payment_method: "PayPay") }
-
-    it "validates title to be within limit" do
-      item.payment_method_append = "a" * 250
-      expect(item.valid?(:publish)).to be false
-      expect(item.errors[:payment_method]).to include("は合わせて255文字以内で入力してください")
-    end
-  end
-
   describe "#deadline_must_be_today_or_later" do
     let(:item) { build(:item, :with_item_image, entry_deadline_at: entry_deadline_at) }
 
@@ -303,38 +273,6 @@ RSpec.describe Item, type: :model do
         item.assign_attributes(entry_deadline_at: Date.current + 2.days)
 
         expect(item.valid?(:publish)).to be true
-      end
-    end
-  end
-
-  describe "#append_additional_contents" do
-    context "when append contents exists" do
-      let(:item) { build(:item, :published, title: "Alice's Adventures in Wonderland", description: "Alice wonders in Wonderland", payment_method: "PayPay") }
-
-      it "adds to original title" do
-        item.title_append = "by Lewis Carroll"
-        item.description_append = "It's a classic children's book."
-        item.payment_method_append = "PayPal"
-        item.save!
-
-        expect(item.title).to eq("Alice's Adventures in Wonderland by Lewis Carroll")
-        expect(item.description).to eq("Alice wonders in Wonderland\nIt's a classic children's book.")
-        expect(item.payment_method).to eq("PayPay PayPal")
-      end
-    end
-
-    context "when append contents are already joined" do
-      let(:item) { build(:item, :published, title: "Alice's Adventures in Wonderland by Lewis Carroll", description: "Alice wonders in Wonderland\nIt's a classic children's book.", payment_method: "PayPay PayPal") }
-
-      it "does not joins twice" do
-        item.title_append = "by Lewis Carroll"
-        item.description_append = "It's a classic children's book."
-        item.payment_method_append = "PayPal"
-        item.save!
-
-        expect(item.title).to eq("Alice's Adventures in Wonderland by Lewis Carroll")
-        expect(item.description).to eq("Alice wonders in Wonderland\nIt's a classic children's book.")
-        expect(item.payment_method).to eq("PayPay PayPal")
       end
     end
   end

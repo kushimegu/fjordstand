@@ -80,7 +80,7 @@ class ItemsController < ApplicationController
     if @item.draft?
       params.expect(item: [ *Item::FIELDS_FOR_DRAFT ])
     else
-      params.expect(item: [ :title_append, :description_append, :payment_method_append, *Item::FIELDS_FOR_PUBLISHED ])
+      params.expect(item: [ *Item::FIELDS_FOR_PUBLISHED ])
     end
   end
 
