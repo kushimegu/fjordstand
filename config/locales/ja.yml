@@ -2,8 +2,8 @@ ja:
   enums:
     item:
       shipping_fee_payer:
-        buyer: 購入者
-        seller: 出品者
+        seller: 出品者（送料込）
+        buyer: 購入者（送料別）
   views:
     item:
       shipping_fee_label:
