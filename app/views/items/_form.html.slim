@@ -80,11 +80,11 @@
       label.flex.items-center.gap-2.cursor-pointer for="shipping_buyer"
         = form.radio_button :shipping_fee_payer, :buyer, id: "shipping_buyer", class: "accent-cyan-600", disabled: @item.published?
         span.text-sm class="#{"opacity-50 cursor-not-allowed" if @item.published?}"
-          | 購入者
+          | 購入者（送料別）
       label.flex.items-center.gap-2.cursor-pointer for="shipping_seller"
         = form.radio_button :shipping_fee_payer, :seller, id: "shipping_seller", class: "accent-cyan-600", disabled: @item.published?
         span.text-sm class="#{"opacity-50 cursor-not-allowed" if @item.published?}"
-          | 出品者
+          | 出品者（送料込）
     = render "shared/error_messages", model: item, attribute: :shipping_fee_payer
 
   div

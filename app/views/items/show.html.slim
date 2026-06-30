@@ -209,7 +209,7 @@ article.item-show.mt-2.flex.flex-col.md:grid.md:grid-cols-2.md:gap-10.md:items-s
         - if @item.description.present?
           div
             p.text-sm.font-semibold.text-gray-700.uppercase.tracking-wide.mb-1 商品説明
-            .text-base.text-gray-700.leading-relaxed = simple_format(@item.description)
+            .text-base.text-gray-700.leading-relaxed = safe_join(@item.description.split("\n"), tag(:br))
 
     / 編集・削除
     - if (@item.user == current_user && @item.editable?) || current_user.admin?
