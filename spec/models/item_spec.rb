@@ -360,5 +360,13 @@ RSpec.describe Item, type: :model do
         expect { item.update!(status: :published, entry_deadline_at: Date.tomorrow) }.not_to have_enqueued_job(NotifyDeadlineExtendedJob)
       end
     end
+
+    context "when draft entry_deadline_at is changed" do
+      it "does not send webhook notification" do
+        item = create(:item, entry_deadline_at: Date.current)
+
+        expect { item.update!(entry_deadline_at: Date.tomorrow) }.not_to have_enqueued_job(NotifyDeadlineExtendedJob)
+      end
+    end
   end
 end
