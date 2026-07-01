@@ -43,7 +43,7 @@ class Item < ApplicationRecord
   after_save_commit :watch_on_publish, if: -> { saved_change_to_attribute?(:status, to: "published") }
   after_save_commit :notify_publishing, if: -> { saved_change_to_attribute?(:status, to: "published") }
 
-  after_update_commit :notify_deadline_extension, if: :saved_only_change_deadline?
+  after_update_commit :notify_deadline_extension, if: :saved_only_deadline_change?
 
   scope :not_expired, -> { where(entry_deadline_at: Time.current.beginning_of_day..) }
   scope :expired, -> { where.not(id: not_expired).where(status: :published) }
@@ -156,8 +156,8 @@ class Item < ApplicationRecord
     NotifyDeadlineExtendedJob.perform_later(id)
   end
 
-  def saved_only_change_deadline?
-    !saved_change_to_status? && saved_change_to_entry_deadline_at?
+  def saved_only_deadline_change?
+    published? && !saved_change_to_status? && saved_change_to_entry_deadline_at?
   end
 
   def save_lottery_result!
