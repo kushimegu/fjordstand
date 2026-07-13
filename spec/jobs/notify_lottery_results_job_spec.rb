@@ -11,7 +11,7 @@ RSpec.describe NotifyLotteryResultsJob, type: :job do
     create(:entry, :won, item: item, user: winner)
   end
 
-  describe '#perform_later' do
+  describe '#perform' do
     it "sends discord notification" do
       NotifyLotteryResultsJob.perform_now(item.id)
       expect(webhook).to have_received(:notify_lottery_completed).with([ winner, seller ], item)

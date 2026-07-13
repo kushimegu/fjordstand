@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe "/comments", type: :request do
   let(:user) { create(:user) }
   let(:item) { create(:item, :published, user: user) }
-  let(:valid_attributes) { attributes_for(:comment) }
+  let(:valid_attributes) { { body: "コメントです" } }
 
   describe "POST /create" do
     before { login(user) }
@@ -27,7 +27,7 @@ RSpec.describe "/comments", type: :request do
     end
 
     context "with invalid parameters" do
-      let(:invalid_attributes) { attributes_for(:comment, body: "") }
+      let(:invalid_attributes) { { body: "" } }
 
       it "does not create a new Comment" do
         expect {

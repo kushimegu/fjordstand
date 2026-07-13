@@ -7,7 +7,7 @@ RSpec.describe "Items::Drafts", type: :request do
 
   describe "POST /create" do
     context "when save as draft" do
-      let(:valid_attributes) { attributes_for(:item) }
+      let(:valid_attributes) { { title: "技術書" } }
 
       it "creates a new Item" do
         expect {
@@ -19,11 +19,9 @@ RSpec.describe "Items::Drafts", type: :request do
   end
 
   describe "PATCH /update" do
-    let(:new_attributes) { { title: "初版" } }
-
     it "updates the requested item" do
       item = create(:item, user: user, title: "技術書")
-      patch draft_url(item), params: { item: new_attributes }
+      patch draft_url(item), params: { item: { title: "初版" } }
       expect(item.reload.title).to eq("初版")
       expect(response).to redirect_to(listings_path)
     end

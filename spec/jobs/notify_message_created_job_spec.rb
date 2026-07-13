@@ -11,7 +11,7 @@ RSpec.describe NotifyMessageCreatedJob, type: :job do
     create(:entry, :won, item: item, user: buyer)
   end
 
-  describe '#perform_later' do
+  describe '#perform' do
     it 'enqueues the job' do
       message = build(:message, item: item, user: buyer)
       message.save!

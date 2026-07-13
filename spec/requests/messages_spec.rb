@@ -40,14 +40,14 @@ RSpec.describe "/messages", type: :request do
 
       it "redirects to messages index" do
         expect {
-          post conversation_messages_path(item), params: { message: attributes_for(:message, item: item, user: admin) }
+          post conversation_messages_path(item), params: { message: { body: "関係のないメッセージ" } }
         }.not_to change(Message, :count)
         expect(response).to redirect_to(conversation_messages_path(item))
       end
     end
 
     context "with valid parameters" do
-      let(:valid_attributes) { attributes_for(:message, item: item, user: user) }
+      let(:valid_attributes) { { body: "メッセージです" } }
 
       before { login(user) }
 
@@ -60,7 +60,7 @@ RSpec.describe "/messages", type: :request do
     end
 
     context "with invalid parameters" do
-      let(:invalid_attributes) { attributes_for(:message, item: item, user: user, body: "") }
+      let(:invalid_attributes) { { body: "" } }
 
       before { login(user) }
 
