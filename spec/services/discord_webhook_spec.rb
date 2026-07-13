@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe DiscordWebhook, discord_stub: false do
-  let(:seller) { create(:user) }
+  let(:seller) { create(:user, uid: "456") }
 
   let(:client) { instance_double(Discordrb::Webhooks::Client) }
   let(:builder) { instance_double(Discordrb::Webhooks::Builder) }
@@ -59,14 +59,14 @@ RSpec.describe DiscordWebhook, discord_stub: false do
   end
 
   describe "#notify_lottery_completed" do
-    let(:applicant) { create(:user) }
+    let(:applicant) { create(:user, uid: "789", name: "Alice") }
     let(:item) { create(:item, :published, user: seller, winner: applicant) }
 
     it "sends webhook notification" do
       webhook = DiscordWebhook.new
       webhook.notify_lottery_completed([ applicant, seller ], item)
 
-      expect(builder).to have_received(:content=).with("<@#{applicant.uid}> <@#{seller.uid}>\n🎉抽選が完了し#{applicant.name}さんが当選しました！")
+      expect(builder).to have_received(:content=).with("<@789> <@456>\n🎉抽選が完了しAliceさんが当選しました！")
     end
   end
 
@@ -77,7 +77,7 @@ RSpec.describe DiscordWebhook, discord_stub: false do
       webhook = DiscordWebhook.new
       webhook.notify_lottery_skipped([ seller ], item)
 
-      expect(builder).to have_received(:content=).with("<@#{seller.uid}>\n⏭️希望者がいなかったため当選者なしで公開終了しました")
+      expect(builder).to have_received(:content=).with("<@456>\n⏭️希望者がいなかったため当選者なしで公開終了しました")
     end
   end
 
@@ -88,7 +88,7 @@ RSpec.describe DiscordWebhook, discord_stub: false do
       webhook = DiscordWebhook.new
       webhook.notify_new_comment([ seller ], item)
 
-      expect(builder).to have_received(:content=).with("<@#{seller.uid}>\n📝新しいコメントがつきました")
+      expect(builder).to have_received(:content=).with("<@456>\n📝新しいコメントがつきました")
     end
   end
 
@@ -99,7 +99,7 @@ RSpec.describe DiscordWebhook, discord_stub: false do
       webhook = DiscordWebhook.new
       webhook.notify_new_message([ seller ], item)
 
-      expect(builder).to have_received(:content=).with("<@#{seller.uid}>\n💬新しいメッセージが届きました")
+      expect(builder).to have_received(:content=).with("<@456>\n💬新しいメッセージが届きました")
     end
   end
 end
