@@ -5,7 +5,7 @@ RSpec.describe ScheduleLotteryJob, type: :job do
   let!(:expired_item) { create(:item, :published, user: seller, entry_deadline_at: Date.yesterday) }
   let!(:unexpired_item) { create(:item, :published, user: seller, entry_deadline_at: Date.tomorrow) }
 
-  describe '#perform_later' do
+  describe '#perform' do
     it "enqueue FinishSaleJob for expired item" do
       ScheduleLotteryJob.perform_now
       expect(FinishSaleJob).to have_been_enqueued.with(expired_item.id)

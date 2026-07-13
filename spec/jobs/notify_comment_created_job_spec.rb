@@ -11,7 +11,7 @@ RSpec.describe NotifyCommentCreatedJob, type: :job do
     create(:watch, user: watcher, item: item)
   end
 
-  describe '#perform_later' do
+  describe '#perform' do
     it 'enqueues the job' do
       comment = build(:comment, item: item)
       comment.save!
