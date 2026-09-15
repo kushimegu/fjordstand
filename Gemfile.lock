@@ -169,7 +169,7 @@ GEM
       domain_name (~> 0.5)
     i18n (1.15.1)
       concurrent-ruby (~> 1.0)
-    image_processing (2.0.2)
+    image_processing (2.1.0)
     importmap-rails (2.2.3)
       actionpack (>= 6.0.0)
       activesupport (>= 6.0.0)
@@ -557,7 +557,7 @@ DEPENDENCIES
   factory_bot_rails
   faker
   hanmoto
-  image_processing (~> 2.0)
+  image_processing (~> 2.1)
   importmap-rails
   kamal
   kaminari
