@@ -58,6 +58,9 @@ jobs:
       - name: Lint ruby code for consistent style
         run: bin/rubocop -f github
 
+      - name: Lint Slim templates
+        run: bundle exec slim-lint app/views
+
   lint_js:
     runs-on: ubuntu-latest
     steps:
@@ -75,3 +78,57 @@ jobs:
 
       - name: Check format and lint js code for consistent style
         run: npm run lint
+
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/fjord_stand_test
+      DISCORD_CLIENT_ID: test-client-id
+      DISCORD_CLIENT_SECRET: test-client-secret
+      DISCORD_REDIRECT_URI: http://localhost:3000/auth/discord/callback
+      DISCORD_SERVER_ID: '123456789'
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: fjord_stand_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y libvips libpq-dev
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+
+      - name: Check Chrome availability
+        run: google-chrome --version
+
+      - name: Prepare test database
+        run: bin/rails db:prepare
+
+      - name: Build Tailwind CSS
+        run: bin/rails tailwindcss:build
+
+      - name: Run RSpec
+        run: bundle exec rspec
