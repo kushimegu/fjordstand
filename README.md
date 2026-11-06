@@ -38,7 +38,7 @@ Discordで受け取る通知にはメンションがついており、抽選結�
 
 | カテゴリ               | 技術                                      |
 | ---------------------- | ----------------------------------------- |
-| 言語                   | Ruby 4.0.5                                |
+| 言語                   | Ruby                                |
 | フレームワーク         | Ruby on Rails                             |
 | データベース           | PostgreSQL                                |
 | フロントエンド         | Tailwind CSS / Hotwire (Turbo + Stimulus) |
@@ -54,7 +54,7 @@ Discordで受け取る通知にはメンションがついており、抽選結�
 
 以下をインストールしておいてください。
 
-- **Ruby** 4.0.5（[rbenv](https://github.com/rbenv/rbenv) または [asdf](https://asdf-vm.com/) 推奨）
+- **Ruby** 4.0.9（[rbenv](https://github.com/rbenv/rbenv) または [asdf](https://asdf-vm.com/) 推奨）
 - **PostgreSQL**
 - **libvips**（画像処理に使用）
 
