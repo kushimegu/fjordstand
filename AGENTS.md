@@ -1,7 +1,7 @@
 ## Project Overview
 
 - FjordBootCamp内向けのクローズドなフリマアプリです。
-- Ruby 4.0.5 / Rails 8.1、PostgreSQL、Slim、Tailwind CSS、Hotwireを使用しています。
+- Ruby 4.0.5 / Rails、PostgreSQL、Slim、Tailwind CSS、Hotwireを使用しています。
 - 認証と通知にDiscord、画像管理にActive Storage、バックグラウンド処理にSolid Queueを使用しています。
 - 商品の状態は`draft`、`published`、`sold`、`closed`です。応募締切後は抽選され、応募者がいない商品は公開終了になります。
 
