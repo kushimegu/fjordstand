@@ -104,6 +104,60 @@ RSpec.describe Item, type: :model do
         expect(NotifyLotterySkippedJob).to have_been_enqueued.with(item.id)
       end
     end
+
+    context "when the item is republished after closing without entries" do
+      let!(:previous_notification) do
+        item.finish_sale!
+        item.notifications.find_by!(user: seller)
+      end
+
+      before { item.update!(status: :published, entry_deadline_at: Date.tomorrow) }
+
+      it "notifies the seller once for the new listing without entries" do
+        expect do
+          expect { 2.times { item.finish_sale! } }.to change { seller.notifications.count }.by(1)
+        end.to have_enqueued_job(NotifyLotterySkippedJob).with(item.id).once
+        expect(item.reload).to be_closed
+        expect(seller.notifications).to include(previous_notification)
+      end
+
+      it "notifies the seller and each applicant once for the new listing with entries" do
+        applicants = create_list(:user, 2)
+        applicants.each { |applicant| create(:entry, item: item, user: applicant) }
+
+        expect do
+          expect { item.finish_sale! }.to change { seller.notifications.count }.by(1)
+        end.to have_enqueued_job(NotifyLotteryResultsJob).with(item.id).once
+        expect(item.reload).to be_sold
+        winner = item.winner
+        expect(applicants).to include(winner)
+        expect(applicants.map { |applicant| applicant.notifications.count }).to eq([ 1, 1 ])
+
+        expect { item.finish_sale! }.not_to change(Notification, :count)
+        expect(NotifyLotteryResultsJob).to have_been_enqueued.with(item.id).once
+        expect(item.reload.winner).to eq(winner)
+      end
+    end
+
+    it "rolls back the result and notifications when the Discord job cannot be enqueued" do
+      entry = create(:entry, item: item)
+      allow(NotifyLotteryResultsJob).to receive(:perform_later).and_raise(SolidQueue::Job::EnqueueError)
+
+      expect do
+        expect { item.finish_sale! }.to raise_error(SolidQueue::Job::EnqueueError)
+      end.not_to change(Notification, :count)
+      expect(item.reload).to be_published
+      expect(entry.reload).to be_applied
+    end
+
+    %i[draft closed].each do |status|
+      it "does not notify the seller when the item is #{status}" do
+        item.update!(status: status)
+
+        expect { item.finish_sale! }.not_to change(Notification, :count)
+        expect(NotifyLotterySkippedJob).not_to have_been_enqueued
+      end
+    end
   end
 
   describe "#close!" do

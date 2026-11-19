@@ -54,10 +54,11 @@ class Item < ApplicationRecord
 
   def finish_sale!
     with_lock do
-      save_lottery_result!
-    end
+      next unless published?
 
-    sold? ? notify_lottery_results : notify_lottery_skipped
+      save_lottery_result!
+      sold? ? notify_lottery_results : notify_lottery_skipped
+    end
   end
 
   def close!
@@ -161,8 +162,6 @@ class Item < ApplicationRecord
   end
 
   def save_lottery_result!
-    return unless published?
-
     if entries.any?
       picked_entry = entries.sample
       entries.where.not(id: picked_entry.id).update_all(status: :lost)
@@ -174,29 +173,23 @@ class Item < ApplicationRecord
   end
 
   def notify_lottery_results
-    return if notifications.exists?(user_id: user_id)
-
     now = Time.current
-    unless Notification.exists?(notifiable_id: entries.pluck(:id), notifiable_type: "Entry")
-      entry_notifications = entries.map do |entry|
-        {
-          user_id: entry.user_id,
-          notifiable_id: entry.id,
-          notifiable_type: "Entry",
-          read: false,
-          created_at: now,
-          updated_at: now
-        }
-      end
-      Notification.insert_all!(entry_notifications) if entry_notifications.any?
+    entry_notifications = entries.map do |entry|
+      {
+        user_id: entry.user_id,
+        notifiable_id: entry.id,
+        notifiable_type: "Entry",
+        read: false,
+        created_at: now,
+        updated_at: now
+      }
     end
+    Notification.insert_all!(entry_notifications)
     notifications.create!(user: user)
     NotifyLotteryResultsJob.perform_later(id)
   end
 
   def notify_lottery_skipped
-    return if notifications.exists?(user_id: user_id)
-
     notifications.create!(user: user)
     NotifyLotterySkippedJob.perform_later(id)
   end
