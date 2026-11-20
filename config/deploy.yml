@@ -46,8 +46,8 @@ env:
     # WEB_CONCURRENCY: 2
 
     # Match this to any external database server to configure Active Record correctly
-    # Use fjord_stand-db for a db accessory server on same machine via local kamal docker network.
-    DB_HOST: fjordstand-db
+    # Reach the database accessory through the local Kamal Docker network.
+    DB_HOST: fjordstand-db18
 
     # Log everything from Rails
     RAILS_LOG_LEVEL: warn
@@ -122,6 +122,17 @@ accessories:
     #       - db/production.sql:/docker-entrypoint-initdb.d/setup.sql
     directories:
       - fjordstand_data:/var/lib/postgresql/data
+  db18:
+    image: postgres:18.7
+    host: 153.120.120.6
+    env:
+      clear:
+        POSTGRES_USER: fjordstand
+        POSTGRES_DB: postgres
+      secret:
+        - POSTGRES_PASSWORD
+    directories:
+      - fjordstand_data:/var/lib/postgresql
 #   redis:
 #     image: redis:7.0
 #     host: 192.168.0.2

@@ -6,10 +6,10 @@ RSpec.describe "Items", type: :system do
   before { driven_by(:selenium_chrome_headless) }
 
   describe "listings tab switching" do
-    let!(:draft_item) { create(:item, user: user) }
-    let!(:published_item) { create(:item, :published, user: user) }
-    let!(:closed_item) { create(:item, :closed, user: user) }
-    let!(:sold_item) { create(:item, :sold, user: user) }
+    let!(:draft_item) { create(:item, user: user, title: "未公開の自転車") }
+    let!(:published_item) { create(:item, :published, user: user, title: "販売中の水筒") }
+    let!(:closed_item) { create(:item, :closed, user: user, title: "受付を終えた万年筆") }
+    let!(:sold_item) { create(:item, :sold, user: user, title: "購入者が決まった腕時計") }
 
     before { login(user) }
 
